@@ -80,7 +80,7 @@ module.exports = {
                     message = 'Authentication succuess !';
                     let token = jwt.sign(user.toJSON(), config.secret);
                     items = { token: 'jwt ' + token };
-                    stt = true\
+                    stt = true;
                     user.local.tokenExpires = new Date();
                     await user.save((err) => {
                         if (err) console.err(err)

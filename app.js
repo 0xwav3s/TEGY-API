@@ -71,12 +71,12 @@ db.init().then(() => {
     handler.init().then(async () => {
 
         const routeArr = [
+            'systemRoute',
             'homeRoute',
             'accountRoute',
             'billRoute',
             'reportRoute',
             'imagesRoute',
-            'systemRoute',
             'errorRoute'
         ]
 

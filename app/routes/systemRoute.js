@@ -25,15 +25,6 @@ module.exports = function (app) {
         next();
     });
 
-
-
-
-
-
-
-
-
-    
     app.get(endpoint.system.printTest, system_controller.checkPrint_GET);
 
 };
