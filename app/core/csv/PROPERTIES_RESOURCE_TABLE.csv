@@ -1,0 +1,4 @@
+resourceREF,type,enumValue,properties,paths,require,unique,schemaREF
+accountResource,String,,username,local.username,y,y,loginSchema
+accountResource,String,,password,local.password,y,,loginSchema
+accountResource,model,,User,,,,userSchema

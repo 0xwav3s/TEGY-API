@@ -1,0 +1,6 @@
+resourceREF,products,linkName,href,method,title
+accountResource,ALL,account:login,/account/login,POST,Sign In Account
+accountResource,ALL,account:logout,/account/logout,POST,Logout Account
+accountResource,ALL,account:register,/account/register,POST,Sign Up Account
+accountResource,ALL,account:profile,/account/profile,GET,Get information account from jwt
+accountResource,ALL,account:profile,/account/profile,PATCH,Update information account

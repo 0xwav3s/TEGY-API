@@ -1,0 +1,44 @@
+{
+	"header": {
+		"home": "TRANG CHỦ",
+		"menu": "THỰC ĐƠN",
+		"post": "BÀI VIẾT",
+		"about": "GIỚI THIỆU",
+        "contact": "LIÊN HỆ",
+        "language":{
+            "name": "NGÔN NGỮ",
+            "vi": "Tiếng Việt",
+            "en": "Tiếng Anh"
+        },
+		"login": "ĐĂNG NHẬP"
+	},
+	"infomation":{
+		"description":"Chúng tôi luôn phục vụ tốt nhất cho bạn.",
+		"address":"203 Long Khánh",
+		"city":"Đồng Nai",
+		"email":"email@gmail.com",
+		"phone":"0383 260 263",
+		"open":"Thứ Hai-Thứ Sáu",
+		"time":"8:00 sáng - 9:00 tối"
+	},
+	"page": {
+		"home": {
+			"title": "Trang chủ - Tank Café"
+		}
+	},
+	"slide": {
+		"header_title": "Xin chào",
+		"ob1": {
+			"title": "Đây là trải nghiệm tốt nhất dành do bạn",
+			"description": "Một con sông nhỏ có tên Duden chảy qua nơi họ ở và cung cấp cho nó những chất dinh dưỡng cần thiết."
+		},
+		"ob2": {
+			"title": "Đây là trải nghiệm tốt nhất dành do bạn",
+			"description": "Một con sông nhỏ có tên Duden chảy qua nơi họ ở và cung cấp cho nó những chất dinh dưỡng cần thiết."
+		},
+		"ob3": {
+			"title": "Đây là trải nghiệm tốt nhất dành do bạn",
+			"description": "Một con sông nhỏ có tên Duden chảy qua nơi họ ở và cung cấp cho nó những chất dinh dưỡng cần thiết."
+		}
+	}
+}

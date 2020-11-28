@@ -1,0 +1,6 @@
+method,href,products,isCollection,resourceREF,methodREF
+POST,/account/login,ALL,N,accountResource,login_POST
+POST,/account/logout,ALL,N,accountResource,account_POST
+POST,/account/register,ALL,N,accountResource,account_POST
+GET,/account/profile,ALL,N,accountResource,account_GET_PATCH
+PATCH,/account/profile,ALL,N,accountResource,account_GET_PATCH

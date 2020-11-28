@@ -1,0 +1,148 @@
+{
+    "product": {
+        "name": "NGỌC HẢI"
+    },
+    "dev": false,
+    "secret": "nodeauthsecret",
+    "timeExpiredToken": 12,
+    "copyright": {
+        "name": "TEGY SERVICES"
+    },
+    "port": "3000",
+    "role": {
+        "admin": [
+            "vle34",
+            "hau",
+            "quyen"
+        ]
+    },
+    "model": {
+        "id": {
+            "artcategories": "AC0",
+            "articles": "NE0",
+            "menu": "ME0",
+            "menucategories": "MC0",
+            "order": "OR0",
+            "bill": "BI0",
+            "zone": "ZO0",
+            "table": "TA0",
+            "tax_promotions": "TP0",
+            "user": "US0"
+        },
+        "enum": {
+            "gender": [
+                "Nam",
+                "Nữ"
+            ],
+            "menu": [
+                "Món",
+                "Đĩa",
+                "Kg",
+                "Gr",
+                "Lon",
+                "Chai"
+            ],
+            "order": [
+                "Đã chọn",
+                "Đang xử lý",
+                "Hoàn tất",
+                "Hủy"
+            ],
+            "bill": [
+                "Chưa thanh toán",
+                "Đã thanh toán",
+                "Hủy"
+            ],
+            "price": [
+                "VND",
+                "$",
+                "Liên hệ"
+            ],
+            "tax_promotions": [
+                "%",
+                "Giá trị"
+            ],
+            "types_bill": [
+                "Tại bàn",
+                "Mang về"
+            ],
+            "active": [
+                "Có khách",
+                "Trống",
+                "Bảo trì"
+            ]
+        }
+    },
+    "endpoint": {
+        "home": "/",
+        "menu": "/menu",
+        "post": "/post",
+        "about": "/about",
+        "contact": "/contact",
+        "dashboard": {
+            "home": "/dashboard",
+            "system": {
+                "name": "/system",
+                "restart": "/restart",
+                "printTest": "/testPrinter"
+            },
+            "subPath": ".html",
+            "action": {
+                "create": "create",
+                "view": "view",
+                "list": "list",
+                "edit": "edit",
+                "delete": "delete",
+                "cancel": "cancel",
+                "order": "take",
+                "report": "report",
+                "submit": "submit"
+            },
+            "art": {
+                "articles": "/articles",
+                "categories": "/categories"
+            },
+            "table": {
+                "table": "/table",
+                "zone": "/zone"
+            },
+            "menu": {
+                "menu": "/menu",
+                "categories": "/types"
+            },
+            "bill": {
+                "bill": "/bill",
+                "order": "/order",
+                "tax_pro": "/tax_pro"
+            }
+        },
+        "account": {
+            "login": "/login",
+            "signup": "/signup",
+            "profile": "/profile",
+            "change": "/change",
+            "forget": "/forgot",
+            "resetToken": "/reset/:token",
+            "logout": "/logout"
+        }
+    },
+    "mongo": {
+        "host": "localhost",
+        "port": "27017",
+        "username": "admin",
+        "password": "admin",
+        "database": "banhcanh"
+    },
+    "mail": {
+        "service": "gmail",
+        "user": "tegy.services@gmail.com",
+        "pass": "13245236",
+        "recieverError": "v3load@gmail.com"
+    },
+    "images": {
+        "local": true,
+        "cloud_name": "tegyimagesservices",
+        "api_key": "878272771526651",
+        "api_secret": "Q-1IN-fR46rVTE6ac3yHT1gS1rg"
+    }
+}

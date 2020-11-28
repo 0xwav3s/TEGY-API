@@ -1,0 +1,44 @@
+{
+	"header": {
+		"home": "HOME",
+		"menu": "MENU",
+		"post": "BLOG",
+		"about": "ABOUT",
+		"contact": "CONTACT",
+		"language":{
+            "name": "LANGUAGE",
+            "vi": "Vietnamese",
+            "en": "English"
+        },
+		"login": "LOGIN"
+	},
+	"infomation":{
+		"description":"Best services for you.",
+		"address":"203 Long Khanh",
+		"city":"Dong Nai",
+		"email":"email@gmail.com",
+		"phone":"(+84) 383 260 263",
+		"open":"Monday-Friday",
+		"time":"8:00am - 9:00pm"
+	},
+	"page": {
+		"home": {
+			"title": "Home - Tank Café"
+		}
+	},
+	"slide": {
+		"header_title": "Welcome",
+		"ob1": {
+			"title": "The Best Coffee Testing Experience",
+			"description": "A small river named Duden flows by their place and supplies it with the necessary regelialia."
+		},
+		"ob2": {
+			"title": "The Best Coffee Testing Experience",
+			"description": "A small river named Duden flows by their place and supplies it with the necessary regelialia."
+		},
+		"ob3": {
+			"title": "The Best Coffee Testing Experience",
+			"description": "A small river named Duden flows by their place and supplies it with the necessary regelialia."
+		}
+	}
+}

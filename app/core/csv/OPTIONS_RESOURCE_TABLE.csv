@@ -1,0 +1,6 @@
+methodREF,products,href,method,media_type,schemaREF
+login_POST,ALL,/account/login,POST,application/x-www-form-urlencoded,loginSchema
+account_POST,ALL,/account/logout,POST,application/vnd.hal+json,
+account_POST,ALL,/account/register,POST,application/vnd.hal+json,userSchema
+account_GET_PATCH,ALL,/account/profile,GET,application/vnd.hal+json,userSchema
+account_GET_PATCH,ALL,/account/profile,PATCH,application/vnd.hal+json,userSchema
