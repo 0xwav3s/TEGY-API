@@ -5,6 +5,9 @@ let db = require('../helper/loadModels');
 let helper = require('../helper/utils');
 let notify = require('../helper/notifyFunction');
 
+const handler = require('../core/handler/tegyHandler');
+const { response } = require('express');
+
 let endpointAccount = config.get('endpoint').account;
 let dirPage = 'admin/pages/dashboard/table/';
 let endpoint = config.get('endpoint').dashboard;
@@ -20,16 +23,24 @@ module.exports = {
             .find(filter)
             .exec(function (err, items) {
                 if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
                     console.log(err)
-                    return res.redirect(endpointAccount.logout);
+                    handler.buildResponse(req, res, {}, err.message, false);
                 }
-                return res.json({
-                    user: req.user,
-                    data: items,
-                    active: active,
-                    message: req.flash('tableMessage'),
-                });
+                handler.buildResponse(req, res, items, req.flash('tableMessage')[1], true);
+            })
+    },
+    viewTableById_GET: function (req, res) {
+        let id = req.params.id;
+        db.Table
+            .findOne({ _id: id })
+            .exec(function (err, item) {
+                if (err) {
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
+                    console.log(err)
+                    handler.buildResponse(req, res, {}, err.message, false);
+                }
+                handler.buildResponse(req, res, item, 'Success find table by id: ' + id, true);
             })
     },
     viewAllTable_GET: function (req, res) {
@@ -42,7 +53,7 @@ module.exports = {
             .skip(limitPage * page)
             .exec(function (err, items) {
                 if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
 
                     console.log(err)
                     return res.redirect(endpointAccount.logout);
@@ -112,7 +123,7 @@ module.exports = {
                 item.updateTime = Date.now();
                 item.save((err) => {
                     if (err) {
-                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
 
                         console.log(err)
                         notify.sendMessageByFlash(req, 'tableMessage', 'Không thể lưu thông tin mới !');
@@ -152,7 +163,7 @@ module.exports = {
             item.author = req.user._id;
             item.save((err) => {
                 if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
 
                     console.log(err)
                     notify.sendMessageByFlash(req, 'tableMessage', 'Không thể lưu thông tin mới !');
@@ -170,7 +181,7 @@ module.exports = {
             var id = req.query.id;
             db.Table.remove({ _id: id }, function (err, items) {
                 if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
 
                     console.log(err)
                     notify.sendMessageByFlash(req, 'tableMessage', 'Không thể lưu thông tin mới !');
@@ -194,7 +205,7 @@ module.exports = {
             .skip(limitPage * page)
             .exec(function (err, items) {
                 if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
 
                     console.log(err)
                     return res.redirect(endpointAccount.logout);
@@ -259,7 +270,7 @@ module.exports = {
                 item.updateTime = Date.now();
                 item.save((err) => {
                     if (err) {
-                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
 
                         console.log(err)
                         notify.sendMessageByFlash(req, 'zoneMessage', 'Không thể lưu thông tin mới !');
@@ -294,7 +305,7 @@ module.exports = {
             item.author = req.user._id;
             item.save((err) => {
                 if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
 
                     console.log(err)
                     notify.sendMessageByFlash(req, 'zoneMessage', 'Không thể lưu thông tin mới !');
@@ -314,7 +325,7 @@ module.exports = {
                 if (!err) {
                     db.Table.remove({ 'zone': id }, function (err, items) {
                         if (err) {
-                            mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' +err.stack +'')
+                            mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
 
                             console.log(err)
                             notify.sendMessageByFlash(req, 'zoneMessage', 'Không thể lưu thông tin mới !');

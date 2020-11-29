@@ -26,6 +26,16 @@ module.exports.getFullUrl = function (req, endpoint) {
     return req.protocol + '://' + req.get('host') + endpoint;
 }
 
+// This should work both there and elsewhere.
+module.exports.isEmptyObject = function (obj) {
+    for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 module.exports.getStartDate = function (date) {
     if (date) {
         date = new Date(date);

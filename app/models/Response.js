@@ -34,6 +34,9 @@ var responseSchema = mongoose.Schema({
         message: {
             type: String,
         },
+        collection: {
+            type: Boolean,
+        },
         item: {
             type: Object,
             required: true

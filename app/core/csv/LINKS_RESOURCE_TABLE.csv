@@ -4,3 +4,8 @@ accountResource,ALL,account:logout,/account/logout,POST,Logout Account
 accountResource,ALL,account:register,/account/register,POST,Sign Up Account
 accountResource,ALL,account:profile,/account/profile,GET,Get information account from jwt
 accountResource,ALL,account:profile,/account/profile,PATCH,Update information account
+tableResource,ALL,table:list,/table/list,GET,Get list table
+tableResource,ALL,table:id,/table/:id,GET,Get table by ID
+tableResource,ALL,table:create,/table/create,POST,Create new talbe
+tableResource,ALL,table:id,/table/:id,PATCH,Update table by ID
+tableResource,ALL,table:id,/table/:id,DELETE,Get table by ID

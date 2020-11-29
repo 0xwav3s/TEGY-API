@@ -15,21 +15,23 @@ let endpoint = config.get('endpoint').dashboard;
 var express = require('express');
 
 module.exports = function (app) {
-    
-    
+
+
     /**
      * Router Table
      */
     //View All Categories
     var tabSubEndponint = endpoint.table.table;
+    var tabSubEndponint = '/table';
 
     //Gọi món
-    app.get(tabSubEndponint + '/' + endpoint.action.list, user_controller.isLoggedIn, table_controller.viewTable_GET)
 
     /**
      * CRUD Bàn ăn
      */
     var routerTable = express.Router();
+    routerTable.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.viewTable_GET)
+    routerTable.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.viewTableById_GET)
 
     //View All Bàn ăn
     app.get(tabSubEndponint + endpoint.subPath, user_controller.isLoggedIn, table_controller.viewAllTable_GET)

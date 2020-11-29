@@ -4,3 +4,8 @@ POST,/account/logout,ALL,N,accountResource,account_POST
 POST,/account/register,ALL,N,accountResource,account_POST
 GET,/account/profile,ALL,N,accountResource,account_GET_PATCH
 PATCH,/account/profile,ALL,N,accountResource,account_GET_PATCH
+GET,/table/list,ALL,Y,tableResource,table_ALL
+GET,/table/:id,ALL,N,tableResource,table_ALL
+POST,/table/create,ALL,N,tableResource,table_ALL
+PATCH,/table/:id,ALL,N,tableResource,table_ALL
+DELETE,/table/:id,ALL,N,tableResource,table_ALL

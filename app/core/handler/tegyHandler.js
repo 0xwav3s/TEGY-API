@@ -42,13 +42,14 @@ function getTitleLink(links, method, endpoint) {
 
 function buildResource(responseModel, req) {
     return new Promise((resolve, reject) => {
-        let endpoint = req.originalUrl;
+        let endpoint = req.baseUrl + req.route.path;
         console.log('Building Resource method ' + req.method + ' with endpoint: ' + endpoint)
         filterEndpointToProperties(req).then(async (prop) => {
             // responseModel.title = prop.links[0].title;
             responseModel.title = getTitleLink(prop.links, req.method, endpoint)[0].title;
-            responseModel.seftHref.href = helper.getFullUrl(req, endpoint);
+            responseModel.seftHref.href = helper.getFullUrl(req, req.originalUrl);
             responseModel.seftHref.method = prop.endpoint[0].method;
+            if (prop.endpoint[0].isCollection === 'Y') responseModel.seftHref.collection = true;
             responseModel._links = await buildLinks(prop.links, req);
             responseModel._options = await buildOptionsAndProperties(prop.options, prop.properties, req);
             // console.log(prop)
@@ -60,6 +61,11 @@ function buildResource(responseModel, req) {
 }
 
 function buildResponse(req, res, items, message, status) {
+    if (!items || items === {}) {
+        items = {};
+        message = 'No matching items found';
+        status = false;
+    }
     return new Promise(async (resolve, reject) => {
         console.log('Building response with endpoint: ' + req.originalUrl)
         let responseModel = new db.Response();
@@ -83,12 +89,13 @@ function buildResponse(req, res, items, message, status) {
 }
 
 async function buildLinks(links, req) {
-    let endpoint = req.originalUrl;
+    let endpoint = req.baseUrl + req.route.path;
     console.log('Start build links for endpoint: ' + endpoint);
     let arrLinks = [];
     await Promise.all(links.map((item) => {
         if (!(item.href === endpoint && item.method === req.method)) {
             let template = {};
+            item.href = checkExistsParamsAndUpdateEndpoint(req, item.href);
             template[item.linkName] = {
                 'title': item.title,
                 'href': helper.getFullUrl(req, item.href),
@@ -102,8 +109,9 @@ async function buildLinks(links, req) {
     return arrLinks;
 }
 
+
 async function buildOptionsAndProperties(options, properties, req) {
-    let endpoint = req.originalUrl;
+    let endpoint = req.baseUrl + req.route.path;
     console.log('Start build Options from Options and Properties for endpoint: ' + endpoint);
     let object = {
         methods: [],
@@ -112,6 +120,7 @@ async function buildOptionsAndProperties(options, properties, req) {
     object.properties = await buildProperties(properties);
     await Promise.all(options.map((item) => {
         let obOp = {};
+        item.href = checkExistsParamsAndUpdateEndpoint(req, item.href);
         obOp[item.method] = {
             href: helper.getFullUrl(req, item.href),
             type: item.media_type
@@ -170,7 +179,7 @@ function getPropertiesFromModel(paths) {
 
 function filterEndpointToProperties(req) {
     // console.log(csv);
-    let endpoint = req.originalUrl;
+    let endpoint = req.baseUrl + req.route.path;
     return new Promise(async (resolve, reject) => {
         console.log('Get all properties from filter Endpoint function')
         let propFilter = {
@@ -189,6 +198,8 @@ function filterEndpointToProperties(req) {
         let methodREF = endpoints[0].methodREF;
         let links = await csv.links.filter((item) => (
             (resourceREF === item.resourceREF)
+            &&
+            (endpoint != item.href)
             // &&
             // ((endpoint != item.href)||(req.method != item.method))
         ));
@@ -212,6 +223,17 @@ function filterEndpointToProperties(req) {
         resolve(propFilter);
     })
 
+}
+
+function checkExistsParamsAndUpdateEndpoint(req, endpoint) {
+    let params = req.params;
+    if (!helper.isEmptyObject(params) && endpoint.includes(':')) {
+        let split = endpoint.split(':');
+        let new_path = split[0].concat(params[split[1]]);
+        return new_path;
+    } else {
+        return endpoint;
+    }
 }
 
 function getToken(headers) {
