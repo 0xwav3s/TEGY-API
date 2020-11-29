@@ -1,6 +1,7 @@
 console.log('Startup TEGY API Services');
 var startTime = new Date();
 const express = require("express");
+var cors = require('cors')
 const config = require('config');
 const app = express();
 var i18n = require("i18n");
@@ -25,7 +26,7 @@ log4jsCustom.setConsoleToLogger(log);
 // config express, ejs
 app.set("view engine", "ejs");
 app.set("views", "./views");
-
+app.use(cors())
 app.use(cookieParser());
 i18n.configure({
     locales: ['vi', 'en'],
