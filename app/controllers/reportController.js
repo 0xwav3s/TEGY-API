@@ -1,7 +1,7 @@
 
 
 let config = require('config');
-let db = require('../helper/loadModels');
+let db = require('../helper/dbHelper');
 let caculate = require('../helper/accountant/caculate');
 let helper = require('../helper/utils');
 let print = require('../helper/printServices/printServices');

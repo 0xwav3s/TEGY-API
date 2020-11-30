@@ -12,9 +12,10 @@ let TaxPromotions = require('../models/TaxPromotions');
 let Zone = require('../models/Zone');
 let Response = require('../models/Response');
 
-var config = require('config');
-var helper = require('./utils');
-module.exports = {
+const config = require('config');
+const helper = require('./utils');
+const mailService = require('./mailService');
+const db = {
     Response,
     User,
     ArtCategories,
@@ -27,8 +28,40 @@ module.exports = {
     Table,
     TaxPromotions,
     Zone,
-    Counter
+    Counter,
+    hasPropertyFromModel,
+    patchItemById
 };
+
+module.exports = db
+function patchItemById(model, id, body) {
+    return new Promise((resolve, rejects) => {
+        this[model].findById(id, function (err, item) {
+            if (err) rejects(err);
+            for (let i in body) {
+                if (hasPropertyFromModel(item, i)) {
+                    item[i] = body[i]
+                } else {
+                    rejects('Property ' + i + ' is missing !')
+                }
+            }
+            item.save((err, rs) => {
+                if (err) {
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
+                    console.log(err)
+                    rejects(err);
+                } else {
+                    resolve(rs);
+                }
+            })
+        });
+    })
+}
+
+function hasPropertyFromModel(item, property) {
+    let object = item.toObject();
+    return object.hasOwnProperty(property)
+}
 
 if (config.dev) {
     autoCreateForTest();
@@ -256,7 +289,7 @@ function autoCreateForTest() {
                     console.log("Complete create => Menu " + i);
                 }
             }
-        }).then(()=>{
+        }).then(() => {
             // Bill.countDocuments({}, function (err, count) {
             //     if (err) {
             //         console.log(err);

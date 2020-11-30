@@ -12,12 +12,16 @@ var userSchema = mongoose.Schema({
         password: { type: String, required: true },
         fullname: { type: String, required: true },
         phone: { type: String, required: true },
-        gender: {type: String, enum: [
-            "Nam",
-            "Nữ"
-        ]},
+        gender: {
+            type: String, enum: [
+                "Nam",
+                "Nữ"
+            ]
+        },
         bio: String,
-        avatar: { type: String, ref: 'images'},
+        birthday: { type: Date },
+        role: { type: String, ref: 'roles' },
+        avatar: { type: String, ref: 'images' },
         createTime: { type: Date, default: Date.now() },
         updateTime: { type: Date, default: Date.now() },
         tokenExpires: Date,
@@ -61,10 +65,10 @@ userSchema.methods.validRePassword = function (password, rePassword) {
 };
 
 //Can use
-userSchema.plugin(autoIncrement.plugin, { 
+userSchema.plugin(autoIncrement.plugin, {
     startAt: 1,
-    model: 'user', 
-    field: 'userSeq' 
+    model: 'user',
+    field: 'userSeq'
 });
 userSchema.pre('save', function (next) {
     this._id = "US0" + this.userSeq;

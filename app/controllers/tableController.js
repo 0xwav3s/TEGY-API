@@ -1,12 +1,12 @@
 
 
 let config = require('config');
-let db = require('../helper/loadModels');
+let db = require('../helper/dbHelper');
 let helper = require('../helper/utils');
 let notify = require('../helper/notifyFunction');
 
 const handler = require('../core/handler/tegyHandler');
-const { response } = require('express');
+const mailService = require('../helper/mailService');
 
 let endpointAccount = config.get('endpoint').account;
 let dirPage = 'admin/pages/dashboard/table/';
@@ -83,58 +83,40 @@ module.exports = {
                 })
             })
     },
-    editTable_GET: function (req, res) {
-        var query = req.query;
-        if (query.id) {
-            db.Table.findById(query.id, async function (err, item) {
-                var zone = await db.Zone.find();
-                if (item) {
-                    return res.render(dirPage + 'detailTable.ejs', {
-                        helper: helper,
-                        endpoint: endpoint,
-                        endpointAccount: endpointAccount,
-                        message: req.flash('tableMessage'),
-                        user: req.user,
-                        item: item,
-                        zone: zone,
-                        active: config.model.enum.active,
-                        action: endpoint.action.edit
-                    });
-                } else {
-                    notify.sendMessageByFlash(req, 'tableMessage', 'Something Wrong ! Please contact admin for help.')
-                    return res.redirect('./' + endpoint.action.view);
-                }
-            });
-        } else {
-            notify.sendMessageByFlash(req, 'loginMessage', 'Something Wrong ! Please contact admin for help.')
-            return res.redirect(endpointAccount.logout);
-        }
-    },
-    editTable_POST: function (req, res) {
-        var body = req.body;
-        new Promise((resolve) => {
-            db.Table.findById(body.idTable, function (err, item) {
-                item.available = (body.available) ? true : false;
-                item.name = body.name;
-                item.description = body.description;
-                item.active = body.active;
-                item.zone = body.zone;
-                item.author = req.user._id;
-                item.updateTime = Date.now();
-                item.save((err) => {
-                    if (err) {
-                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-
-                        console.log(err)
-                        notify.sendMessageByFlash(req, 'tableMessage', 'Không thể lưu thông tin mới !');
-                    } else {
-                        notify.sendMessageByFlashType(req, 'tableMessage', 'success', 'Lưu thông tin mới thành công!');
-                    }
-                    resolve();
-                })
-            });
-        }).then(() => {
-            return res.redirect(req.originalUrl);
+    // editTable_GET: function (req, res) {
+    //     var query = req.query;
+    //     if (query.id) {
+    //         db.Table.findById(query.id, async function (err, item) {
+    //             var zone = await db.Zone.find();
+    //             if (item) {
+    //                 return res.render(dirPage + 'detailTable.ejs', {
+    //                     helper: helper,
+    //                     endpoint: endpoint,
+    //                     endpointAccount: endpointAccount,
+    //                     message: req.flash('tableMessage'),
+    //                     user: req.user,
+    //                     item: item,
+    //                     zone: zone,
+    //                     active: config.model.enum.active,
+    //                     action: endpoint.action.edit
+    //                 });
+    //             } else {
+    //                 notify.sendMessageByFlash(req, 'tableMessage', 'Something Wrong ! Please contact admin for help.')
+    //                 return res.redirect('./' + endpoint.action.view);
+    //             }
+    //         });
+    //     } else {
+    //         notify.sendMessageByFlash(req, 'loginMessage', 'Something Wrong ! Please contact admin for help.')
+    //         return res.redirect(endpointAccount.logout);
+    //     }
+    // },
+    editTable_PATCH: function (req, res) {
+        let body = req.body;
+        let id = req.params.id;
+        db.patchItemById('Table', id, body).then((result) => {
+            handler.buildResponse(req, res, result, 'Successful saved table ID: ' + result._id, true);
+        }).catch((err) => {
+            handler.buildResponse(req, res, {}, err, false);
         });
     },
     createTable_GET: async function (req, res) {

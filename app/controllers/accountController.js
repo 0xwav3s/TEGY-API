@@ -1,7 +1,7 @@
 const notify = require('../helper/notifyFunction');
 const config = require('config');
 const crypto = require('crypto');
-const db = require('../helper/loadModels');
+const db = require('../helper/dbHelper');
 const helper = require('../helper/utils');
 const handler = require('../core/handler/tegyHandler');
 const async = require('async');
@@ -62,7 +62,7 @@ module.exports = {
         db.User.findOne({
             'local.username': username
         }, async (err, user) => {
-            try{
+            try {
                 let items = [];
                 let message = '';
                 let stt = false;
@@ -88,7 +88,7 @@ module.exports = {
                     })
                 }
                 handler.buildResponse(req, res, items, message, stt);
-            }catch(err){
+            } catch (err) {
                 handler.buildResponse(req, res, {}, err, false);
             }
         })
@@ -156,7 +156,10 @@ module.exports = {
                                 if (element === 'local') {
                                     let local = body[element];
                                     for (let varible in local) {
-                                        user.local[varible] = local[varible];
+                                        if (varible === 'birthday')
+                                            user.local[varible] = Date(local[varible]);
+                                        else
+                                            user.local[varible] = local[varible];
                                     }
                                 } else {
                                     user[element] = body[element];

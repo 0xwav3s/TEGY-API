@@ -20,29 +20,25 @@ module.exports = function (app) {
     /**
      * Router Table
      */
-    //View All Categories
-    var tabSubEndponint = endpoint.table.table;
     var tabSubEndponint = '/table';
-
-    //Gọi món
-
     /**
      * CRUD Bàn ăn
      */
     var routerTable = express.Router();
     routerTable.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.viewTable_GET)
     routerTable.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.viewTableById_GET)
+    routerTable.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.editTable_PATCH)
+    routerTable.post('/' + endpoint.action.create, user_controller.isLoggedIn, table_controller.createTable_POST)
 
     //View All Bàn ăn
     app.get(tabSubEndponint + endpoint.subPath, user_controller.isLoggedIn, table_controller.viewAllTable_GET)
 
-    //Edit
-    routerTable.get('/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editTable_GET)
-    routerTable.post('/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editTable_POST)
+    // //Edit
+    // routerTable.get('/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editTable_GET)
+    // routerTable.post('/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editTable_POST)
 
     //Create
-    routerTable.get('/' + endpoint.action.create, user_controller.isLoggedIn, table_controller.createTable_GET)
-    routerTable.post('/' + endpoint.action.create, user_controller.isLoggedIn, table_controller.createTable_POST)
+    // routerTable.get('/' + endpoint.action.create, user_controller.isLoggedIn, table_controller.createTable_GET)
 
     //Delete
     routerTable.post('/' + endpoint.action.delete, user_controller.isLoggedIn, table_controller.deleteTable_POST)

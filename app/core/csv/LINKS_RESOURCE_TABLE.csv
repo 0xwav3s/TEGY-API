@@ -6,6 +6,6 @@ accountResource,ALL,account:profile,/account/profile,GET,Get information account
 accountResource,ALL,account:profile,/account/profile,PATCH,Update information account
 tableResource,ALL,table:list,/table/list,GET,Get list table
 tableResource,ALL,table:id,/table/:id,GET,Get table by ID
-tableResource,ALL,table:create,/table/create,POST,Create new talbe
+tableResource,ALL,table:create,/table/create,POST,Create new table
 tableResource,ALL,table:id,/table/:id,PATCH,Update table by ID
 tableResource,ALL,table:id,/table/:id,DELETE,Get table by ID

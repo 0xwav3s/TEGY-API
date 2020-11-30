@@ -1,6 +1,6 @@
 const log4js = require('../../helper/logService');
 const path = require('path');
-const db = require('../../helper/loadModels');
+const db = require('../../helper/dbHelper');
 const helper = require('../../helper/utils');
 var scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
@@ -92,6 +92,7 @@ async function buildLinks(links, req) {
     let endpoint = req.baseUrl + req.route.path;
     console.log('Start build links for endpoint: ' + endpoint);
     let arrLinks = [];
+    let existsArr = [];
     await Promise.all(links.map((item) => {
         if (!(item.href === endpoint && item.method === req.method)) {
             let template = {};
@@ -101,8 +102,10 @@ async function buildLinks(links, req) {
                 'href': helper.getFullUrl(req, item.href),
                 'method': item.method
             }
-            // console.log(template);
-            arrLinks.push(template);
+            if(!existsArr.includes(item.linkName)){
+                existsArr.push(item.linkName);
+                arrLinks.push(template);
+            }
         }
     }))
     console.log('Complete build links for endpoint: ' + endpoint);
@@ -120,9 +123,9 @@ async function buildOptionsAndProperties(options, properties, req) {
     object.properties = await buildProperties(properties);
     await Promise.all(options.map((item) => {
         let obOp = {};
-        item.href = checkExistsParamsAndUpdateEndpoint(req, item.href);
+        let href = checkExistsParamsAndUpdateEndpoint(req, item.href);
         obOp[item.method] = {
-            href: helper.getFullUrl(req, item.href),
+            href: helper.getFullUrl(req, href),
             type: item.media_type
         }
         object.methods.push(obOp);

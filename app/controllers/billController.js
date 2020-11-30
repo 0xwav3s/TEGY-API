@@ -1,7 +1,7 @@
 
 
 const config = require('config');
-const db = require('../helper/loadModels');
+const db = require('../helper/dbHelper');
 const helper = require('../helper/utils');
 const print = require('../helper/printServices/printServices');
 const notify = require('../helper/notifyFunction');

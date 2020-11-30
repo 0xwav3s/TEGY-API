@@ -1,7 +1,7 @@
 var notify = require('../helper/notifyFunction');
 var config = require('config');
 var crypto = require('crypto');
-var db = require('../helper/loadModels');
+var db = require('../helper/dbHelper');
 var helper = require('../helper/utils');
 var async = require('async');
 

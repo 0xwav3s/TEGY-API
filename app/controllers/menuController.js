@@ -1,7 +1,7 @@
 
 
 let config = require('config');
-let db = require('../helper/loadModels');
+let db = require('../helper/dbHelper');
 let helper = require('../helper/utils');
 let notify = require('../helper/notifyFunction');
 

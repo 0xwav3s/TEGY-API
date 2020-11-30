@@ -1,6 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy;
 const notify = require('../helper/notifyFunction')
-const User = require('../helper/loadModels').User;
+const User = require('../helper/dbHelper').User;
 const config = require('config');
 const mailService = require('../helper/mailService');
 var JwtStrategy = require('passport-jwt').Strategy;
