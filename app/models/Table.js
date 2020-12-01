@@ -7,12 +7,16 @@ const ObjectId = Schema.ObjectId;
 
 var tableSchema = mongoose.Schema({
     _id: String,
-    name: { type: String},
+    name: { 
+        type: String, 
+        required: true,
+        unique: true
+    },
     description: String,
     available: { type: Boolean, default: true, required: true },
-    active: {type: String, enum: config.model.enum.active, required: true },
-    zone: { type: String, ref: 'zone'},
-    currentBill: [{ type: String, ref: 'bill'}],
+    active: { type: String, enum: config.model.enum.active, required: true },
+    zone: { type: String, ref: 'zone' },
+    currentBill: [{ type: String, ref: 'bill' }],
     author: { type: String, ref: 'user', required: true },
     createTime: { type: Date, default: Date.now(), required: true },
     updateTime: { type: Date, default: Date.now(), required: true },
@@ -32,7 +36,7 @@ tableSchema.pre('save', function (next) {
 });
 
 tableSchema.pre('save', function (next) {
-    if(!this.name)this.name = this.tableSeq;
+    if (!this.name) this.name = this.tableSeq;
     next();
 });
 

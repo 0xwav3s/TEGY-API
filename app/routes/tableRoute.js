@@ -20,47 +20,30 @@ module.exports = function (app) {
     /**
      * Router Table
      */
-    var tabSubEndponint = '/table';
+    let tabSubEndponint = '/table';
     /**
      * CRUD Bàn ăn
      */
     var routerTable = express.Router();
-    routerTable.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.viewTable_GET)
-    routerTable.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.viewTableById_GET)
-    routerTable.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.editTable_PATCH)
-    routerTable.post('/' + endpoint.action.create, user_controller.isLoggedIn, table_controller.createTable_POST)
-
-    //View All Bàn ăn
-    app.get(tabSubEndponint + endpoint.subPath, user_controller.isLoggedIn, table_controller.viewAllTable_GET)
-
-    // //Edit
-    // routerTable.get('/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editTable_GET)
-    // routerTable.post('/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editTable_POST)
-
-    //Create
-    // routerTable.get('/' + endpoint.action.create, user_controller.isLoggedIn, table_controller.createTable_GET)
-
-    //Delete
-    routerTable.post('/' + endpoint.action.delete, user_controller.isLoggedIn, table_controller.deleteTable_POST)
+    routerTable.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getAllTable_GET)
+    routerTable.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getTableById_GET)
+    routerTable.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.editTableById_PATCH)
+    routerTable.delete('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.editTableById_PATCH)
+    routerTable.post('/create', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.createTable_POST)
 
     /**
-     * CRUD Khu vực
-     */
+    * CRUD Khu vực
+    */
+    let zoneSubEndponint = '/zone';
+    var routerZone = express.Router();
 
-    routerTable.get(endpoint.table.zone + endpoint.subPath, user_controller.isLoggedIn, table_controller.viewAllZone_GET)
-
-    //Create
-    routerTable.get(endpoint.table.zone + '/' + endpoint.action.create, user_controller.isLoggedIn, table_controller.createZone_GET)
-    routerTable.post(endpoint.table.zone + '/' + endpoint.action.create, user_controller.isLoggedIn, table_controller.createZone_POST)
-
-    //Edit
-    routerTable.get(endpoint.table.zone + '/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editZone_GET)
-    routerTable.post(endpoint.table.zone + '/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editZone_POST)
-
-    //Delete
-    routerTable.post(endpoint.table.zone + '/' + endpoint.action.delete, user_controller.isLoggedIn, table_controller.deleteZone_POST)
-
+    routerZone.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getAllZone_GET);
+    routerZone.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getZoneById_GET)
+    routerZone.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.editZoneById_PATCH)
+    routerZone.delete('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.editZoneById_PATCH)
+    routerZone.post('/create', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.createZone_POST)
 
     //Add subEndpoint cho routerPost
     app.use(tabSubEndponint, routerTable);
+    app.use(zoneSubEndponint, routerZone);
 }

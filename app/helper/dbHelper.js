@@ -15,7 +15,8 @@ let Response = require('../models/Response');
 const config = require('config');
 const helper = require('./utils');
 const mailService = require('./mailService');
-const db = {
+const { model } = require('../models/User');
+module.exports = {
     Response,
     User,
     ArtCategories,
@@ -29,22 +30,30 @@ const db = {
     TaxPromotions,
     Zone,
     Counter,
+    setPropertyForModel,
     hasPropertyFromModel,
-    patchItemById
+    createNewItem,
+    updateItemById
 };
 
-module.exports = db
-function patchItemById(model, id, body) {
+function setPropertyForModel(item, body) {
+    for (let i in body) {
+        if (hasPropertyFromModel(item, i)) {
+            item[i] = body[i]
+        } else {
+            return 'Property "' + i + '" is missing.';
+        }
+    }
+    return item;
+}
+
+function createNewItem(model, body) {
+    console.log('Create new item ' + model);
+    console.log('Request body: ' + body);
     return new Promise((resolve, rejects) => {
-        this[model].findById(id, function (err, item) {
-            if (err) rejects(err);
-            for (let i in body) {
-                if (hasPropertyFromModel(item, i)) {
-                    item[i] = body[i]
-                } else {
-                    rejects('Property ' + i + ' is missing !')
-                }
-            }
+        let item = new this[model];
+        item = setPropertyForModel(item, body);
+        if (item.constructor.modelName) {
             item.save((err, rs) => {
                 if (err) {
                     mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
@@ -54,13 +63,41 @@ function patchItemById(model, id, body) {
                     resolve(rs);
                 }
             })
+        } else {
+            rejects(item);
+        }
+    })
+}
+
+function updateItemById(model, id, body) {
+    console.log('Update ' + model + ' by ID: ' + id);
+    console.log('Request body: ' + body);
+    return new Promise((resolve, rejects) => {
+        this[model].findById(id, function (err, item) {
+            if (err) rejects(err);
+            if (!item) rejects('Can not find ' + model + ' by Id: ' + id);
+            item = setPropertyForModel(item, body);
+            if (item.constructor.modelName) {
+                item.save((err, rs) => {
+                    if (err) {
+                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
+                        console.log(err)
+                        rejects(err);
+                    } else {
+                        resolve(rs);
+                    }
+                })
+            } else {
+                rejects(item);
+            }
         });
     })
 }
 
 function hasPropertyFromModel(item, property) {
-    let object = item.toObject();
-    return object.hasOwnProperty(property)
+    if (!item || !property)
+        return false
+    return item.schema.paths.hasOwnProperty(property)
 }
 
 if (config.dev) {

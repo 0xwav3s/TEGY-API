@@ -9,3 +9,8 @@ GET,/table/:id,ALL,N,tableResource,table_ALL
 POST,/table/create,ALL,N,tableResource,table_ALL
 PATCH,/table/:id,ALL,N,tableResource,table_ALL
 DELETE,/table/:id,ALL,N,tableResource,table_ALL
+GET,/zone/list,ALL,Y,tableResource,table_ALL
+GET,/zone/:id,ALL,N,tableResource,table_ALL
+POST,/zone/create,ALL,N,tableResource,table_ALL
+PATCH,/zone/:id,ALL,N,tableResource,table_ALL
+DELETE,/zone/:id,ALL,N,tableResource,table_ALL

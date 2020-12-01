@@ -9,3 +9,8 @@ tableResource,ALL,table:id,/table/:id,GET,Get table by ID
 tableResource,ALL,table:create,/table/create,POST,Create new table
 tableResource,ALL,table:id,/table/:id,PATCH,Update table by ID
 tableResource,ALL,table:id,/table/:id,DELETE,Get table by ID
+tableResource,ALL,zone:list,/zone/list,GET,Get list zone
+tableResource,ALL,zone:id,/zone/:id,GET,Get zone by ID
+tableResource,ALL,zone:create,/zone/create,POST,Create new zone
+tableResource,ALL,zone:id,/zone/:id,PATCH,Update zone by ID
+tableResource,ALL,zone:id,/zone/:id,DELETE,Get zone by ID

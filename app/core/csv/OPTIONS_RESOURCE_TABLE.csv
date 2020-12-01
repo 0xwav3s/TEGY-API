@@ -9,3 +9,8 @@ table_ALL,ALL,/table/:id,GET,application/vnd.hal+json,tableSchema
 table_ALL,ALL,/table/create,POST,application/vnd.hal+json,tableSchema
 table_ALL,ALL,/table/:id,PATCH,application/vnd.hal+json,tableSchema
 table_ALL,ALL,/table/:id,DELETE,application/vnd.hal+json,tableSchema
+table_ALL,ALL,/zone/list,GET,application/vnd.hal+json,zoneSchema
+table_ALL,ALL,/zone/:id,GET,application/vnd.hal+json,zoneSchema
+table_ALL,ALL,/zone/create,POST,application/vnd.hal+json,zoneSchema
+table_ALL,ALL,/zone/:id,PATCH,application/vnd.hal+json,zoneSchema
+table_ALL,ALL,/zone/:id,DELETE,application/vnd.hal+json,zoneSchema

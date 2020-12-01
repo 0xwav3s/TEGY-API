@@ -2,6 +2,7 @@ const log4js = require('../../helper/logService');
 const path = require('path');
 const db = require('../../helper/dbHelper');
 const helper = require('../../helper/utils');
+const { link } = require('fs');
 var scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
 var log = log4js.getLog(name);
@@ -31,13 +32,7 @@ function init() {
 }
 
 function getTitleLink(links, method, endpoint) {
-    return links.filter((item) => {
-        if (item.href === endpoint && item.method === method) {
-            return item.title;
-        } else {
-            return 'No find'
-        }
-    })
+    return links.filter((item) => (item.href === endpoint && item.method === method))
 }
 
 function buildResource(responseModel, req) {
@@ -46,7 +41,7 @@ function buildResource(responseModel, req) {
         console.log('Building Resource method ' + req.method + ' with endpoint: ' + endpoint)
         filterEndpointToProperties(req).then(async (prop) => {
             // responseModel.title = prop.links[0].title;
-            responseModel.title = getTitleLink(prop.links, req.method, endpoint)[0].title;
+            responseModel.title = prop.title;
             responseModel.seftHref.href = helper.getFullUrl(req, req.originalUrl);
             responseModel.seftHref.method = prop.endpoint[0].method;
             if (prop.endpoint[0].isCollection === 'Y') responseModel.seftHref.collection = true;
@@ -69,9 +64,8 @@ function buildResponse(req, res, items, message, status) {
     return new Promise(async (resolve, reject) => {
         console.log('Building response with endpoint: ' + req.originalUrl)
         let responseModel = new db.Response();
-        responseModel.seftHref.item = items;
+        responseModel.seftHref.data = items;
         responseModel.seftHref.message = message;
-        // responseModel.seftHref.status = (items.length > 0) ? 'SUCCESS' : 'FAILED';
         responseModel.seftHref.status = (status) ? 'SUCCESS' : 'FAILED';
         buildResource(responseModel, req).then((result) => {
             result.validate((err) => {
@@ -96,13 +90,13 @@ async function buildLinks(links, req) {
     await Promise.all(links.map((item) => {
         if (!(item.href === endpoint && item.method === req.method)) {
             let template = {};
-            item.href = checkExistsParamsAndUpdateEndpoint(req, item.href);
+            let href = checkExistsParamsAndUpdateEndpoint(req, item.href);
             template[item.linkName] = {
                 'title': item.title,
-                'href': helper.getFullUrl(req, item.href),
+                'href': helper.getFullUrl(req, href),
                 'method': item.method
             }
-            if(!existsArr.includes(item.linkName)){
+            if (!existsArr.includes(item.linkName)) {
                 existsArr.push(item.linkName);
                 arrLinks.push(template);
             }
@@ -186,6 +180,7 @@ function filterEndpointToProperties(req) {
     return new Promise(async (resolve, reject) => {
         console.log('Get all properties from filter Endpoint function')
         let propFilter = {
+            title: "",
             endpoint: {},
             links: {},
             options: {},
@@ -217,7 +212,7 @@ function filterEndpointToProperties(req) {
             &&
             (schemaREF === item.schemaREF)
         );
-
+        propFilter.title = getTitleLink(csv.links, req.method, endpoint)[0].title;
         propFilter.endpoint = endpoints;
         propFilter.links = links;
         propFilter.options = options;

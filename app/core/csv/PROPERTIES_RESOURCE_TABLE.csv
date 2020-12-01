@@ -3,3 +3,4 @@ accountResource,String,,username,local.username,y,y,loginSchema
 accountResource,String,,password,local.password,y,,loginSchema
 accountResource,model,,User,,,,userSchema
 tableResource,model,,Table,,,,tableSchema
+tableResource,model,,Zone,,,,zoneSchema

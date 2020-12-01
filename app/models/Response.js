@@ -37,7 +37,7 @@ var responseSchema = mongoose.Schema({
         collection: {
             type: Boolean,
         },
-        item: {
+        data: {
             type: Object,
             required: true
         }
