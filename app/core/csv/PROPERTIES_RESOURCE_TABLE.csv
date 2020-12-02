@@ -4,3 +4,5 @@ accountResource,String,,password,local.password,y,,loginSchema
 accountResource,model,,User,,,,userSchema
 tableResource,model,,Table,,,,tableSchema
 tableResource,model,,Zone,,,,zoneSchema
+menuResource,model,,Menu,,,,menuSchema
+menuResource,model,,MenuCategories,,,,menuCatSchema

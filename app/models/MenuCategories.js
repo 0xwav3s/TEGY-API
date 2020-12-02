@@ -10,7 +10,7 @@ var menuCatSchema = mongoose.Schema({
     name: { type: String, required: true },
     description: String,
     available: { type: Boolean, default: true, required: true },
-    menu: { type: String, ref: 'menu'},
+    menu: [{ type: String, ref: 'menu'}],
     author: { type: String, ref: 'user', required: true },
     createTime: { type: Date, default: Date.now(), required: true },
     updateTime: { type: Date, default: Date.now(), required: true },

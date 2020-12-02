@@ -151,7 +151,7 @@ function getRefListForRemove(model) {
     return ob;
 }
 
-if (!config.dev) {
+if (config.dev) {
     autoCreateForTest();
 }
 

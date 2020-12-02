@@ -76,12 +76,14 @@ db.init().then(() => {
             'homeRoute',
             'accountRoute',
             'tableRoute',
+            'menuRoute',
             'reportRoute',
             'imagesRoute',
             'errorRoute'
         ]
 
         await Promise.all(routeArr.map((route) => {
+            // console.log('Load route: ' + route)
             require('./app/routes/' + route)(app)
         })).then(() => {
             fs.readFile('./config/logo.txt', 'utf8', function (err, data) {

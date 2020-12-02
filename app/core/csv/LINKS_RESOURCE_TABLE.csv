@@ -14,3 +14,13 @@ tableResource,ALL,zone:id,/zone/:id,GET,Get zone by ID
 tableResource,ALL,zone:create,/zone/create,POST,Create new zone
 tableResource,ALL,zone:id,/zone/:id,PATCH,Update zone by ID
 tableResource,ALL,zone:id,/zone/:id,DELETE,Get zone by ID
+menuResource,ALL,menu:list,/menu/list,GET,Get list menu
+menuResource,ALL,menu:id,/menu/:id,GET,Get menu by ID
+menuResource,ALL,menu:create,/menu/create,POST,Create new menu
+menuResource,ALL,menu:id,/menu/:id,PATCH,Update menu by ID
+menuResource,ALL,menu:id,/menu/:id,DELETE,Get menu by ID
+menuResource,ALL,categories:list,/menu/categories/list,GET,Get list categories
+menuResource,ALL,categories:id,/menu/categories/:id,GET,Get categories by ID
+menuResource,ALL,categories:create,/menu/categories/create,POST,Create new categories
+menuResource,ALL,categories:id,/menu/categories/:id,PATCH,Update categories by ID
+menuResource,ALL,categories:id,/menu/categories/:id,DELETE,Get categories by ID

@@ -4,6 +4,15 @@ const db = require('../helper/dbHelper');
 const handler = require('../core/handler/tegyHandler');
 const mailService = require('../helper/mailService');
 
+
+const path = require('path');
+var scriptName = path.basename(__filename).split(".");
+const name = scriptName[0];
+const log4js = require('../helper/logService');
+var log = log4js.getLog(name);
+log4js.setConsoleToLogger(log);
+console.log("Start " + name);
+
 module.exports = {
     getTable_GET: function (req, res) {
         var filter = {};
@@ -91,12 +100,14 @@ module.exports = {
     //         return res.redirect(endpointAccount.logout);
     //     }
     // },
-    editTableById_PATCH: function (req, res) {
+    updateTableById_PATCH: function (req, res) {
         let body = req.body;
         let id = req.params.id;
         db.updateItemById('Table', id, body).then((result) => {
-            handler.buildResponse(req, res, result, 'Successful saved table ID: ' + result._id, true);
+            let message = 'Successful saved table ID: ' + result._id;
+            handler.buildResponse(req, res, result, message, true);
         }).catch((err) => {
+            console.log(err);
             handler.buildResponse(req, res, {}, err, false);
         });
     },
@@ -116,15 +127,18 @@ module.exports = {
     // },
     createTable_POST: function (req, res) {
         var body = req.body;
-        db.createNewItem('Table', body).then((result) => {
+        let modelName = 'Table';
+        db.createNewItem(modelName, body).then((result) => {
             db.Zone.findById(result.zone).exec((err, rs) => {
                 rs.table.push(result._id);
                 rs.save((err) => {
                     if (err) throw err;
-                    handler.buildResponse(req, res, result, 'Successful saved table ID: ' + result._id, true);
+                    let message = 'Successful saved ' + modelName + ' ID: ' + result._id;
+                    handler.buildResponse(req, res, result, message, true);
                 })
             })
         }).catch((err) => {
+            console.log(err);
             handler.buildResponse(req, res, {}, err, false);
         });
     },
@@ -132,8 +146,10 @@ module.exports = {
         let id = req.params.id;
         let modelName = 'Table';
         db.removeItemById(modelName, id).then((message) => {
+            console.log(message);
             handler.buildResponse(req, res, {}, message, true);
         }).catch((err) => {
+            console.log(err);
             handler.buildResponse(req, res, {}, err, false);
         });
     },
@@ -182,11 +198,12 @@ module.exports = {
                 handler.buildResponse(req, res, item, message, true);
             })
     },
-    editZoneById_PATCH: function (req, res) {
+    updateZoneById_PATCH: function (req, res) {
         let body = req.body;
         let id = req.params.id;
-        db.updateItemById('Zone', id, body).then((result) => {
-            handler.buildResponse(req, res, result, 'Successful saved Zone by ID: ' + result._id, true);
+        let modelName = 'Zone';
+        db.updateItemById(modelName, id, body).then((result) => {
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
         }).catch((err) => {
             handler.buildResponse(req, res, {}, err, false);
         });
@@ -204,9 +221,10 @@ module.exports = {
     // },
     createZone_POST: function (req, res) {
         var body = req.body;
-        db.createNewItem('Zone', body).then((result) => {
+        let modelName = 'Zone';
+        db.createNewItem(modelName, body).then((result) => {
             console.log("Successful create new item: " + result);
-            handler.buildResponse(req, res, result, 'Successful saved zone ID: ' + result._id, true);
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' ID: ' + result._id, true);
         }).catch((err) => {
             handler.buildResponse(req, res, {}, err, false);
         });
@@ -219,10 +237,12 @@ module.exports = {
             object[modelName.toLowerCase()] = id;
             db.Table.deleteMany(object).exec((err) => {
                 if (err) handler.buildResponse(req, res, {}, err, false);
-                message += '. And delete many table with zone = ' + id;
+                message += '. And delete many Table from ' + modelName + ' by Id: ' + id;
+                console.log(message)
                 handler.buildResponse(req, res, {}, message, true);
             })
         }).catch((err) => {
+            console.log(err);
             handler.buildResponse(req, res, {}, err, false);
         });
     }

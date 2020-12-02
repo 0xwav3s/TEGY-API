@@ -14,3 +14,13 @@ GET,/zone/:id,ALL,N,tableResource,table_ALL
 POST,/zone/create,ALL,N,tableResource,table_ALL
 PATCH,/zone/:id,ALL,N,tableResource,table_ALL
 DELETE,/zone/:id,ALL,N,tableResource,table_ALL
+GET,/menu/list,ALL,Y,menuResource,menu_ALL
+GET,/menu/:id,ALL,N,menuResource,menu_ALL
+POST,/menu/create,ALL,N,menuResource,menu_ALL
+PATCH,/menu/:id,ALL,N,menuResource,menu_ALL
+DELETE,/menu/:id,ALL,N,menuResource,menu_ALL
+GET,/menu/categories/list,ALL,Y,menuResource,menu_ALL
+GET,/menu/categories/:id,ALL,N,menuResource,menu_ALL
+POST,/menu/categories/create,ALL,N,menuResource,menu_ALL
+PATCH,/menu/categories/:id,ALL,N,menuResource,menu_ALL
+DELETE,/menu/categories/:id,ALL,N,menuResource,menu_ALL

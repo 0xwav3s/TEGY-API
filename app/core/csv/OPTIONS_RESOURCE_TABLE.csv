@@ -14,3 +14,13 @@ table_ALL,ALL,/zone/:id,GET,application/vnd.hal+json,zoneSchema
 table_ALL,ALL,/zone/create,POST,application/vnd.hal+json,zoneSchema
 table_ALL,ALL,/zone/:id,PATCH,application/vnd.hal+json,zoneSchema
 table_ALL,ALL,/zone/:id,DELETE,application/vnd.hal+json,zoneSchema
+menu_ALL,ALL,/menu/list,GET,application/vnd.hal+json,menuSchema
+menu_ALL,ALL,/menu/:id,GET,application/vnd.hal+json,menuSchema
+menu_ALL,ALL,/menu/create,POST,application/vnd.hal+json,menuSchema
+menu_ALL,ALL,/menu/:id,PATCH,application/vnd.hal+json,menuSchema
+menu_ALL,ALL,/menu/:id,DELETE,application/vnd.hal+json,menuSchema
+menu_ALL,ALL,/menu/categories/list,GET,application/vnd.hal+json,menuCatSchema
+menu_ALL,ALL,/menu/categories/:id,GET,application/vnd.hal+json,menuCatSchema
+menu_ALL,ALL,/menu/categories/create,POST,application/vnd.hal+json,menuCatSchema
+menu_ALL,ALL,/menu/categories/:id,PATCH,application/vnd.hal+json,menuCatSchema
+menu_ALL,ALL,/menu/categories/:id,DELETE,application/vnd.hal+json,menuCatSchema

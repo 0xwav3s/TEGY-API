@@ -27,7 +27,7 @@ module.exports = function (app) {
     var routerTable = express.Router();
     routerTable.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getAllTable_GET)
     routerTable.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getTableById_GET)
-    routerTable.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.editTableById_PATCH)
+    routerTable.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.updateTableById_PATCH)
     routerTable.delete('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.deleteTable_DELETE)
     routerTable.post('/create', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.createTable_POST)
 
@@ -39,7 +39,7 @@ module.exports = function (app) {
 
     routerZone.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getAllZone_GET);
     routerZone.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getZoneById_GET)
-    routerZone.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.editZoneById_PATCH)
+    routerZone.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.updateZoneById_PATCH)
     routerZone.delete('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.deleteZoneById_DELETE)
     routerZone.post('/create', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.createZone_POST)
 

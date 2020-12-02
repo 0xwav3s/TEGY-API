@@ -25,8 +25,7 @@ module.exports = function (app) {
     );
 
     // Profile
-    routerAccount.get('/profile', passport.authenticate('jwt', { session: false }), user_controller.authorized, user_controller.profile_GET
-    );
+    routerAccount.get('/profile', passport.authenticate('jwt', { session: false }), user_controller.authorized, user_controller.profile_GET);
     routerAccount.patch('/profile', passport.authenticate('jwt', { session: false }), user_controller.authorized, user_controller.profile_PATCH);
 
 
