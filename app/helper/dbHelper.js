@@ -15,7 +15,7 @@ let Response = require('../models/Response');
 const config = require('config');
 const helper = require('./utils');
 const mailService = require('./mailService');
-const { model } = require('../models/User');
+const { db } = require('../models/User');
 module.exports = {
     Response,
     User,
@@ -33,8 +33,10 @@ module.exports = {
     setPropertyForModel,
     hasPropertyFromModel,
     createNewItem,
-    updateItemById
+    updateItemById,
+    removeItemById
 };
+
 
 function setPropertyForModel(item, body) {
     for (let i in body) {
@@ -45,6 +47,12 @@ function setPropertyForModel(item, body) {
         }
     }
     return item;
+}
+
+function hasPropertyFromModel(item, property) {
+    if (!item || !property)
+        return false
+    return item.schema.paths.hasOwnProperty(property)
 }
 
 function createNewItem(model, body) {
@@ -94,13 +102,57 @@ function updateItemById(model, id, body) {
     })
 }
 
-function hasPropertyFromModel(item, property) {
-    if (!item || !property)
-        return false
-    return item.schema.paths.hasOwnProperty(property)
+function removeItemById(modelName, id, refList = []) {
+    console.log('Remove ' + modelName + ' by ID: ' + id);
+    let message = '';
+    return new Promise((resolve, rejects) => {
+        let model = this[modelName];
+        model.findByIdAndRemove({ _id: id }, async function (err, rs) {
+            if (err) rejects(err);
+            if (!rs) rejects(modelName + ' by ID: ' + id + ' not exists.')
+            message += 'Succsessful remove ' + modelName + ' by ID: ' + id;
+            console.log(message)
+            // if (refList.length > 0) {
+            //     await Promise.all(refList.map((ref) => {
+            //         let ob1 = { "zone": id}
+            //         let refModel = Table;
+            //         refModel.updateMany(
+            //             ob1,
+            //             { $unset: { zone: 1 } },
+            //             function (err, res){
+            //                 if (err) throw err;
+            //                 resolve(res);
+            //             }
+            //         );
+            //     }))
+            // }
+            resolve(message);
+        });
+    })
 }
 
-if (config.dev) {
+function getRefListForRemove(model) {
+    let refList = [];
+    let paths = model.schema.paths;
+    let ob = {};
+    const allowed = [
+        'options'
+    ];
+    for (let k in paths) {
+        let raw = paths[k];
+        const filtered = Object.keys(raw)
+            .filter(key => allowed.includes(key))
+            .reduce((obj, key) => {
+                obj[key] = raw[key];
+                return obj;
+            }, {});
+        ob[k] = filtered;
+    }
+    delete ob.__v
+    return ob;
+}
+
+if (!config.dev) {
     autoCreateForTest();
 }
 
@@ -221,7 +273,6 @@ function autoCreateForTest() {
             }
         })
     });
-
     Zone.countDocuments({}, function (err, count) {
         if (err) {
             console.log(err);
@@ -236,44 +287,54 @@ function autoCreateForTest() {
                     name: "Khu vực " + i,
                     description: "Description " + i,
                 });
-                cat.save(function (err, rs) {
+                cat.save(function (err, zone) {
                     if (err) {
                         console.log(err)
                         return;
                     }
-                })
-                console.log("Complete create => Zone " + i);
-            }
-        }
-    }).then(() => {
-        Table.countDocuments({}, function (err, count) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            if (count > 0)
-                console.log("Table exists");
-            else {
-                for (var i = 1; i <= 20; i++) {
-                    var art = new Table({
-                        author: 'US01',
-                        zone: 'ZO0' + 1,
-                        name: i,
-                        active: config.model.enum.active[1]
-                    });
-                    art.save(function (err, rs) {
+                    console.log("Complete create => Zone " + i);
+                    Table.countDocuments({}, async function (err, count) {
                         if (err) {
-                            console.log(err)
+                            console.log(err);
                             return;
                         }
+                        if (count > 0)
+                            console.log("Table exists");
+                        else {
+                            for (var i = 1; i <= 20; i++) {
+                                var art = new Table({
+                                    author: 'US01',
+                                    zone: 'ZO0' + 1,
+                                    name: i,
+                                    active: config.model.enum.active[1]
+                                });
+                                await art.save(function (err, rs) {
+                                    if (err) {
+                                        console.log(err)
+                                        return;
+                                    }
+                                    zone.table.push(rs._id)
+                                    console.log("Complete create => Table " + i);
+                                })
+
+                            }
+                            setTimeout(async function () {
+                                if (zone) zone.save((err) => {
+                                    if (err) {
+                                        console.log(err)
+                                        return;
+                                    }
+                                    console.log('Complete save zone');
+                                })
+                            }, 1500)
+                        }
                     })
-                    setTimeout(function () {
-                        //do what you need here
-                    }, 1000);
-                    console.log("Complete create => Table " + i);
-                }
+                })
+                setTimeout(function () {
+                    //do what you need here
+                }, 2000);
             }
-        })
+        }
     });
 
     MenuCategories.countDocuments({}, function (err, count) {

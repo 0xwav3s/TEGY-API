@@ -1,17 +1,8 @@
 const config = require('config');
 const db = require('../helper/dbHelper');
-const helper = require('../helper/utils');
-const notify = require('../helper/notifyFunction');
 
 const handler = require('../core/handler/tegyHandler');
 const mailService = require('../helper/mailService');
-
-let endpointAccount = config.get('endpoint').account;
-let dirPage = 'admin/pages/dashboard/table/';
-let endpoint = config.get('endpoint').dashboard;
-
-let limitPage = 7;
-let limitPagination = 5;
 
 module.exports = {
     getTable_GET: function (req, res) {
@@ -126,28 +117,25 @@ module.exports = {
     createTable_POST: function (req, res) {
         var body = req.body;
         db.createNewItem('Table', body).then((result) => {
-            handler.buildResponse(req, res, result, 'Successful saved table ID: ' + result._id, true);
+            db.Zone.findById(result.zone).exec((err, rs) => {
+                rs.table.push(result._id);
+                rs.save((err) => {
+                    if (err) throw err;
+                    handler.buildResponse(req, res, result, 'Successful saved table ID: ' + result._id, true);
+                })
+            })
         }).catch((err) => {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    deleteTable_POST: function (req, res) {
-        new Promise((resolve) => {
-            var id = req.query.id;
-            db.Table.remove({ _id: id }, function (err, items) {
-                if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-
-                    console.log(err)
-                    notify.sendMessageByFlash(req, 'tableMessage', 'Không thể lưu thông tin mới !');
-                } else {
-                    notify.sendMessageByFlashType(req, 'tableMessage', 'success', 'Xóa mục ' + id + ' mới thành công!');
-                }
-                resolve();
-            });
-        }).then(() => {
-            return res.redirect('..' + endpoint.table.table + endpoint.subPath);
-        })
+    deleteTable_DELETE: function (req, res) {
+        let id = req.params.id;
+        let modelName = 'Table';
+        db.removeItemById(modelName, id).then((message) => {
+            handler.buildResponse(req, res, {}, message, true);
+        }).catch((err) => {
+            handler.buildResponse(req, res, {}, err, false);
+        });
     },
     getAllZone_GET: function (req, res) {
         console.log("Get All Zone");
@@ -203,17 +191,17 @@ module.exports = {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    createZone_GET: function (req, res) {
-        return res.render(dirPage + 'detailZone.ejs', {
-            helper: helper,
-            endpoint: endpoint,
-            endpointAccount: endpointAccount,
-            message: req.flash('zoneMessage'),
-            user: req.user,
-            action: endpoint.action.create,
-            item: false
-        });
-    },
+    // createZone_GET: function (req, res) {
+    //     return res.render(dirPage + 'detailZone.ejs', {
+    //         helper: helper,
+    //         endpoint: endpoint,
+    //         endpointAccount: endpointAccount,
+    //         message: req.flash('zoneMessage'),
+    //         user: req.user,
+    //         action: endpoint.action.create,
+    //         item: false
+    //     });
+    // },
     createZone_POST: function (req, res) {
         var body = req.body;
         db.createNewItem('Zone', body).then((result) => {
@@ -223,30 +211,19 @@ module.exports = {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    deleteZone_POST: function (req, res) {
-        new Promise((resolve) => {
-            var id = req.query.id;
-            db.Zone.remove({ _id: id }, function (err) {
-                if (!err) {
-                    db.Table.remove({ 'zone': id }, function (err, items) {
-                        if (err) {
-                            mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-
-                            console.log(err)
-                            notify.sendMessageByFlash(req, 'zoneMessage', 'Không thể lưu thông tin mới !');
-                        } else {
-                            notify.sendMessageByFlashType(req, 'zoneMessage', 'success', 'Xóa mục ' + id + ' và ' + JSON.stringify(items) + ' mới thành công!');
-                        }
-                        resolve();
-                    })
-                }
-                else {
-                    notify.sendMessageByFlash(req, 'zoneMessage', 'Không thể lưu thông tin mới !');
-                    resolve();
-                }
+    deleteZoneById_DELETE: function (req, res) {
+        let id = req.params.id;
+        let modelName = 'Zone';
+        db.removeItemById(modelName, id).then((message) => {
+            let object = {}
+            object[modelName.toLowerCase()] = id;
+            db.Table.deleteMany(object).exec((err) => {
+                if (err) handler.buildResponse(req, res, {}, err, false);
+                message += '. And delete many table with zone = ' + id;
+                handler.buildResponse(req, res, {}, message, true);
             })
-        }).then(() => {
-            return res.redirect('..' + endpoint.table.zone);
-        })
+        }).catch((err) => {
+            handler.buildResponse(req, res, {}, err, false);
+        });
     }
 };;

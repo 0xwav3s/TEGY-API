@@ -67,7 +67,7 @@ app.use(flash());
 //Routes
 
 db.init().then(() => {
-    require('./app/core/passport')(passport);
+    require('./app/core/middleware/passport')(passport);
     var handler = require('./app/core/handler/tegyHandler');
     handler.init().then(async () => {
 
