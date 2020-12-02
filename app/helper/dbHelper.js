@@ -15,7 +15,6 @@ let Response = require('../models/Response');
 const config = require('config');
 const helper = require('./utils');
 const mailService = require('./mailService');
-const { db } = require('../models/User');
 module.exports = {
     Response,
     User,
