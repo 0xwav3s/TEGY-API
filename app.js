@@ -89,7 +89,7 @@ db.init().then(() => {
             fs.readFile('./config/logo.txt', 'utf8', function (err, data) {
                 if (err) throw err;
                 console.log("Complete startup TEGY API Services")
-                console.log(data);
+                console.log('%c '+data, 'background: #222; color: #bada55');
                 let duration = new Duration(startTime, new Date());
                 console.log("Total time: " + duration.milliseconds + " ms");
             });

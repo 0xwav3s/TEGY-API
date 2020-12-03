@@ -16,13 +16,21 @@ var express = require('express');
 
 module.exports = function (app) {
 
-  
+    app.get(endpoint.home, user_controller.isLoggedIn, function (req, res) {
+        res.render(dirPage + 'home.ejs', {
+            endpoint: endpoint,
+            endpointAccount: endpointAccount,
+            user: req.user
+        });
+    })
     /**
      * Router Order
      */
     var routerBill = express.Router();
     var billSubEndponint = endpoint.bill.bill;
-
+    /**
+     * CRUD Bài Viết
+     */
     //View All Bill
     app.get(billSubEndponint + endpoint.subPath, user_controller.isLoggedIn, bill_controller.viewAllBill_GET);
 

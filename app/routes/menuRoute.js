@@ -9,7 +9,6 @@ var express = require('express');
 
 module.exports = function (app) {
 
-
     /**
      * Router Table
      */
@@ -35,6 +34,5 @@ module.exports = function (app) {
     routerMenu.delete(catSubEndponint + '/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, menu_controller.deleteMenuCategories_DELETE)
     routerMenu.post(catSubEndponint + '/create', passport.authenticate('jwt', { session: false }), user_controller.authorized, menu_controller.createMenuCategories_POST)
 
-    //Add subEndpoint cho routerPost
     app.use(menuSubEndponint, routerMenu);
 }
