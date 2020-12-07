@@ -5,6 +5,7 @@ const db = require('../helper/dbHelper');
 const helper = require('../helper/utils');
 const handler = require('../core/handler/tegyHandler');
 const async = require('async');
+const Duration = require("duration");
 
 const jwt = require('jsonwebtoken');
 
@@ -106,6 +107,7 @@ module.exports = {
         let user = req.user;
         if (user) {
             let dur = new Date(Date.now() - user.local.tokenExpires);
+
             checkExpire = (dur.getHours() > config.timeExpiredToken) ? true : false;
             if (checkExpire) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
@@ -113,12 +115,14 @@ module.exports = {
         return res.status(403).send({ success: false, msg: 'Unauthorized.' });
     },
     authorized: function (req, res, next) {
-        let checkExpire = false;
         let user = req.user;
         if (user) {
             let dur = new Date(Date.now() - user.local.tokenExpires);
-            checkExpire = (dur.getHours() > config.timeExpiredToken) ? true : false;
-            if (checkExpire) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
+            let duration = new Duration(user.local.tokenExpires, new Date());
+            // let duration = new Duration(new Date(), user.local.tokenExpires);
+            console.log("Expired token: " + duration.hours + "/" + config.timeExpiredToken);
+            let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
+            if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
         }
         return res.status(403).send({ success: false, msg: 'Unauthorized.' });

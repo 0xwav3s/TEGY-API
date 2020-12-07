@@ -18,13 +18,15 @@ module.exports.init = function () {
             console.log(status(connection.readyState) + ' to database !!');
             autoIncrement.initialize(mongoose.connection);
 
+            //set passport
+
             module.exports.mongoose = mongoose;
             module.exports.autoIncrement = autoIncrement;
             // module.exports.Models = require('./loadModels');
 
             resolve();
         }).catch(err => {
-            console.err(err);
+            console.log(err);
             mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
         }
         );

@@ -25,11 +25,11 @@ module.exports = function (app) {
      * CRUD Bàn ăn
      */
     var routerTable = express.Router();
-    routerTable.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getAllTable_GET)
-    routerTable.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getTableById_GET)
-    routerTable.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.updateTableById_PATCH)
-    routerTable.delete('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.deleteTable_DELETE)
-    routerTable.post('/create', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.createTable_POST)
+    routerTable.get('/list', table_controller.getAllTable_GET)
+    routerTable.get('/:id', table_controller.getTableById_GET)
+    routerTable.patch('/:id', table_controller.updateTableById_PATCH)
+    routerTable.delete('/:id', table_controller.deleteTable_DELETE)
+    routerTable.post('/create', table_controller.createTable_POST)
 
     /**
     * CRUD Khu vực
@@ -37,11 +37,11 @@ module.exports = function (app) {
     let zoneSubEndponint = '/zone';
     var routerZone = express.Router();
 
-    routerZone.get('/list', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getAllZone_GET);
-    routerZone.get('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.getZoneById_GET)
-    routerZone.patch('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.updateZoneById_PATCH)
-    routerZone.delete('/:id', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.deleteZoneById_DELETE)
-    routerZone.post('/create', passport.authenticate('jwt', { session: false }), user_controller.authorized, table_controller.createZone_POST)
+    routerZone.get('/list', table_controller.getAllZone_GET);
+    routerZone.get('/:id', table_controller.getZoneById_GET)
+    routerZone.patch('/:id', table_controller.updateZoneById_PATCH)
+    routerZone.delete('/:id', table_controller.deleteZoneById_DELETE)
+    routerZone.post('/create', table_controller.createZone_POST)
 
     //Add subEndpoint cho routerPost
     app.use(tabSubEndponint, routerTable);

@@ -81,7 +81,6 @@ db.init().then(() => {
             'imagesRoute',
             'errorRoute'
         ]
-
         await Promise.all(routeArr.map((route) => {
             // console.log('Load route: ' + route)
             require('./app/routes/' + route)(app)

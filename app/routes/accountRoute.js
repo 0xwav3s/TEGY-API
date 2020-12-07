@@ -17,16 +17,14 @@ module.exports = function (app) {
     let routerAccount = express.Router();
 
     // Đăng nhập
-    // routerAccount.get(endpoint.login, user_controller.login_GET);
-    // routerAccount.post('/login', passport.authenticate('local-login'), user_controller.login_POST);
-    routerAccount.post(
-        '/login',
-        user_controller.signIn_POST
-    );
+    app.post('/account/login', user_controller.signIn_POST);
+
+    //Set authen and author after get route account
+    app.use(passport.authenticate('jwt', { session: false }), user_controller.authorized)
 
     // Profile
-    routerAccount.get('/profile', passport.authenticate('jwt', { session: false }), user_controller.authorized, user_controller.profile_GET);
-    routerAccount.patch('/profile', passport.authenticate('jwt', { session: false }), user_controller.authorized, user_controller.profile_PATCH);
+    routerAccount.get('/profile', user_controller.profile_GET);
+    routerAccount.patch('/profile', user_controller.profile_PATCH);
 
 
     // Đăng xuất 
