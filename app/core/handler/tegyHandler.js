@@ -227,8 +227,13 @@ function checkExistsParamsAndUpdateEndpoint(req, endpoint) {
     let params = req.params;
     if (!helper.isEmptyObject(params) && endpoint.includes(':')) {
         let split = endpoint.split(':');
-        let new_path = split[0].concat(params[split[1]]);
-        return new_path;
+        let prop = split[1];
+        if (prop.includes('/')) {
+            let splitProp = prop.split('/');
+            return split[0].concat(params[splitProp[0]] + '/' + splitProp[1]);
+        } else{
+            return split[0].concat(params[prop]);
+        }
     } else {
         return endpoint;
     }
