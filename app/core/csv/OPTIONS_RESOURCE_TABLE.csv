@@ -24,3 +24,5 @@ menu_ALL,ALL,/menu/categories/:id,GET,application/vnd.hal+json,menuCatSchema
 menu_ALL,ALL,/menu/categories/create,POST,application/vnd.hal+json,menuCatSchema
 menu_ALL,ALL,/menu/categories/:id,PATCH,application/vnd.hal+json,menuCatSchema
 menu_ALL,ALL,/menu/categories/:id,DELETE,application/vnd.hal+json,menuCatSchema
+bill_ALL,ALL,/bill/list,GET,application/vnd.hal+json,billSchema
+bill_ALL,ALL,/bill/list,GET,application/vnd.hal+json,billSchema
