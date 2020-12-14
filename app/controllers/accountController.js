@@ -116,7 +116,7 @@ module.exports = {
     },
     authorized: function (req, res, next) {
         let user = req.user;
-        if (user) {
+        if (user && user.local.tokenExpires) {
             let dur = new Date(Date.now() - user.local.tokenExpires);
             let duration = new Duration(user.local.tokenExpires, new Date());
             // let duration = new Duration(new Date(), user.local.tokenExpires);

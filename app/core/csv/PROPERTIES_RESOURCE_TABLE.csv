@@ -6,3 +6,5 @@ tableResource,model,,Table,,,,tableSchema
 tableResource,model,,Zone,,,,zoneSchema
 menuResource,model,,Menu,,,,menuSchema
 menuResource,model,,MenuCategories,,,,menuCatSchema
+billResource,model,,Bill,,,,billSchema
+billResource,model,,Order,,,,orderSchema

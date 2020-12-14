@@ -72,13 +72,14 @@ db.init().then(() => {
     handler.init().then(async () => {
 
         const routeArr = [
+            'accountRoute',
             'systemRoute',
             'homeRoute',
-            'accountRoute',
             'tableRoute',
             'menuRoute',
             'reportRoute',
             'imagesRoute',
+            'billRoute',
             'errorRoute'
         ]
         await Promise.all(routeArr.map((route) => {

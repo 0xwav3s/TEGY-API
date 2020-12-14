@@ -27,13 +27,13 @@ menuResource,ALL,categories:id,/menu/categories/:id,DELETE,Remove categories by 
 billResource,ALL,bill:list,/bill/list,GET,Get list bill
 billResource,ALL,bill:create,/bill,POST,Create new bill with orders
 billResource,ALL,bill:id,/bill/:id,GET,Get bill by Id
+billResource,ALL,bill:id,/bill/:id,PATCH,Update bill by Id
 billResource,ALL,bill:pay,/bill/:id/pay,POST,Submit bill with payment
-billResource,ALL,bill:id,/bill/:id/cancel,GET,Cancel bill
-billResource,ALL,bill:id,/bill/:id,DELETE,Get list bill
+billResource,ALL,bill:id,/bill/:id/cancel,GET,Cancel bill by Id
+billResource,ALL,bill:id,/bill/:id,DELETE,Remove bill by Id
 billResource,ALL,bill:orders,/bill/:id/orders,GET,Get orders by Bill Id
 billResource,ALL,bill:insert_orders,/bill/:id/orders,POST,Insert orders for Bill
-billResource,ALL,bill:orders,/bill/:id/orders,PATCH,Update orders for Bill
 billResource,ALL,order:id,/order/:id,GET,Get order by Id
 billResource,ALL,order:id,/order/:id,PATCH,Update order by Id
-billResource,ALL,order:cancel,/order/:id/cancel,POST,Get list bill
+billResource,ALL,order:cancel,/order/:id/cancel,POST,Cancel order by Id
 billResource,ALL,order:id,/order/:id,DELETE,Remove order by Id

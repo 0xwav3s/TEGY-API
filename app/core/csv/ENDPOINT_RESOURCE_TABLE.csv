@@ -27,12 +27,12 @@ DELETE,/menu/categories/:id,ALL,N,menuResource,menu_ALL
 GET,/bill/list,ALL,Y,billResource,bill_ALL
 POST,/bill,ALL,N,billResource,bill_ALL
 GET,/bill/:id,ALL,N,billResource,bill_ALL
+PATCH,/bill/:id,ALL,N,billResource,bill_ALL
 POST,/bill/:id/pay,ALL,N,billResource,bill_ALL
 POST,/bill/:id/cancel,ALL,N,billResource,bill_ALL
 DELETE,/bill/:id,ALL,N,billResource,bill_ALL
 GET,/bill/:id/orders,ALL,N,billResource,bill_ALL
 POST,/bill/:id/orders,ALL,N,billResource,bill_ALL
-PATCH,/bill/:id/orders,ALL,N,billResource,bill_ALL
 GET,/order/:id,ALL,N,billResource,bill_ALL
 PATCH,/order/:id,ALL,N,billResource,bill_ALL
 POST,/order/:id/cancel,ALL,N,billResource,bill_ALL

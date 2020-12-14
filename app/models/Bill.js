@@ -13,10 +13,13 @@ var billSchema = mongoose.Schema({
     money_pay_for_cus: { type: Number },  /** */
     status: { type: String, enum: config.model.enum.bill, default: config.model.enum.bill[0], required: true },
     types_bill: {
-        type: String, enum: [
+        type: String, 
+        enum: [
             "Tại bàn",
             "Mang về"
-        ], default: "Tại bàn", required: true
+        ], 
+        default: "Tại bàn", 
+        required: true
     },
     // menu: [{ type: String, ref: 'menu', required: true }],
     table: { type: String, ref: 'table', required: true },

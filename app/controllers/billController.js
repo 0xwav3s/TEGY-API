@@ -6,6 +6,7 @@ const helper = require('../helper/utils');
 const print = require('../helper/printServices/printServices');
 const notify = require('../helper/notifyFunction');
 const mailService = require('../helper/mailService');
+const handler = require('../core/handler/tegyHandler');
 
 // const log4js = require("log4js");
 // var fileLog = "log-" + helper.formatDateNotHours(new Date()).replace(new RegExp('/', 'g'), "-") + ".log";
@@ -32,11 +33,12 @@ console.log("Start " + name);
 let limitPage = 20;
 let limitPagination = 5;
 module.exports = {
-    viewAllBill_GET: function (req, res) {
-        var startDate = helper.getStartDate(req.query.startDate);
-        var endDate = helper.getEndDate(req.query.endDate);
+    getAllBill_GET: function (req, res) {
+        console.log("Get All Menu");
+        var from = helper.getEndDate(req.query.from);
+        var to = helper.getStartDate(req.query.to);
         var filter = {};
-        filter.createTime = { "$gte": endDate, "$lt": startDate };
+        filter.createTime = { "$gte": from, "$lt": to };
         var statusBill = req.query.statusBill;
         switch (statusBill) {
             case config.model.enum.bill[1]:
@@ -50,77 +52,62 @@ module.exports = {
                 break;
             default:
         }
-        var page = (req.query.page) ? (req.query.page - 1 > 0) ? req.query.page - 1 : 0 : 0;
-        var urlOrg = req.originalUrl;
-        var url = helper.removePathUrl('limitPage', urlOrg);
-        limitPage = (req.query.limitPage) ? parseInt(req.query.limitPage) : limitPage;
+        let page = (req.query.page) ? parseInt(req.query.page) : 0;
+        let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
         db.Bill
             .find(filter)
             .sort({ updateTime: "desc" })
             .populate('table')
-            .populate('tax_promotions')
             .populate('order')
             .populate('user')
-            .limit(limitPage)
-            .skip(limitPage * page)
+            .limit(limit)
+            .skip(limit * page)
             .exec(function (err, items) {
                 if (err) {
                     mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
                     console.log(err)
-                    return res.redirect(endpointAccount.logout);
+                    message = err.message;
+                    handler.buildResponse(req, res, {}, message, false);
                 }
-                db.Bill.countDocuments(filter).exec(function (errCount, count) {
-                    // var count = item.count;
-                    if (errCount) {
-                        console.log(errCount)
-                        return res.redirect(endpointAccount.logout);
-                    }
-                    var pageSize = Math.ceil(count / limitPage);    //Làm tròn số lớn
-                    var pageCur = page + 1;
-                    var firstPage = (pageCur > limitPagination) ? pageCur - limitPagination : 1;
-                    var widthPage = pageSize - pageCur;
-                    var lastPage = (widthPage > limitPagination) ? pageCur + limitPagination : pageCur + widthPage;
-                    return res.render(dirPage + 'viewAllBill.ejs', {
-                        helper: helper,
-                        endpoint: endpoint,
-                        endpointAccount: endpointAccount,
-                        user: req.user,
-                        data: items,
-                        url: url,
-                        time: {
-                            "startDate": helper.createDate(startDate),
-                            "endDate": helper.createDate(endDate)
-                        },
-                        statusBill: statusBill,
-                        enumBill: config.model.enum.bill,
-                        message: req.flash('billMessage'),
-                        page: pageCur,
-                        firstPage: firstPage,
-                        lastPage: lastPage,
-                        limitPage: (limitPage) ? limitPage : 'All'
-                    });
-                })
+                let data = {
+                    limit: limit,
+                    page: page,
+                    page: page,
+                    from: from,
+                    to: to,
+                    items: items
+                }
+                message = 'Successful get all Menu.';
+                console.log(message)
+                handler.buildResponse(req, res, data, message, true);
             })
     },
-    viewDetailBill_GET: async function (req, res) {
-        var id = req.query.id;
-        id = id.split(',');
-        var bill = await db.Bill.find({ '_id': { $in: id } }).populate('order').populate('user');
-        var menu = await db.Menu.find();
-        var table = await db.Table.findById(bill[0].table).populate('zone');
-        return res.render(dirPage + 'detailBill.ejs', {
-            helper: helper,
-            endpoint: endpoint,
-            endpointAccount: endpointAccount,
-            user: req.user,
-            menu: menu,
-            table: table,
-            bill: bill,
-            price_unit: config.model.enum.price,
-            unit: config.model.enum.menu,
-            active: config.model.enum.active,
-            url: req.originalUrl,
-            message: req.flash('orderMessage')
+    getBillById_GET: async function (req, res) {
+        let message = '';
+        let id = req.params.id;
+        db.Bill
+            .findOne({ _id: id })
+            .populate('order')
+            .exec(function (err, item) {
+                if (err) {
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
+                    console.log(err)
+                    message = err.message;
+                    handler.buildResponse(req, res, {}, message, false);
+                }
+                message = 'Success find Menu by id: ' + id;
+                console.log(message)
+                handler.buildResponse(req, res, item, message, true);
+            })
+    },
+    updateBillById_PATCH: function (req, res) {
+        let body = req.body;
+        let id = req.params.id;
+        let modelName = 'Bill';
+        db.updateItemById(modelName, id, body).then((result) => {
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
+        }).catch((err) => {
+            handler.buildResponse(req, res, {}, err, false);
         });
     },
     submitBill_POST: function (req, res) {
@@ -271,10 +258,10 @@ module.exports = {
                                 'id': newBill._id,
                                 'author': author,
                                 'orders': orders
-                            }).then((rs)=>{
-                                if(rs){
+                            }).then((rs) => {
+                                if (rs) {
                                     notify.sendMessageByFlashType(req, 'tableMessage', 'success', 'Món ăn bàn ' + table.name + ' đã được in vào trong bếp !');
-                                }else{
+                                } else {
                                     notify.sendMessageByFlashType(req, 'tableMessage', 'danger', 'Cảnh báo: Món ăn bàn ' + table.name + ' in lỗi !');
                                 }
                             })
