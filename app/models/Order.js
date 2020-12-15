@@ -6,12 +6,22 @@ var autoIncrement = dbHelper.autoIncrement;
 var orderSchema = mongoose.Schema({
     _id: String,
     // name: { type: String, required: true },
-    note: { type: String},
-    log: { type: String},
+    note: { type: String },
+    log: { type: String },
     price: { type: Number, required: true },
     total: { type: Number, required: true },
     amount: { type: Number, required: true },
-    status: { type: String, enum: config.model.enum.order, default: config.model.enum.order[0], required: true },
+    status: {
+        type: String,
+        enum: [
+            "Đã chọn",
+            "Đang xử lý",
+            "Hoàn tất",
+            "Hủy"
+        ],
+        default: "Đã chọn",
+        required: true
+    },
     menu: { type: String, ref: 'menu', required: true },
     author: { type: String, ref: 'user', required: true },
     available: { type: Boolean, default: true, required: true },

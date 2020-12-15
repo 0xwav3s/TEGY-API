@@ -25,7 +25,10 @@ const endpoint = config.get('endpoint').dashboard;
 const path = require('path');
 var scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
-const log4js = require('../helper/logService')
+const log4js = require('../helper/logService');
+const { resolve } = require('path');
+const { rejects } = require('assert');
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 var log = log4js.getLog(name);
 log4js.setConsoleToLogger(log);
 console.log("Start " + name);
@@ -63,12 +66,7 @@ module.exports = {
             .limit(limit)
             .skip(limit * page)
             .exec(function (err, items) {
-                if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                    console.log(err)
-                    message = err.message;
-                    handler.buildResponse(req, res, {}, message, false);
-                }
+                if (err) return handler.buildErrorRespose(req, res, err)
                 let data = {
                     limit: limit,
                     page: page,
@@ -84,21 +82,32 @@ module.exports = {
     },
     getBillById_GET: async function (req, res) {
         let message = '';
-        let id = req.params.id;
-        db.Bill
-            .findOne({ _id: id })
-            .populate('order')
-            .exec(function (err, item) {
-                if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                    console.log(err)
-                    message = err.message;
-                    handler.buildResponse(req, res, {}, message, false);
-                }
-                message = 'Success find Menu by id: ' + id;
-                console.log(message)
-                handler.buildResponse(req, res, item, message, true);
-            })
+        let query = req.query;
+        if (!query.mode) {
+            let id = req.params.id;
+            db.Bill
+                .findById(id)
+                .populate('order')
+                .exec(function (err, items) {
+                    if (err) return handler.buildErrorRespose(req, res, err)
+                    message = 'Success find Menu by id: ' + id;
+                    console.log(message)
+                    handler.buildResponse(req, res, items, message, true);
+                })
+        } else {
+            if (query.mode = 'multiple') {
+                let id = req.params.id.split(',');
+                db.Bill
+                    .find({ '_id': { $in: id } })
+                    .populate('order')
+                    .exec(function (err, items) {
+                        if (err) return handler.buildErrorRespose(req, res, err)
+                        message = 'Success find Menu by id: ' + id;
+                        console.log(message)
+                        handler.buildResponse(req, res, items, message, true);
+                    })
+            }
+        }
     },
     updateBillById_PATCH: function (req, res) {
         let body = req.body;
@@ -110,83 +119,81 @@ module.exports = {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    submitBill_POST: function (req, res) {
-        new Promise(async (resolve) => {
-            console.log(req.body)
-            var id = req.query.id;
-            id = id.split(',');
-            db.Bill.find({ '_id': { $in: id } }).populate('table').exec(async (err, bills) => {
-                for (var bill of bills) {
-                    bill.status = config.model.enum.bill[1];
-                    bill.timeOut = Date.now();
-                    await bill.save((err) => {
-                        if (err) {
-                            mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                            console.log(err);
+    insertNewBillToTable_POST: function (req, res) {
+        let body = req.body;
+        let tableId = body.table;
+        let user = req.user;
+        db.Table.findById(tableId).exec(async (err, table) => {
+            if (err) return handler.buildErrorRespose(req, res, err);
+            if (table.active === "Bảo trì") handler.buildResponse(req, res, {}, "Table " + table._id + " is maintain, you cannot insert for this table", false);
+            insertOrderForBill(body, user).then((ordersList) => {
+                let newBill = new db.Bill();
+                let orders = ordersList.filter((obj) => { return obj }).map((obj) => { return obj._id; }); //Get Id Array from Object Array
+                newBill.order = orders;
+                newBill.author = user._id;
+                newBill.total_price_order = body.total_price_order;
+                newBill.table = tableId;
+                newBill.save((err, rsNewBill) => {
+                    if (err) return handler.buildErrorRespose(req, res, err);
+                    table.currentBill.push(rsNewBill._id);
+                    table.active = "Có khách";
+                    table.updateTime = Date.now();
+                    table.save((err, rsTable) => {
+                        if (err) return handler.buildErrorRespose(req, res, err);
+                        let result = {
+                            table: rsTable,
+                            newBill: rsNewBill
                         }
+                        return handler.buildResponse(req, res, result, 'Successful saved Table with Id: ' + table._id + ' and Bill with Id: ' + rsNewBill._id, true);
                     })
-                }
-                var table = bills[0].table;
-                table.active = config.model.enum.active[1];
-                table.currentBill = '';
-                table.save((err) => {
-                    if (err) {
-                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                        console.log(err);
-                    }
-                    notify.sendMessageByFlashType(req, 'tableMessage', 'success', 'Bàn ăn ' + table.name + ' lưu thông tin mới thành công!');
-                    resolve();
                 })
+
+            }).catch((msg) => {
+                return handler.buildResponse(req, res, {}, msg, false);
             })
-        }).then(() => {
-            return res.redirect('..' + endpoint.table.table + '/' + endpoint.action.list);
         })
     },
-    cancelBill_POST: function (req, res) {
-        new Promise((resolve) => {
-            var id = req.query.id;
-            id = id.split(',');
-            var note = req.body.noteCancel;
-            db.Bill.find({ '_id': { $in: id } }).populate('table').populate('order').exec(async (err, bills) => {
-                for (var bill of bills) {
-                    for (var order of bill.order) {
-                        if (order.status != config.model.enum.order[3]) {
-                            order.status = config.model.enum.order[3];
-                            await order.save(err => {
-                                if (err) {
-                                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                                    console.log(err);
-                                }
-                                resolve();
-                            })
-                        }
-                    }
-                    bill.status = config.model.enum.bill[2];
-                    bill.note = note;
+    submitBill_POST: function (req, res, mode) {
+        let id = req.params.id;
+        let body = req.body;
+        id = id.split(',');
+        let total_price_bills = 0;
+        db.Bill.find({ '_id': { $in: id } }).populate('table').exec(async (err, bills) => {
+            if (err || bills.length === 0) return handler.buildErrorRespose(req, res, err)
+            let i = 0;
+            let lastTable;
+            for (var bill of bills) {
+                if (bill.status !== 'Chưa thanh toán') return handler.buildErrorRespose(req, res, 'Bill ' + bill._id + ' has been submitted or cancelled')
+                bill.timeOut = Date.now();
+                bill.updateTime = Date.now();
+                if(body.note) bill.note = body.note;
+                total_price_bills += bill.total_price_order;
+                if (mode !== "pay") {
+                    bill.status = "Hủy";
                     bill.total_price_order = 0;
-                    bill.timeOut = Date.now();
-                    await bill.save((err) => {
-                        if (err) {
-                            mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                            console.log(err);
-                        }
-                        // loggerNewBill.info("Cancel Bill: " + bill)
-                    })
+                } else {
+                    bill.status = "Đã thanh toán";
                 }
-                var table = bills[0].table;
-                notify.sendMessageByFlashType(req, 'tableMessage', 'success', 'Hóa đơn ở bàn ' + table.name + ' đã được hủy !');
-                table.active = config.model.enum.active[1];
-                table.currentBill = '';
-                await table.save((err) => {
-                    if (err) {
-                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                        console.log(err);
+                await bill.save(async (err) => {
+                    if (err) return handler.buildErrorRespose(req, res, err)
+                    let table = bill.table;
+                    if (lastTable != table._id) {
+                        lastTable = table._id;
+                        table.active = "Trống";
+                        table.currentBill = [];
+                        table.updateTime = Date.now();
+                        await table.save((err) => {
+                            if (err) return handler.buildErrorRespose(req, res, err)
+                        })
                     }
-                    resolve();
+                    if (++i === bills.length) {
+                        let validTotal = InvalidCompareTotalBetweenUIandAPI(body.total_price_bills, total_price_bills)
+                        if (validTotal && mode === "pay")
+                            return handler.buildErrorRespose(req, res, validTotal)
+                        return handler.buildResponse(req, res, bills, 'Successful submit Table with Id: ' + table._id + ' and Bill with Id: ' + id, true);
+                    }
                 })
-            })
-        }).then(() => {
-            return res.redirect('..' + endpoint.table.table + '/' + endpoint.action.list);
+            }
         })
     },
     cancelOrder_POST: function (req, res) {
@@ -370,5 +377,52 @@ async function createMakeOrders(body, author) {
                 }
             })
         }
+    })
+}
+
+function InvalidCompareTotalBetweenUIandAPI(totalUI, totalAPI) {
+    if (totalUI !== totalAPI) {
+        let msg = 'Error: Total from UI [' + totalUI + '] != [' + totalAPI + '] Total from API'
+        mailService.sendMail(config.mail.recieverError, 'Invalid caculation total From Ngoc Hai', msg);
+        console.log(msg);
+        return msg;
+    }
+    return false;
+}
+
+function insertOrderForBill(body, user) {
+    let orders = body.order;
+    return new Promise(async (resolve, rejects) => {
+        let menu = await db.Menu.find().select("_id");
+        let orderList = [];
+        let totalBill = 0;
+        let i = 0;
+        orders.map((order) => {
+            if (menu.filter(e => e._id === order.menu).length > 0) {
+                let newOrder = new db.Order(order);
+                newOrder.author = user._id;
+                let totalOrder = order.price * order.amount;
+                totalBill += totalOrder;
+                let validTotal = InvalidCompareTotalBetweenUIandAPI(order.total, totalOrder)
+                if (validTotal)
+                    rejects(validTotal);
+                newOrder.save((err, rsNewOrder) => {
+                    if (err) {
+                        mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '');
+                        rejects(err.stack);
+                    }
+                    orderList.push(rsNewOrder);
+                    if (++i === orders.length) {
+                        let validTotal = InvalidCompareTotalBetweenUIandAPI(body.total_price_order, totalBill)
+                        if (validTotal)
+                            rejects(validTotal);
+                        resolve(orderList);
+                    }
+                })
+            } else {
+                msgInvalid += order.menu + ' invalid ( not exist in menu)';
+                rejects(msgInvalid);
+            }
+        })
     })
 }

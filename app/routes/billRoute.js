@@ -22,28 +22,20 @@ module.exports = function (app) {
      */
     var routerBill = express.Router();
     var billSubEndponint = '/bill';
-    routerBill.post(bill_controller.makeOrderHasTable_POST)
 
-    //View All Bill
+    //Create new bill
+    app.post(billSubEndponint, bill_controller.insertNewBillToTable_POST)
+
+    //Handle bill
     routerBill.get('/list', bill_controller.getAllBill_GET);
     routerBill.get('/:id', bill_controller.getBillById_GET)
-    routerBill.patch('/:id', bill_controller.getBillById_GET)
+    routerBill.patch('/:id', bill_controller.updateBillById_PATCH)
+    routerBill.post('/:id/pay', function (req, res) {
+        bill_controller.submitBill_POST(req, res, 'pay')
+    })
+    routerBill.post('/:id/cancel', function (req, res) {
+        bill_controller.submitBill_POST(req, res, 'cancel')
+    })
 
-    // //Edit
-    // routerBill.get('/:id', bill_controller.viewDetailBill_GET)
-    // routerBill.get('/' + endpoint.action.order, bill_controller.makeOrderHasTable_GET)
-    // /**
-    //  * Router Order
-    //  */
-    // var routerOrder = express.Router();
-    // var orderSubEndponint = endpoint.bill.order;
-
-    // //Order
-    // routerOrder.post('/' + endpoint.action.cancel, bill_controller.cancelBill_POST)
-    // routerOrder.post(endpoint.bill.order + '_' + endpoint.action.cancel, user_controller.isLoggedIn, bill_controller.cancelOrder_POST)
-    // routerOrder.post('/' + endpoint.action.submit, user_controller.isLoggedIn, bill_controller.submitBill_POST)
-
-    //Add subEndpoint cho routerPost
-    // app.use(orderSubEndponint, routerOrder);
     app.use(billSubEndponint, routerBill);
 }

@@ -2,8 +2,9 @@ const log4js = require('../../helper/logService');
 const path = require('path');
 const db = require('../../helper/dbHelper');
 const helper = require('../../helper/utils');
-const { link } = require('fs');
-var scriptName = path.basename(__filename).split(".");
+const mailService = require('../../helper/mailService');
+const config = require('config');
+const scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
 var log = log4js.getLog(name);
 log4js.setConsoleToLogger(log);
@@ -14,6 +15,7 @@ module.exports = {
     init,
     getToken,
     buildResponse,
+    buildErrorRespose,
     filterEndpointToProperties
 }
 
@@ -56,8 +58,7 @@ function buildResource(responseModel, req) {
 }
 
 function buildResponse(req, res, items, message, status) {
-    if (!items || items === {}) {
-        items = {};
+    if (typeof items === 'object' && items !== null && checkProperties(items) && !message) {
         message = 'No matching items found';
         status = false;
     }
@@ -223,6 +224,13 @@ function filterEndpointToProperties(req) {
 
 }
 
+function buildErrorRespose(req, res, err) {
+    let msg = (err) ? (err.stack) ? err.stack : err : false;
+    if (msg) mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + msg + '')
+    console.log(err);
+    return buildResponse(req, res, {}, err, false);
+}
+
 function checkExistsParamsAndUpdateEndpoint(req, endpoint) {
     let params = req.params;
     if (!helper.isEmptyObject(params) && endpoint.includes(':')) {
@@ -231,7 +239,7 @@ function checkExistsParamsAndUpdateEndpoint(req, endpoint) {
         if (prop.includes('/')) {
             let splitProp = prop.split('/');
             return split[0].concat(params[splitProp[0]] + '/' + splitProp[1]);
-        } else{
+        } else {
             return split[0].concat(params[prop]);
         }
     } else {
@@ -251,3 +259,11 @@ function getToken(headers) {
         return null;
     }
 };
+
+function checkProperties(obj) {
+    for (var key in obj) {
+        if (obj[key] !== null && obj[key] != "")
+            return false;
+    }
+    return true;
+}

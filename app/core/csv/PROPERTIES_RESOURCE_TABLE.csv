@@ -8,3 +8,8 @@ menuResource,model,,Menu,,,,menuSchema
 menuResource,model,,MenuCategories,,,,menuCatSchema
 billResource,model,,Bill,,,,billSchema
 billResource,model,,Order,,,,orderSchema
+billResource,Number,,total_price_bills,,y,,paySchema
+billResource,String,,tax_promotions,tax_promotions,,,paySchema
+billResource,Number,,af_price_tax_promotions,af_price_tax_promotions,,,paySchema
+billResource,Number,,money_give_by_cus,money_give_by_cus,,,paySchema
+billResource,Number,,money_pay_for_cus,money_pay_for_cus,,,paySchema

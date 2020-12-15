@@ -7,14 +7,21 @@ const ObjectId = Schema.ObjectId;
 
 var tableSchema = mongoose.Schema({
     _id: String,
-    name: { 
-        type: String, 
+    name: {
+        type: String,
         required: true,
         unique: true
     },
     description: String,
     available: { type: Boolean, default: true, required: true },
-    active: { type: String, enum: config.model.enum.active, required: true },
+    active: {
+        type: String, enum: [
+            "Có khách",
+            "Trống",
+            "Bảo trì"
+        ],
+        required: true
+    },
     zone: { type: String, ref: 'zone', required: true },
     currentBill: [{ type: String, ref: 'bill' }],
     author: { type: String, ref: 'user', required: true },

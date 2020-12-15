@@ -28,15 +28,12 @@ module.exports.appendChild = function (nameChild, msg) {
 }
 
 module.exports.setConsoleToLogger = (log, err = false) => {
-    if (config.dev) {
+    if (!config.dev) {
         console.log = (msg) => {
             if (msg.toLowerCase().includes('error') || err === true)
                 log.warning(msg);
             else
                 log.info(msg);
-        }
-        console.error = (msg) =>{
-            log.err(msg);
         }
     }
 }

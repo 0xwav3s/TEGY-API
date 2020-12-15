@@ -28,7 +28,7 @@ bill_ALL,ALL,/bill/list,GET,application/vnd.hal+json,billSchema
 bill_ALL,ALL,/bill,POST,application/vnd.hal+json,billSchema
 bill_ALL,ALL,/bill/:id,GET,application/vnd.hal+json,billSchema
 bill_ALL,ALL,/bill/:id,PATCH,application/vnd.hal+json,billSchema
-bill_ALL,ALL,/bill/:id/pay,POST,application/vnd.hal+json,billSchema
+bill_ALL,ALL,/bill/:id/pay,POST,application/vnd.hal+json,paySchema
 bill_ALL,ALL,/bill/:id/cancel,POST,application/vnd.hal+json,billSchema
 bill_ALL,ALL,/bill/:id,DELETE,application/vnd.hal+json,billSchema
 bill_ALL,ALL,/bill/:id/orders,GET,application/vnd.hal+json,orderSchema

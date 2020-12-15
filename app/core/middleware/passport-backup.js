@@ -73,7 +73,7 @@ module.exports = function (passport) {
             db.User.findOne({ 'local.username': username }, function (err, user) {
                 // if there are any errors, return the error before anything else
                 if (err) {
-                    console.error(err)
+                    console.log(err)
                     return done(err);
                 }
 

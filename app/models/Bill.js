@@ -11,7 +11,16 @@ var billSchema = mongoose.Schema({
     af_price_tax_promotions: { type: Number },  /** */
     money_give_by_cus: { type: Number },  /** */
     money_pay_for_cus: { type: Number },  /** */
-    status: { type: String, enum: config.model.enum.bill, default: config.model.enum.bill[0], required: true },
+    status: { 
+        type: String, 
+        enum: [
+            "Chưa thanh toán",
+            "Đã thanh toán",
+            "Hủy"
+        ], 
+        default: "Chưa thanh toán", 
+        required: true 
+    },
     types_bill: {
         type: String, 
         enum: [

@@ -18,16 +18,24 @@ module.exports = function (passport) {
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt")
     opts.secretOrKey = config.secret;
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-        User.findOne({ _id: jwt_payload._id }, function (err, user) {
+        // User.findOne({ _id: jwt_payload._id }, function (err, user) {
+        //     if (err) {
+        //         return done(err, false);
+        //     }
+        //     if (user) {
+        //         done(null, user);
+        //     } else {
+        //         done(null, false);
+        //     }
+        // });
+        let UserValidate = new User(jwt_payload);
+        UserValidate.validate((err) => {
             if (err) {
-                return done(err, false);
-            }
-            if (user) {
-                done(null, user);
+                done(err, false);
             } else {
-                done(null, false);
+                done(null, UserValidate);
             }
-        });
+        })
     }));
 
 }

@@ -2,7 +2,7 @@
     "product": {
         "name": "NGỌC HẢI"
     },
-    "dev": false,
+    "dev": true,
     "secret": "nodeauthsecret",
     "timeExpiredToken": 12,
     "copyright": {

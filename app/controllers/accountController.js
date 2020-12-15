@@ -117,10 +117,10 @@ module.exports = {
     authorized: function (req, res, next) {
         let user = req.user;
         if (user && user.local.tokenExpires) {
-            let dur = new Date(Date.now() - user.local.tokenExpires);
-            let duration = new Duration(user.local.tokenExpires, new Date());
+            let dur = new Date(Date.now() - new Date(user.local.tokenExpires));
+            let duration = new Duration(new Date(user.local.tokenExpires), new Date());
             // let duration = new Duration(new Date(), user.local.tokenExpires);
-            console.log("Expired token: " + duration.hours + "/" + config.timeExpiredToken);
+            if (duration >= 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
             let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
             if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();

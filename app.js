@@ -70,7 +70,6 @@ db.init().then(() => {
     require('./app/core/middleware/passport')(passport);
     var handler = require('./app/core/handler/tegyHandler');
     handler.init().then(async () => {
-
         const routeArr = [
             'accountRoute',
             'systemRoute',
