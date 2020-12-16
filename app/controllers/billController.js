@@ -114,9 +114,9 @@ module.exports = {
         let id = req.params.id;
         let modelName = 'Bill';
         db.updateItemById(modelName, id, body).then((result) => {
-            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
+            return handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
         }).catch((err) => {
-            handler.buildResponse(req, res, {}, err, false);
+            return handler.buildErrorRespose(req, res, err)
         });
     },
     insertNewBillToTable_POST: function (req, res) {
@@ -128,7 +128,8 @@ module.exports = {
             if (table.active === "Bảo trì") handler.buildResponse(req, res, {}, "Table " + table._id + " is maintain, you cannot insert for this table", false);
             insertOrderForBill(body, user).then((ordersList) => {
                 let newBill = new db.Bill();
-                let orders = ordersList.filter((obj) => { return obj }).map((obj) => { return obj._id; }); //Get Id Array from Object Array
+                let orders = ordersList.map((obj) => { return obj._id; }); //Get Id Array from Object Array
+                // let orders = ordersList.filter((obj) => { return obj }).map((obj) => { return obj._id; });
                 newBill.order = orders;
                 newBill.author = user._id;
                 newBill.total_price_order = body.total_price_order;
@@ -161,39 +162,77 @@ module.exports = {
         db.Bill.find({ '_id': { $in: id } }).populate('table').exec(async (err, bills) => {
             if (err || bills.length === 0) return handler.buildErrorRespose(req, res, err)
             let i = 0;
-            let lastTable;
-            for (var bill of bills) {
-                if (bill.status !== 'Chưa thanh toán') return handler.buildErrorRespose(req, res, 'Bill ' + bill._id + ' has been submitted or cancelled')
-                bill.timeOut = Date.now();
-                bill.updateTime = Date.now();
-                if(body.note) bill.note = body.note;
-                total_price_bills += bill.total_price_order;
-                if (mode !== "pay") {
-                    bill.status = "Hủy";
-                    bill.total_price_order = 0;
-                } else {
-                    bill.status = "Đã thanh toán";
+            let arrObjBills = [];
+            let arrIdBills = bills.map((x) => x._id);
+            new Promise((resolve, rejects) => {
+                for (var bill of bills) {
+                    if (bill.status !== 'Chưa thanh toán') rejects('Bill ' + bill._id + ' has been ' + ((mode === 'pay') ? 'submitted' : 'cancelled'))
+                    bill.timeOut = Date.now();
+                    bill.updateTime = Date.now();
+                    if (body.note) bill.note = body.note;
+                    total_price_bills += bill.total_price_order;
+                    if (mode !== "pay") {
+                        bill.status = "Hủy";
+                    } else {
+                        bill.totalBills.isMultiple = (bills.length > 1) ? true : false;
+                        bill.status = "Đã thanh toán";
+                        bill.totalBills.ref_otherBills = (bills.length > 1) ? arrIdBills.filter((x) => x !== bill._id) : [];
+                    }
+                    arrObjBills.push(bill);
+                    if (++i === bills.length) {
+                        let result = {};
+                        if (mode === "pay") {
+                            let validTotal = InvalidCompareTotalBetweenUIandAPI(body.total_price_bills, total_price_bills)
+                            if (validTotal) rejects(validTotal)
+                            result.total_price_bills = total_price_bills;
+                            if (body.money_give_by_cus || body.money_pay_for_cus) {
+                                let calToCus = body.money_give_by_cus - total_price_bills;
+                                let validTotal = InvalidCompareTotalBetweenUIandAPI(body.money_pay_for_cus, calToCus)
+                                if (validTotal) rejects(validTotal)
+                                result.money_give_by_cus = body.money_give_by_cus;
+                                result.money_pay_for_cus = calToCus;
+                            }
+                            // if (body.tax_promotions) {
+
+                            // }
+                        } else {
+                            result.total_price_bills = 0;
+                        }
+                        result.bills = arrObjBills;
+                        resolve(result);
+                    }
+
                 }
-                await bill.save(async (err) => {
-                    if (err) return handler.buildErrorRespose(req, res, err)
+            }).then((result) => {
+                let lastTable;
+                let bills = result.bills;
+                let i = 0;
+                bills.map((bill) => {
+                    bill.totalBills.total_price_bills = result.total_price_bills;
+                    if ((result.money_give_by_cus || result.money_pay_for_cus) && mode === 'pay') {
+                        bill.totalBills.money_give_by_cus = result.money_give_by_cus;
+                        bill.totalBills.money_pay_for_cus = result.money_pay_for_cus;
+                    }
                     let table = bill.table;
                     if (lastTable != table._id) {
                         lastTable = table._id;
                         table.active = "Trống";
                         table.currentBill = [];
                         table.updateTime = Date.now();
-                        await table.save((err) => {
+                        table.save((err) => {
                             if (err) return handler.buildErrorRespose(req, res, err)
                         })
                     }
+                    bill.save((err) => {
+                        if (err) return handler.buildErrorRespose(req, res, err)
+                    })
                     if (++i === bills.length) {
-                        let validTotal = InvalidCompareTotalBetweenUIandAPI(body.total_price_bills, total_price_bills)
-                        if (validTotal && mode === "pay")
-                            return handler.buildErrorRespose(req, res, validTotal)
-                        return handler.buildResponse(req, res, bills, 'Successful submit Table with Id: ' + table._id + ' and Bill with Id: ' + id, true);
+                        return handler.buildResponse(req, res, result, 'Successful submit Bill with Id: ' + id, true);
                     }
                 })
-            }
+            }).catch((err) => {
+                return handler.buildErrorRespose(req, res, err);
+            })
         })
     },
     cancelOrder_POST: function (req, res) {
@@ -380,10 +419,10 @@ async function createMakeOrders(body, author) {
     })
 }
 
-function InvalidCompareTotalBetweenUIandAPI(totalUI, totalAPI) {
+function InvalidCompareTotalBetweenUIandAPI(totalUI, totalAPI, arg) {
     if (totalUI !== totalAPI) {
         let msg = 'Error: Total from UI [' + totalUI + '] != [' + totalAPI + '] Total from API'
-        mailService.sendMail(config.mail.recieverError, 'Invalid caculation total From Ngoc Hai', msg);
+        mailService.sendMail(config.mail.recieverError, 'Invalid caculation total From Ngoc Hai' + (arg) ? arg : "", msg);
         console.log(msg);
         return msg;
     }
@@ -413,7 +452,7 @@ function insertOrderForBill(body, user) {
                     }
                     orderList.push(rsNewOrder);
                     if (++i === orders.length) {
-                        let validTotal = InvalidCompareTotalBetweenUIandAPI(body.total_price_order, totalBill)
+                        let validTotal = InvalidCompareTotalBetweenUIandAPI(body.total_price_order, totalBill, 'Bill has order Id: ' + rsNewOrder._id);
                         if (validTotal)
                             rejects(validTotal);
                         resolve(orderList);

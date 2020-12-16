@@ -61,6 +61,7 @@ function createNewItem(model, body) {
         let item = new this[model];
         item = setPropertyForModel(item, body);
         if (item.constructor.modelName) {
+            item.updateTime = Date.now();
             item.save((err, rs) => {
                 if (err) {
                     mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')

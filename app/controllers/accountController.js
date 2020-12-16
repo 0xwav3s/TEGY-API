@@ -66,31 +66,29 @@ module.exports = {
             try {
                 let items = [];
                 let message = '';
-                let stt = false;
                 if (err) throw err;
                 else if (!user) {
                     message = 'Authentication failed. User not found.';
                     console.log(message);
-                    // res.status(401).send({ success: false, msg: message });
+                    throw message
                 }
                 else if (!user.validPassword(req.body.password)) {
                     message = 'Authentication failed. Wrong password.';
                     console.log(message);
-                    // res.status(401).send({ success: false, msg: message });
+                    throw message
                 } else {
                     message = 'Authentication succuess !';
                     let token = jwt.sign(user.toJSON(), config.secret);
                     items = { token: 'jwt ' + token };
-                    stt = true;
                     user.local.tokenExpires = new Date();
                     await user.save((err) => {
                         if (err) console.err(err)
                         console.log('Success authentication and find user: ' + user);
                     })
                 }
-                handler.buildResponse(req, res, items, message, stt);
+                return handler.buildResponse(req, res, items, message, true);
             } catch (err) {
-                handler.buildResponse(req, res, {}, err, false);
+                return handler.buildErrorRespose(req, res, err);
             }
         })
     },
@@ -107,7 +105,6 @@ module.exports = {
         let user = req.user;
         if (user) {
             let dur = new Date(Date.now() - user.local.tokenExpires);
-
             checkExpire = (dur.getHours() > config.timeExpiredToken) ? true : false;
             if (checkExpire) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
@@ -117,7 +114,6 @@ module.exports = {
     authorized: function (req, res, next) {
         let user = req.user;
         if (user && user.local.tokenExpires) {
-            let dur = new Date(Date.now() - new Date(user.local.tokenExpires));
             let duration = new Duration(new Date(user.local.tokenExpires), new Date());
             // let duration = new Duration(new Date(), user.local.tokenExpires);
             if (duration >= 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
