@@ -84,9 +84,9 @@ module.exports = {
                     await user.save((err) => {
                         if (err) console.err(err)
                         console.log('Success authentication and find user: ' + user);
+                        return handler.buildResponse(req, res, items, message, true);
                     })
                 }
-                return handler.buildResponse(req, res, items, message, true);
             } catch (err) {
                 return handler.buildErrorRespose(req, res, err);
             }
