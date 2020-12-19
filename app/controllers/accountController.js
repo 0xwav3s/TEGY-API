@@ -21,7 +21,8 @@ const cloud = require('../helper/cloudinaryService');
 const path = require('path');
 var scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
-const log4js = require('../helper/logService')
+const log4js = require('../helper/logService');
+const { resolve } = require('path');
 var log = log4js.getLog(name);
 log4js.setConsoleToLogger(log);
 console.log("Start " + name);
@@ -62,7 +63,7 @@ module.exports = {
         console.log('Start find user: ' + username);
         db.User.findOne({
             'local.username': username
-        }, async (err, user) => {
+        }, (err, user) => {
             try {
                 let items = [];
                 let message = '';
@@ -81,10 +82,19 @@ module.exports = {
                     let token = jwt.sign(user.toJSON(), config.secret);
                     items = { token: 'jwt ' + token };
                     user.local.tokenExpires = new Date();
-                    await user.save((err) => {
-                        if (err) console.err(err)
-                        console.log('Success authentication and find user: ' + user);
+                    new Promise((resolve, rejects) => {
+                        user.save((err, rsUser) => {
+                            if (err) {
+                                console.log(err);
+                                rejects(err);
+                            }
+                            resolve(rsUser)
+                        })
+                    }).then((result)=>{
+                        console.log('Success authentication and find user: ' + result);
                         return handler.buildResponse(req, res, items, message, true);
+                    }).catch((err)=>{
+                        throw err;
                     })
                 }
             } catch (err) {
@@ -111,7 +121,7 @@ module.exports = {
         }
         return res.status(403).send({ success: false, msg: 'Unauthorized.' });
     },
-    authorized: function (req, res, next) {
+    authenticate: function (req, res, next) {
         let user = req.user;
         if (user && user.local.tokenExpires) {
             let duration = new Duration(new Date(user.local.tokenExpires), new Date());

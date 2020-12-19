@@ -20,7 +20,7 @@ module.exports = function (app) {
     app.post('/account/login', user_controller.signIn_POST);
 
     //Set authen and author after get route account
-    app.use(passport.authenticate('jwt', { session: false }), user_controller.authorized)
+    app.use(passport.authenticate('jwt', { session: false }), user_controller.authenticate)
 
     // Profile
     routerAccount.get('/profile', user_controller.profile_GET);
