@@ -65,7 +65,6 @@ module.exports = {
             'local.username': username
         }, (err, user) => {
             try {
-                let items = [];
                 let message = '';
                 if (err) throw err;
                 else if (!user) {
@@ -78,23 +77,16 @@ module.exports = {
                     console.log(message);
                     throw message
                 } else {
-                    message = 'Authentication succuess !';
-                    let token = jwt.sign(user.toJSON(), config.secret);
-                    items = { token: 'jwt ' + token };
                     user.local.tokenExpires = new Date();
-                    new Promise((resolve, rejects) => {
-                        user.save((err, rsUser) => {
-                            if (err) {
-                                console.log(err);
-                                rejects(err);
-                            }
-                            resolve(rsUser)
-                        })
-                    }).then((result)=>{
-                        console.log('Success authentication and find user: ' + result);
-                        return handler.buildResponse(req, res, items, message, true);
-                    }).catch((err)=>{
-                        throw err;
+                    user.save((err, rsUser) => {
+                        if (err) {
+                            console.log(err);
+                            throw err;
+                        }
+                        message = 'Authentication succuess !';
+                        let token = jwt.sign(rsUser.toJSON(), config.secret);
+                        console.log('Success authentication and find user: ' + rsUser);
+                        return handler.buildResponse(req, res, { token: 'jwt ' + token }, message, true);
                     })
                 }
             } catch (err) {
@@ -128,7 +120,7 @@ module.exports = {
             // let duration = new Duration(new Date(), user.local.tokenExpires);
             if (duration >= 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
             let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
-            // if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
+            if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
         }
         return res.status(403).send({ success: false, msg: 'Unauthorized.' });
