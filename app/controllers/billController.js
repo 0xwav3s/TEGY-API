@@ -112,6 +112,23 @@ module.exports = {
             return handler.buildErrorRespose(req, res, err)
         });
     },
+    deleteBillById_DELETE: function (req, res) {
+        let id = req.params.id;
+        let modelName = 'Bill';
+        db.removeItemById(modelName, id).then((message) => {
+            let object = {}
+            object['order'] = id;
+            db.Order.deleteMany(object).exec((err) => {
+                if (err) return handler.buildErrorRespose(req, res, err);
+                message += '. And delete many Order from ' + modelName + ' by Id: ' + id;
+                console.log(message);
+                return handler.buildResponse(req, res, {}, message, true);
+            })
+        }).catch((err) => {
+            console.log(err);
+            return handler.buildErrorRespose(req, res, err);
+        });
+    },
     insertNewBillToTable_POST: function (req, res) {
         let body = req.body;
         let tableId = body.table;
@@ -140,6 +157,41 @@ module.exports = {
                         }
                         return handler.buildResponse(req, res, result, 'Successful saved Table with Id: ' + table._id + ' and Bill with Id: ' + rsNewBill._id, true);
                     })
+                })
+
+            }).catch((msg) => {
+                return handler.buildResponse(req, res, {}, msg, false);
+            })
+        })
+    },
+    insertNewOrderForBill_POST: function (req, res) {
+        let body = req.body;
+        let billId = req.params.id;
+        let user = req.user;
+        db.Bill.findById(billId).populate('table').exec(async (err, bill) => {
+            let table = bill.table;
+            if (err) return handler.buildErrorRespose(req, res, err);
+            if (table.active === "Bảo trì") handler.buildResponse(req, res, {}, "Table " + table._id + " is maintain, you cannot insert for this table", false);
+            insertOrderForBill(body, user).then((ordersList) => {
+                let totalNewOrder = 0;
+                let orders = ordersList.map((obj) => {
+                    totalNewOrder += obj.total;
+                    return obj._id;
+                });
+                bill.order = [...bill.order, ...orders];
+                bill.author = user._id;
+                bill.total_price_order += totalNewOrder;
+                bill.save((err, rsBill) => {
+                    if (err) return handler.buildErrorRespose(req, res, err);
+                    table.updateTime = Date.now();
+                    table.save((err) => {
+                        if (err) throw err;
+                    })
+                    let result = {
+                        bill: rsBill,
+                        newOrder: ordersList
+                    }
+                    return handler.buildResponse(req, res, result, 'Successful add new orders for Bill with Id: ' + rsBill._id, true);
                 })
 
             }).catch((msg) => {

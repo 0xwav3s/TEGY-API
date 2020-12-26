@@ -56,7 +56,8 @@ billSchema.plugin(autoIncrement.plugin, {
 });
 
 billSchema.pre('save', function (next) {
-    this._id = "BI0" + this.billSeq;
+    if (this._id) this._id = "BI0" + this.billSeq;
+    this.updateTime = Date.now();
     next();
 });
 

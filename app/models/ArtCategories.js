@@ -24,7 +24,8 @@ artCatSchema.plugin(autoIncrement.plugin, {
 });
 
 artCatSchema.pre('save', function (next) {
-    this._id = config.model.id.artcategories + this.artcategoriesSeq;
+    if (this._id) this._id = config.model.id.artcategories + this.artcategoriesSeq;
+    this.updateTime = Date.now();
     next();
 });
 

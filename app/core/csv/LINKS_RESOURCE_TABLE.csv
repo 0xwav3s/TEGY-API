@@ -26,12 +26,11 @@ menuResource,ALL,categories:id,/menu/categories/:id,PATCH,Update categories by I
 menuResource,ALL,categories:id,/menu/categories/:id,DELETE,Remove categories by ID
 billResource,ALL,bill:list,/bill/list,GET,Get list bill
 billResource,ALL,bill:insert_bill,/bill,POST,Insert new bill with orders for table
-billResource,ALL,bill:id,/bill/:id,GET,Get bill by Id
+billResource,ALL,bill:id,/bill/:id,GET,Get detail bill with order by billId
 billResource,ALL,bill:id,/bill/:id,PATCH,Update bill by Id
-billResource,ALL,bill:pay,/bill/:id/pay,POST,Submit bill with payment
-billResource,ALL,bill:id,/bill/:id/cancel,POST,Cancel bill by Id
+billResource,ALL,bill:pay,/bill/:id/pay,POST,Submit bill for payment with multi ID
+billResource,ALL,bill:id,/bill/:id/cancel,POST,Cancel bill for payment with multi ID
 billResource,ALL,bill:id,/bill/:id,DELETE,Remove bill by Id
-billResource,ALL,bill:orders,/bill/:id/orders,GET,Get orders by Bill Id
 billResource,ALL,bill:insert_orders,/bill/:id/orders,POST,Insert new orders for Bill
 billResource,ALL,order:id,/order/:id,GET,Get order by Id
 billResource,ALL,order:id,/order/:id,PATCH,Update order by Id

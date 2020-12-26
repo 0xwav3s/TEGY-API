@@ -38,7 +38,8 @@ orderSchema.plugin(autoIncrement.plugin, {
 });
 
 orderSchema.pre('save', function (next) {
-    this._id = config.model.id.order + this.orderSeq;
+    if (this._id) this._id = config.model.id.order + this.orderSeq;
+    this.updateTime = Date.now();
     next();
 });
 

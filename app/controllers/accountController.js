@@ -68,12 +68,12 @@ module.exports = {
                 let message = '';
                 if (err) throw err;
                 else if (!user) {
-                    message = 'Authentication failed. User not found.';
+                    message = 'User not found.';
                     console.log(message);
                     throw message
                 }
                 else if (!user.validPassword(req.body.password)) {
-                    message = 'Authentication failed. Wrong password.';
+                    message = 'Wrong password.';
                     console.log(message);
                     throw message
                 } else {

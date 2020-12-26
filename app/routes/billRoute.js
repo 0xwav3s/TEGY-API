@@ -21,21 +21,28 @@ module.exports = function (app) {
      * Router Order
      */
     var routerBill = express.Router();
-    var billSubEndponint = '/bill';
+    var billSubEndpoint = '/bill';
+    var routerOrder = express.Router();
+    var orderSubEndpoint = '/order';
 
     //Create new bill
-    app.post(billSubEndponint, bill_controller.insertNewBillToTable_POST)
+    app.post(billSubEndpoint, bill_controller.insertNewBillToTable_POST)
 
     //Handle bill
     routerBill.get('/list', bill_controller.getAllBill_GET);
-    routerBill.get('/:id', bill_controller.getBillById_GET)
-    routerBill.patch('/:id', bill_controller.updateBillById_PATCH)
+    routerBill.get('/:id', bill_controller.getBillById_GET);
+    routerBill.patch('/:id', bill_controller.updateBillById_PATCH);
+    routerBill.delete('/:id', bill_controller.deleteBillById_DELETE);
     routerBill.post('/:id/pay', function (req, res) {
         bill_controller.submitBill_POST(req, res, 'pay')
-    })
+    });
     routerBill.post('/:id/cancel', function (req, res) {
         bill_controller.submitBill_POST(req, res, 'cancel')
-    })
+    });
+    routerBill.post('/:id/orders', bill_controller.insertNewOrderForBill_POST);
 
-    app.use(billSubEndponint, routerBill);
+
+    // routerBill.get('/:id', bill_controller.getOrderById_GET);
+
+    app.use(billSubEndpoint, routerBill);
 }

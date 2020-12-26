@@ -71,7 +71,8 @@ userSchema.plugin(autoIncrement.plugin, {
     field: 'userSeq'
 });
 userSchema.pre('save', function (next) {
-    this._id = "US0" + this.userSeq;
+    if (this._id) this._id = "US0" + this.userSeq;
+    this.updateTime = Date.now();
     next();
 });
 

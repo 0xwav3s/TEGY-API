@@ -38,8 +38,9 @@ tableSchema.plugin(autoIncrement.plugin, {
 });
 
 tableSchema.pre('save', function (next) {
-    this._id = config.model.id.table + this.tableSeq;
+    if (this._id) this._id = config.model.id.table + this.tableSeq;
     if (!this.name) this.name = this.tableSeq;
+    this.updateTime = Date.now();
     next();
 });
 
