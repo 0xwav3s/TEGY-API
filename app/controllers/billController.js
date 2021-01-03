@@ -66,7 +66,7 @@ module.exports = {
             .limit(limit)
             .skip(limit * page)
             .exec(function (err, items) {
-                if (err) return handler.buildErrorRespose(req, res, err)
+                if (err) return handler.buildErrorResponse(req, res, err)
                 let data = {
                     limit: limit,
                     page: page,
@@ -95,11 +95,33 @@ module.exports = {
                     if (queryDbBill.length === 0) throw ''
                 }
             }
-            message = 'Success find Menu by id: ' + id;
+            message = 'Success find Bill by id: ' + id;
             console.log(message)
             handler.buildResponse(req, res, queryDbBill, message, true);
         } catch (err) {
-            return handler.buildErrorRespose(req, res, err);
+            return handler.buildErrorResponse(req, res, err);
+        }
+    },
+    getOrderById_GET: async function (req, res) {
+        let message = '';
+        let query = req.query;
+        let id = req.params.id.split(',');
+        let queryDbOrder;
+        try {
+            if (!query.mode) {
+                queryDbOrder = await db.Order.findById(id).populate('menu');
+                if (queryDbOrder === null) throw ''
+            } else {
+                if (query.mode = 'multiple') {
+                    queryDbOrder = await db.Order.find({ '_id': { $in: id } }).populate('menu');
+                    if (queryDbOrder.length === 0) throw ''
+                }
+            }
+            message = 'Success find Order by id: ' + id;
+            console.log(message)
+            handler.buildResponse(req, res, queryDbOrder, message, true);
+        } catch (err) {
+            return handler.buildErrorResponse(req, res, err);
         }
     },
     updateBillById_PATCH: function (req, res) {
@@ -109,7 +131,17 @@ module.exports = {
         db.updateItemById(modelName, id, body).then((result) => {
             return handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
         }).catch((err) => {
-            return handler.buildErrorRespose(req, res, err)
+            return handler.buildErrorResponse(req, res, err)
+        });
+    },
+    updateOrderById_PATCH: function (req, res) {
+        let body = req.body;
+        let id = req.params.id;
+        let modelName = 'Order';
+        db.updateItemById(modelName, id, body).then((result) => {
+            return handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
+        }).catch((err) => {
+            return handler.buildErrorResponse(req, res, err)
         });
     },
     deleteBillById_DELETE: function (req, res) {
@@ -119,14 +151,24 @@ module.exports = {
             let object = {}
             object['order'] = id;
             db.Order.deleteMany(object).exec((err) => {
-                if (err) return handler.buildErrorRespose(req, res, err);
+                if (err) return handler.buildErrorResponse(req, res, err);
                 message += '. And delete many Order from ' + modelName + ' by Id: ' + id;
                 console.log(message);
                 return handler.buildResponse(req, res, {}, message, true);
             })
         }).catch((err) => {
             console.log(err);
-            return handler.buildErrorRespose(req, res, err);
+            return handler.buildErrorResponse(req, res, err);
+        });
+    },
+    deleteOrderById_DELETE: function (req, res) {
+        let id = req.params.id;
+        let modelName = 'Order';
+        db.removeItemById(modelName, id).then((message) => {
+            return handler.buildResponse(req, res, {}, message, true);
+        }).catch((err) => {
+            console.log(err);
+            return handler.buildErrorResponse(req, res, err);
         });
     },
     insertNewBillToTable_POST: function (req, res) {
@@ -134,7 +176,7 @@ module.exports = {
         let tableId = body.table;
         let user = req.user;
         db.Table.findById(tableId).exec(async (err, table) => {
-            if (err) return handler.buildErrorRespose(req, res, err);
+            if (err) return handler.buildErrorResponse(req, res, err);
             if (table.active === "Bảo trì") handler.buildResponse(req, res, {}, "Table " + table._id + " is maintain, you cannot insert for this table", false);
             insertOrderForBill(body, user).then((ordersList) => {
                 let newBill = new db.Bill();
@@ -145,12 +187,12 @@ module.exports = {
                 newBill.total_price_order = body.total_price_order;
                 newBill.table = tableId;
                 newBill.save((err, rsNewBill) => {
-                    if (err) return handler.buildErrorRespose(req, res, err);
+                    if (err) return handler.buildErrorResponse(req, res, err);
                     table.currentBill.push(rsNewBill._id);
                     table.active = "Có khách";
                     table.updateTime = Date.now();
                     table.save((err, rsTable) => {
-                        if (err) return handler.buildErrorRespose(req, res, err);
+                        if (err) return handler.buildErrorResponse(req, res, err);
                         let result = {
                             table: rsTable,
                             newBill: rsNewBill
@@ -170,7 +212,7 @@ module.exports = {
         let user = req.user;
         db.Bill.findById(billId).populate('table').exec(async (err, bill) => {
             let table = bill.table;
-            if (err) return handler.buildErrorRespose(req, res, err);
+            if (err) return handler.buildErrorResponse(req, res, err);
             if (table.active === "Bảo trì") handler.buildResponse(req, res, {}, "Table " + table._id + " is maintain, you cannot insert for this table", false);
             insertOrderForBill(body, user).then((ordersList) => {
                 let totalNewOrder = 0;
@@ -182,7 +224,7 @@ module.exports = {
                 bill.author = user._id;
                 bill.total_price_order += totalNewOrder;
                 bill.save((err, rsBill) => {
-                    if (err) return handler.buildErrorRespose(req, res, err);
+                    if (err) return handler.buildErrorResponse(req, res, err);
                     table.updateTime = Date.now();
                     table.save((err) => {
                         if (err) throw err;
@@ -223,180 +265,42 @@ module.exports = {
                         table.currentBill = [];
                         table.updateTime = Date.now();
                         table.save((err) => {
-                            if (err) return handler.buildErrorRespose(req, res, err)
+                            if (err) return handler.buildErrorResponse(req, res, err)
                         })
                     }
                     bill.save((err) => {
-                        if (err) return handler.buildErrorRespose(req, res, err)
+                        if (err) return handler.buildErrorResponse(req, res, err)
                     })
                     if (++i === bills.length) {
                         return handler.buildResponse(req, res, result, 'Successful submit Bill with Id: ' + id, true);
                     }
                 })
             }).catch((err) => {
-                return handler.buildErrorRespose(req, res, err);
+                return handler.buildErrorResponse(req, res, err);
             })
         })
     },
-    cancelOrder_POST: function (req, res) {
-        var idOrder = req.body.idOrder;
-        var idBill = req.body.idBill;
-        var noteCancel = req.body.noteCancel;
-        new Promise(async (resolve) => {
-            await db.Order.findById(idOrder).exec(async (err, order) => {
-                await db.Bill.findById(idBill).exec((err, bill) => {
-                    var minus = bill.total_price_order - order.total;
-                    bill.total_price_order = (minus <= 0) ? 0 : minus;
-                    bill.save(errB => {
-                        if (errB) console.log(errB);
-                        order.status = config.model.enum.order[3];
-                        order.note = (order.note) ? order.note + ' Cancel: ' + noteCancel : ' Cancel: ' + noteCancel;
-                        order.save(err => {
-                            if (err) {
-                                mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                                console.log(err);
-                            }
-                            // loggerNewBill.info("Cancel order: " + order + " in Bill: " + bill)
-                            resolve();
+    cancelOrderById_POST: function (req, res) {
+        let id = req.params.id;
+        try {
+            db.Order.findById(id).exec((err, order) => {
+                if (err) throw err;
+                order.status = "Hủy";
+                db.Bill.find({ order: { "$in": [id] } }).exec(async (err, bills) => {
+                    if (err) throw err;
+                    await Promise.all(bills.map(bill => {
+                        bill.total_price_order -= order.total;
+                        bill.save((err)=>{
+                            if (err) throw err;
+
                         })
-                    })
+                    }))
                 })
             })
-        }).then(() => {
-            notify.sendMessageByFlashType(req, 'orderMessage', 'success', 'Order đã được hủy !');
-            return res.redirect(req.body.urlBack);
-        })
-    },
-    makeOrderHasTable_POST: function (req, res) {
-        var body = req.body;
-        var id = req.query.id;
-        new Promise((resolve) => {
-            db.Table.findOne({ name: body.tableOrder, _id: id }).exec(async function (err, table) {
-                var author = req.user.local.fullname
-                createMakeOrders(body, author).then((orders) => {
-                    if (orders.length === 0) {
-                        notify.sendMessageByFlashType(req, 'tableMessage', 'danger', 'Chưa có món nào được chọn !');
-                        resolve();
-                    } else {
-                        createNewBill(orders, author, table).then((newBill) => {
-                            print.printText({
-                                'table': table.name,
-                                'id': newBill._id,
-                                'author': author,
-                                'orders': orders
-                            }).then((rs) => {
-                                if (rs) {
-                                    notify.sendMessageByFlashType(req, 'tableMessage', 'success', 'Món ăn bàn ' + table.name + ' đã được in vào trong bếp !');
-                                } else {
-                                    notify.sendMessageByFlashType(req, 'tableMessage', 'danger', 'Cảnh báo: Món ăn bàn ' + table.name + ' in lỗi !');
-                                }
-                            })
-                            if ((table.active === config.model.enum.active[0]) && (table.currentBill != newBill._id)) {
-                                table.currentBill.push(newBill._id);
-                            } else {
-                                table.currentBill = newBill._id;
-                            }
-                            table.active = config.model.enum.active[0];
-                            table.updateTime = Date.now();
-                            table.save((err, result) => {
-                                if (err) {
-                                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                                    console.log(err)
-                                } else {
-                                    console.log(result)
-                                    resolve(result);
-                                }
-                            });
-                        });
-                    }
-                })
-            });
-        }).then(() => {
-            return res.redirect('..' + endpoint.table.table + '/' + endpoint.action.list);
-        })
+        } catch (err) {
+            return handler.buildErrorResponse(req, res, err);
+        }
     }
-}
-
-function createNewBill(orders, author, table) {
-    return new Promise(async (resolve) => {
-        if (table.currentBill[0]) {
-            var existBill = await db.Bill.findById(table.currentBill);
-            for (var i in orders) {
-                await existBill.order.push(orders[i]._id);
-                existBill.total_price_order += orders[i].total;
-            }
-            existBill.save((err, rs) => {
-                if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                    console.log(err);
-                }
-                // loggerNewBill.info('Save exist Bill: ' + rs)
-                resolve(rs);
-            })
-        } else {
-            var newBill = new db.Bill();
-            newBill.author = author;
-            newBill.table = table._id;
-            newBill.total_price_order = 0;
-            newBill.timeIn = Date.now();
-            for (var order of orders) {
-                newBill.order.push(order._id)
-                newBill.total_price_order += order.total;
-            }
-            await newBill.save((err) => {
-                if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                    console.log(err);
-                }
-                // loggerNewBill.info('Save new Bill: ' + newBill)
-                resolve(newBill);
-            })
-        }
-    })
-}
-
-async function createMakeOrders(body, author) {
-    var amountArray = [];
-    var modelOrder = []
-    return new Promise(async (resolve) => {
-        for (var element in body) {
-            if (element.includes('amount_')) {
-                var res = element.split("amount_")[1].split("_");
-                var ob = new db.Order();
-                ob.amount = body[element];
-                ob.menu = res[0];
-                amountArray.push(ob);
-            }
-        }
-        var i = 0;
-        var count = amountArray.length;
-        if (count === 0) resolve(modelOrder);
-        for (var ob of amountArray) {
-            for (var element in body) {
-                if (element.includes(ob.menu + '_value')) {
-                    if (element.includes('price_')) {
-                        ob.price = body[element];
-                        ob.total = ob.amount * body[element];
-                    } else if (element.includes('note') && (body[element])) {
-                        ob.note = body[element];
-                    }
-                }
-            }
-            ob.author = author;
-            await ob.save(function (err, result) {
-                if (err) {
-                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
-                    console.log(err);
-                }
-                else {
-                    modelOrder.push(result);
-                    if (++i === count) {
-                        resolve(modelOrder);
-                    }
-                }
-            })
-        }
-    })
 }
 
 function InvalidCompareTotalBetweenUIandAPI(totalUI, totalAPI, arg) {

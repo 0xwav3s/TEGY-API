@@ -25,7 +25,7 @@ menuCatSchema.plugin(autoIncrement.plugin, {
 });
 
 menuCatSchema.pre('save', function (next) {
-    if (this._id) this._id = config.model.id.menucategories + this.menucategoriesSeq;
+    this._id = config.model.id.menucategories + this.menucategoriesSeq;
     this.updateTime = Date.now();
     next();
 });

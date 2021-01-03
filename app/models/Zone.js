@@ -29,7 +29,7 @@ zoneSchema.plugin(autoIncrement.plugin, {
 });
 
 zoneSchema.pre('save', function (next) {
-    if (this._id) this._id = config.model.id.zone + this.zoneSeq;
+    this._id = config.model.id.zone + this.zoneSeq;
     this.updateTime = Date.now();
     next();
 });

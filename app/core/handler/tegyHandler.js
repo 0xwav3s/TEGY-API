@@ -15,7 +15,7 @@ module.exports = {
     init,
     getToken,
     buildResponse,
-    buildErrorRespose,
+    buildErrorResponse,
     filterEndpointToProperties
 }
 
@@ -224,7 +224,7 @@ function filterEndpointToProperties(req) {
 
 }
 
-function buildErrorRespose(req, res, err) {
+function buildErrorResponse(req, res, err) {
     let msg = (err) ? (err.stack) ? err.stack : err : false;
     if (msg) mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + msg + '')
     console.log(err);

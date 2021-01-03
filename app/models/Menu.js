@@ -27,7 +27,7 @@ menuSchema.plugin(autoIncrement.plugin, {
 });
 
 menuSchema.pre('save', function (next) {
-    if (this._id) this._id = config.model.id.menu + this.menuSeq;
+    this._id = config.model.id.menu + this.menuSeq;
     this.updateTime = Date.now();
     next();
 });

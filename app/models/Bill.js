@@ -27,7 +27,7 @@ var billSchema = mongoose.Schema({
         default: "Chưa thanh toán",
         required: true
     },
-    types_bill: {
+    type_bill: {
         type: String,
         enum: [
             "Tại bàn",
@@ -56,7 +56,7 @@ billSchema.plugin(autoIncrement.plugin, {
 });
 
 billSchema.pre('save', function (next) {
-    if (this._id) this._id = "BI0" + this.billSeq;
+    this._id = "BI0" + this.billSeq;
     this.updateTime = Date.now();
     next();
 });

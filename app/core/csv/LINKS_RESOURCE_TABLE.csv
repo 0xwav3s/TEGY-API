@@ -1,38 +1,38 @@
-resourceREF,products,linkName,href,method,title
-accountResource,ALL,account:login,/account/login,POST,Sign In Account
-accountResource,ALL,account:logout,/account/logout,POST,Logout Account
-accountResource,ALL,account:register,/account/register,POST,Sign Up Account
-accountResource,ALL,account:profile,/account/profile,GET,Get information account from jwt
-accountResource,ALL,account:profile,/account/profile,PATCH,Update information account
-tableResource,ALL,table:list,/table/list,GET,Get list table
-tableResource,ALL,table:id,/table/:id,GET,Get table by ID
-tableResource,ALL,table:create,/table/create,POST,Create new table
-tableResource,ALL,table:id,/table/:id,PATCH,Update table by ID
-tableResource,ALL,table:id,/table/:id,DELETE,Get table by ID
-tableResource,ALL,zone:list,/zone/list,GET,Get list zone
-tableResource,ALL,zone:id,/zone/:id,GET,Get zone by ID
-tableResource,ALL,zone:create,/zone/create,POST,Create new zone
-tableResource,ALL,zone:id,/zone/:id,PATCH,Update zone by ID
-tableResource,ALL,zone:id,/zone/:id,DELETE,Get zone by ID
-menuResource,ALL,menu:list,/menu/list,GET,Get list menu
-menuResource,ALL,menu:id,/menu/:id,GET,Get menu by ID
-menuResource,ALL,menu:create,/menu/create,POST,Create new menu
-menuResource,ALL,menu:id,/menu/:id,PATCH,Update menu by ID
-menuResource,ALL,menu:id,/menu/:id,DELETE,Get menu by ID
-menuResource,ALL,categories:list,/menu/categories/list,GET,Get list categories
-menuResource,ALL,categories:id,/menu/categories/:id,GET,Get categories by ID
-menuResource,ALL,categories:create,/menu/categories/create,POST,Create new categories
-menuResource,ALL,categories:id,/menu/categories/:id,PATCH,Update categories by ID
-menuResource,ALL,categories:id,/menu/categories/:id,DELETE,Remove categories by ID
-billResource,ALL,bill:list,/bill/list,GET,Get list bill
-billResource,ALL,bill:insert_bill,/bill,POST,Insert new bill with orders for table
-billResource,ALL,bill:id,/bill/:id,GET,Get detail bill with order by billId
-billResource,ALL,bill:id,/bill/:id,PATCH,Update bill by Id
-billResource,ALL,bill:pay,/bill/:id/pay,POST,Submit bill for payment with multi ID
-billResource,ALL,bill:id,/bill/:id/cancel,POST,Cancel bill for payment with multi ID
-billResource,ALL,bill:id,/bill/:id,DELETE,Remove bill by Id
-billResource,ALL,bill:insert_orders,/bill/:id/orders,POST,Insert new orders for Bill
-billResource,ALL,order:id,/order/:id,GET,Get order by Id
-billResource,ALL,order:id,/order/:id,PATCH,Update order by Id
-billResource,ALL,order:cancel,/order/:id/cancel,POST,Cancel order by Id
-billResource,ALL,order:id,/order/:id,DELETE,Remove order by Id
+id,resourceREF,products,linkName,href,method,title
+account_login,accountResource,ALL,account:login,/account/login,POST,Sign In Account
+account_logout,accountResource,ALL,account:logout,/account/logout,POST,Logout Account
+account_signup,accountResource,ALL,account:register,/account/register,POST,Sign Up Account
+account_info,accountResource,ALL,account:profile,/account/profile,GET,Get information account from jwt
+account_update,accountResource,ALL,account:profile,/account/profile,PATCH,Update information account
+table_list,tableResource,ALL,table:list,/table/list,GET,Get list table
+table_info,tableResource,ALL,table:id,/table/:id,GET,Get table by ID
+table_create,tableResource,ALL,table:create,/table/create,POST,Create new table
+table_update,tableResource,ALL,table:id,/table/:id,PATCH,Update table by ID
+table_delete,tableResource,ALL,table:id,/table/:id,DELETE,Remove table by ID
+zone_list,tableResource,ALL,zone:list,/zone/list,GET,Get list zone
+zone_info,tableResource,ALL,zone:id,/zone/:id,GET,Get zone by ID
+zone_create,tableResource,ALL,zone:create,/zone/create,POST,Create new zone
+zone_update,tableResource,ALL,zone:id,/zone/:id,PATCH,Update zone by ID
+zone_delete,tableResource,ALL,zone:id,/zone/:id,DELETE,Remove zone by ID
+menu_list,menuResource,ALL,menu:list,/menu/list,GET,Get list menu
+menu_info,menuResource,ALL,menu:id,/menu/:id,GET,Get menu by ID
+menu_create,menuResource,ALL,menu:create,/menu/create,POST,Create new menu
+menu_update,menuResource,ALL,menu:id,/menu/:id,PATCH,Update menu by ID
+menu_delete,menuResource,ALL,menu:id,/menu/:id,DELETE,Get menu by ID
+category_list,menuResource,ALL,categories:list,/menu/categories/list,GET,Get list categories
+category_info,menuResource,ALL,categories:id,/menu/categories/:id,GET,Get categories by ID
+category_create,menuResource,ALL,categories:create,/menu/categories/create,POST,Create new categories
+category_update,menuResource,ALL,categories:id,/menu/categories/:id,PATCH,Update categories by ID
+category_delete,menuResource,ALL,categories:id,/menu/categories/:id,DELETE,Remove categories by ID
+bill_list,billResource,ALL,bill:list,/bill/list,GET,Get list bill
+bill_insertNewBill,billResource,ALL,bill:insert_bill,/bill,POST,Insert new bill with orders for table
+bill_info,billResource,ALL,bill:id,/bill/:id,GET,Get detail bill with order by billId
+bill_update,billResource,ALL,bill:id,/bill/:id,PATCH,Update bill by Id
+bill_pay,billResource,ALL,bill:pay,/bill/:id/pay,POST,Submit bill for payment with multi ID
+bill_cancel,billResource,ALL,bill:id,/bill/:id/cancel,POST,Cancel bill for payment with multi ID
+bill_delete,billResource,ALL,bill:id,/bill/:id,DELETE,Remove bill by Id
+bill_insertOrders,billResource,ALL,bill:insert_orders,/bill/:id/orders,POST,Insert new orders for Bill
+order_info,billResource,ALL,order:id,/order/:id,GET,Get order by Id
+order_update,billResource,ALL,order:id,/order/:id,PATCH,Update order by Id
+order_cancel,billResource,ALL,order:cancel,/order/:id/cancel,POST,Cancel order by Id
+order_delete,billResource,ALL,order:id,/order/:id,DELETE,Remove order by Id

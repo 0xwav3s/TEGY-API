@@ -90,7 +90,7 @@ module.exports = {
                     })
                 }
             } catch (err) {
-                return handler.buildErrorRespose(req, res, err);
+                return handler.buildErrorResponse(req, res, err);
             }
         })
     },
