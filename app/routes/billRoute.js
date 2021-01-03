@@ -1,17 +1,4 @@
-let config = require('config');
-var upload = require('../helper/cloudinaryService');
-const passport = require('passport');
-
-var user_controller = require('../controllers/accountController');
-var post_controller = require('../controllers/postController');
-var table_controller = require('../controllers/tableController');
-var menu_controller = require('../controllers/menuController');
 var bill_controller = require('../controllers/billController');
-// let dirPageAccount = 'admin/pages/account/';
-let endpointAccount = config.get('endpoint').account;
-
-let dirPage = 'admin/pages/dashboard/';
-let endpoint = config.get('endpoint').dashboard;
 var express = require('express');
 
 module.exports = function (app) {

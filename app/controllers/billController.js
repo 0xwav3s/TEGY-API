@@ -211,9 +211,10 @@ module.exports = {
         let billId = req.params.id;
         let user = req.user;
         db.Bill.findById(billId).populate('table').exec(async (err, bill) => {
+            if (!bill) handler.buildErrorResponse(req, res, "");
             let table = bill.table;
             if (err) return handler.buildErrorResponse(req, res, err);
-            if (table.active === "Bảo trì") handler.buildResponse(req, res, {}, "Table " + table._id + " is maintain, you cannot insert for this table", false);
+            if (table.active === "Bảo trì") handler.buildErrorResponse(req, res, "Table " + table._id + " is maintain, you cannot insert for this table");
             insertOrderForBill(body, user).then((ordersList) => {
                 let totalNewOrder = 0;
                 let orders = ordersList.map((obj) => {
@@ -285,14 +286,21 @@ module.exports = {
         try {
             db.Order.findById(id).exec((err, order) => {
                 if (err) throw err;
+                if (order.status === "Hủy") return handler.buildErrorResponse(req, res, 'This Order Id: ' + id + ' already cancel');
                 order.status = "Hủy";
                 db.Bill.find({ order: { "$in": [id] } }).exec(async (err, bills) => {
                     if (err) throw err;
+                    let i = 0;
                     await Promise.all(bills.map(bill => {
                         bill.total_price_order -= order.total;
-                        bill.save((err)=>{
+                        bill.save((err) => {
                             if (err) throw err;
-
+                            if (++i === bills.length) {
+                                order.save((err) => {
+                                    if (err) throw err;
+                                    return handler.buildResponse(req, res, order, 'Successful Cancel Order with Id: ' + id, true);
+                                })
+                            }
                         })
                     }))
                 })
