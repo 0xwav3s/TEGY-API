@@ -76,6 +76,7 @@ db.init().then(() => {
             'homeRoute',
             'tableRoute',
             'menuRoute',
+            'roleRoute',
             'reportRoute',
             'imagesRoute',
             'billRoute',

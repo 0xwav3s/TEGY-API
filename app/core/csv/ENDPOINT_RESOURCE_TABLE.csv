@@ -36,3 +36,8 @@ GET,/order/:id,ALL,N,billResource,bill_ALL
 PATCH,/order/:id,ALL,N,billResource,bill_ALL
 POST,/order/:id/cancel,ALL,N,billResource,bill_ALL
 DELETE,/order/:id,ALL,N,billResource,bill_ALL
+GET,/role/list,ALL,Y,roleResource,role_ALL
+GET,/role/:id,ALL,N,roleResource,role_ALL
+POST,/role/create,ALL,N,roleResource,role_ALL
+PATCH,/role/:id,ALL,N,roleResource,role_ALL
+DELETE,/role/:id,ALL,N,roleResource,role_ALL

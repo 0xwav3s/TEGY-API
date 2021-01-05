@@ -20,7 +20,7 @@ module.exports = function (app) {
     /**
      * Router Table
      */
-    let tabSubEndponint = '/table';
+    let tabSubEndpoint = '/table';
     /**
      * CRUD Bàn ăn
      */
@@ -34,7 +34,7 @@ module.exports = function (app) {
     /**
     * CRUD Khu vực
     */
-    let zoneSubEndponint = '/zone';
+    let zoneSubEndpoint = '/zone';
     var routerZone = express.Router();
 
     routerZone.get('/list', table_controller.getListZone_GET);
@@ -44,6 +44,6 @@ module.exports = function (app) {
     routerZone.post('/create', table_controller.createZone_POST)
 
     //Add subEndpoint cho routerPost
-    app.use(tabSubEndponint, routerTable);
-    app.use(zoneSubEndponint, routerZone);
+    app.use(tabSubEndpoint, routerTable);
+    app.use(zoneSubEndpoint, routerZone);
 }

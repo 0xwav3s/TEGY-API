@@ -27,12 +27,12 @@ module.exports = function (app) {
      * Router Order
      */
     var routerBill = express.Router();
-    var billSubEndponint = endpoint.bill.bill;
+    var billSubEndpoint = endpoint.bill.bill;
     /**
      * CRUD Bài Viết
      */
     //View All Bill
-    app.get(billSubEndponint + endpoint.subPath, user_controller.isLoggedIn, bill_controller.viewAllBill_GET);
+    app.get(billSubEndpoint + endpoint.subPath, user_controller.isLoggedIn, bill_controller.viewAllBill_GET);
 
     //Edit
     routerBill.get('/' + endpoint.action.edit, user_controller.isLoggedIn, bill_controller.viewDetailBill_GET)
@@ -49,7 +49,7 @@ module.exports = function (app) {
      * Router Order
      */
     var routerOrder = express.Router();
-    var orderSubEndponint = endpoint.bill.order;
+    var orderSubEndpoint = endpoint.bill.order;
 
     //Order
     routerOrder.get('/' + endpoint.action.order, user_controller.isLoggedIn, bill_controller.makeOrderHasTable_GET)
@@ -62,14 +62,14 @@ module.exports = function (app) {
      * Router Menu
      */
     var routerMenu = express.Router();
-    var menuSubEndponint = endpoint.menu.menu;
+    var menuSubEndpoint = endpoint.menu.menu;
 
     /**
      * CRUD Menu
      */
 
     //View All Menu
-    app.get(menuSubEndponint + endpoint.subPath, user_controller.isLoggedIn, menu_controller.viewAllMenu_GET)
+    app.get(menuSubEndpoint + endpoint.subPath, user_controller.isLoggedIn, menu_controller.viewAllMenu_GET)
 
     //Edit
     routerMenu.get('/' + endpoint.action.edit, user_controller.isLoggedIn, menu_controller.editMenu_GET)
@@ -104,10 +104,10 @@ module.exports = function (app) {
      * Router Table
      */
     //View All Categories
-    var tabSubEndponint = endpoint.table.table;
+    var tabSubEndpoint = endpoint.table.table;
 
     //Gọi món
-    app.get(tabSubEndponint + '/' + endpoint.action.list, user_controller.isLoggedIn, table_controller.viewTable_GET)
+    app.get(tabSubEndpoint + '/' + endpoint.action.list, user_controller.isLoggedIn, table_controller.viewTable_GET)
 
     /**
      * CRUD Bàn ăn
@@ -115,7 +115,7 @@ module.exports = function (app) {
     var routerTable = express.Router();
 
     //View All Bàn ăn
-    app.get(tabSubEndponint + endpoint.subPath, user_controller.isLoggedIn, table_controller.viewAllTable_GET)
+    app.get(tabSubEndpoint + endpoint.subPath, user_controller.isLoggedIn, table_controller.viewAllTable_GET)
 
     //Edit
     routerTable.get('/' + endpoint.action.edit, user_controller.isLoggedIn, table_controller.editTable_GET)
@@ -151,7 +151,7 @@ module.exports = function (app) {
      */
 
     var routerPost = express.Router();
-    var artSubEndponint = endpoint.art.articles;
+    var artSubEndpoint = endpoint.art.articles;
     /**
      * CRUD Danh mục bài viết
      */
@@ -173,7 +173,7 @@ module.exports = function (app) {
      * CRUD Bài Viết
      */
     //View All Articles
-    app.get(artSubEndponint + endpoint.subPath, user_controller.isLoggedIn, post_controller.viewAllArticles_GET)
+    app.get(artSubEndpoint + endpoint.subPath, user_controller.isLoggedIn, post_controller.viewAllArticles_GET)
 
     //Edit
     routerPost.get('/' + endpoint.action.edit, user_controller.isLoggedIn, post_controller.editArticle_GET)
@@ -187,9 +187,9 @@ module.exports = function (app) {
     routerPost.post('/' + endpoint.action.delete, user_controller.isLoggedIn, post_controller.deleteArticle_POST)
 
     //Add subEndpoint cho routerPost
-    app.use(artSubEndponint, routerPost);
-    app.use(tabSubEndponint, routerTable);
-    app.use(menuSubEndponint, routerMenu);
-    app.use(orderSubEndponint, routerOrder);
-    app.use(billSubEndponint, routerBill);
+    app.use(artSubEndpoint, routerPost);
+    app.use(tabSubEndpoint, routerTable);
+    app.use(menuSubEndpoint, routerMenu);
+    app.use(orderSubEndpoint, routerOrder);
+    app.use(billSubEndpoint, routerBill);
 }

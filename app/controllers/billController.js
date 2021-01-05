@@ -3,38 +3,22 @@
 const config = require('config');
 const db = require('../helper/dbHelper');
 const helper = require('../helper/utils');
-const print = require('../helper/printServices/printServices');
-const notify = require('../helper/notifyFunction');
+// const print = require('../helper/printServices/printServices');
+// const notify = require('../helper/notifyFunction');
 const mailService = require('../helper/mailService');
 const handler = require('../core/handler/tegyHandler');
 
-// const log4js = require("log4js");
-// var fileLog = "log-" + helper.formatDateNotHours(new Date()).replace(new RegExp('/', 'g'), "-") + ".log";
-// log4js.configure({
-//     appenders: {
-//         newBill: { type: "file", filename: "logs/newBill/" + fileLog }
-//     },
-//     categories: { default: { appenders: ["newBill"], level: "ALL" } }
-// });
-
-const endpointAccount = config.get('endpoint').account;
-const dirPage = 'admin/pages/dashboard/bill/';
-const endpoint = config.get('endpoint').dashboard;
-// let cloud = require('../helper/cloudinaryService');
 
 const path = require('path');
 var scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
 const log4js = require('../helper/logService');
-const { resolve } = require('path');
-const { rejects } = require('assert');
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 var log = log4js.getLog(name);
 log4js.setConsoleToLogger(log);
 console.log("Start " + name);
 
-let limitPage = 20;
-let limitPagination = 5;
+
 module.exports = {
     getListBill_GET: function (req, res) {
         console.log("Get All Menu");

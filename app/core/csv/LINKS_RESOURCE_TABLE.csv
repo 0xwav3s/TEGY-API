@@ -36,3 +36,8 @@ order_info,billResource,ALL,order:id,/order/:id,GET,Get order by Id
 order_update,billResource,ALL,order:id,/order/:id,PATCH,Update order by Id
 order_cancel,billResource,ALL,order:cancel,/order/:id/cancel,POST,Cancel order by Id
 order_delete,billResource,ALL,order:id,/order/:id,DELETE,Remove order by Id
+role_list,roleResource,ALL,role:list,/role/list,GET,Get list role
+role_info,roleResource,ALL,role:id,/role/:id,GET,Get role by ID
+role_create,roleResource,ALL,role:create,/role/create,POST,Create new role
+role_update,roleResource,ALL,role:id,/role/:id,PATCH,Update role by ID
+role_delete,roleResource,ALL,role:id,/role/:id,DELETE,Remove role by ID

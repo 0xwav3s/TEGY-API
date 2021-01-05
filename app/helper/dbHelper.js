@@ -1,16 +1,17 @@
-let User = require('../models/User');
-let ArtCategories = require('../models/ArtCategories');
-let Counter = require('../models/Counter');
-let Article = require('../models/Article');
-let Menu = require('../models/Menu');
-let MenuCategories = require('../models/MenuCategories');
-let Images = require('../models/Images');
-let Bill = require('../models/Bill');
-let Order = require('../models/Order');
-let Table = require('../models/Table');
-let TaxPromotions = require('../models/TaxPromotions');
-let Zone = require('../models/Zone');
-let Response = require('../models/Response');
+const User = require('../models/User');
+const ArtCategories = require('../models/ArtCategories');
+const Counter = require('../models/Counter');
+const Article = require('../models/Article');
+const Menu = require('../models/Menu');
+const MenuCategories = require('../models/MenuCategories');
+const Images = require('../models/Images');
+const Bill = require('../models/Bill');
+const Order = require('../models/Order');
+const Table = require('../models/Table');
+const TaxPromotions = require('../models/TaxPromotions');
+const Zone = require('../models/Zone');
+const Role = require('../models/Role');
+const Response = require('../models/Response');
 
 const config = require('config');
 const helper = require('./utils');
@@ -18,6 +19,7 @@ const mailService = require('./mailService');
 module.exports = {
     Response,
     User,
+    Role,
     ArtCategories,
     Article,
     Menu,

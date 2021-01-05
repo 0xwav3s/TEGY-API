@@ -12,7 +12,7 @@ module.exports = function (app) {
     /**
      * Router Table
      */
-    let menuSubEndponint = '/menu';
+    let menuSubEndpoint = '/menu';
     /**
      * CRUD Menu
      */
@@ -26,13 +26,13 @@ module.exports = function (app) {
     /**
     * CRUD Categories
     */
-    let catSubEndponint = '/categories';
+    let catSubEndpoint = '/categories';
 
-    routerMenu.get(catSubEndponint + '/list', menu_controller.getListMenuCategories_GET);
-    routerMenu.get(catSubEndponint + '/:id', menu_controller.getMenuCategoriesById_GET)
-    routerMenu.patch(catSubEndponint + '/:id', menu_controller.updateMenuCategoriesById_PATCH)
-    routerMenu.delete(catSubEndponint + '/:id', menu_controller.deleteMenuCategories_DELETE)
-    routerMenu.post(catSubEndponint + '/create', menu_controller.createMenuCategories_POST)
+    routerMenu.get(catSubEndpoint + '/list', menu_controller.getListMenuCategories_GET);
+    routerMenu.get(catSubEndpoint + '/:id', menu_controller.getMenuCategoriesById_GET)
+    routerMenu.patch(catSubEndpoint + '/:id', menu_controller.updateMenuCategoriesById_PATCH)
+    routerMenu.delete(catSubEndpoint + '/:id', menu_controller.deleteMenuCategories_DELETE)
+    routerMenu.post(catSubEndpoint + '/create', menu_controller.createMenuCategories_POST)
 
-    app.use(menuSubEndponint, routerMenu);
+    app.use(menuSubEndpoint, routerMenu);
 }

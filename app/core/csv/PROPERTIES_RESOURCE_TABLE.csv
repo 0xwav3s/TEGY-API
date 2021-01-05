@@ -13,3 +13,4 @@ billResource,String,,tax_promotions,tax_promotions,,,paySchema
 billResource,Number,,af_price_tax_promotions,af_price_tax_promotions,,,paySchema
 billResource,Number,,money_give_by_cus,money_give_by_cus,,,paySchema
 billResource,Number,,money_pay_for_cus,money_pay_for_cus,,,paySchema
+roleResource,model,,Role,,,,roleSchema
