@@ -17,7 +17,7 @@ module.exports = function (app) {
      * CRUD Menu
      */
     var routerMenu = express.Router();
-    routerMenu.get('/list', menu_controller.getAllMenu_GET)
+    routerMenu.get('/list', menu_controller.getListMenu_GET)
     routerMenu.get('/:id', menu_controller.getMenuById_GET)
     routerMenu.patch('/:id', menu_controller.updateMenuById_PATCH)
     routerMenu.delete('/:id', menu_controller.deleteMenu_DELETE)
@@ -28,7 +28,7 @@ module.exports = function (app) {
     */
     let catSubEndponint = '/categories';
 
-    routerMenu.get(catSubEndponint + '/list', menu_controller.getAllMenuCategories_GET);
+    routerMenu.get(catSubEndponint + '/list', menu_controller.getListMenuCategories_GET);
     routerMenu.get(catSubEndponint + '/:id', menu_controller.getMenuCategoriesById_GET)
     routerMenu.patch(catSubEndponint + '/:id', menu_controller.updateMenuCategoriesById_PATCH)
     routerMenu.delete(catSubEndponint + '/:id', menu_controller.deleteMenuCategories_DELETE)

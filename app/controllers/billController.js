@@ -36,7 +36,7 @@ console.log("Start " + name);
 let limitPage = 20;
 let limitPagination = 5;
 module.exports = {
-    getAllBill_GET: function (req, res) {
+    getListBill_GET: function (req, res) {
         console.log("Get All Menu");
         var from = helper.getEndDate(req.query.from);
         var to = helper.getStartDate(req.query.to);

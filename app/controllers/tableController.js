@@ -45,7 +45,7 @@ module.exports = {
                 handler.buildResponse(req, res, item, message, true);
             })
     },
-    getAllTable_GET: function (req, res) {
+    getListTable_GET: function (req, res) {
         console.log("Get All Table");
         let message = '';
         let filter = {};
@@ -153,7 +153,7 @@ module.exports = {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    getAllZone_GET: function (req, res) {
+    getListZone_GET: function (req, res) {
         console.log("Get All Zone");
         let message = '';
         let filter = {};

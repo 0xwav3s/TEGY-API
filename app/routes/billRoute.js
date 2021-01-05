@@ -13,7 +13,7 @@ module.exports = function (app) {
     app.post(billSubEndpoint, bill_controller.insertNewBillToTable_POST)
 
     //Handle bill
-    routerBill.get('/list', bill_controller.getAllBill_GET);
+    routerBill.get('/list', bill_controller.getListBill_GET);
     routerBill.get('/:id', bill_controller.getBillById_GET);
     routerBill.patch('/:id', bill_controller.updateBillById_PATCH);
     routerBill.delete('/:id', bill_controller.deleteBillById_DELETE);

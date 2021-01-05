@@ -11,7 +11,7 @@ log4js.setConsoleToLogger(log);
 console.log("Start " + name);
 
 module.exports = {
-    getAllMenu_GET: async function (req, res) {
+    getListMenu_GET: async function (req, res) {
         console.log("Get All Menu");
         let message = '';
         let filter = {};
@@ -96,7 +96,7 @@ module.exports = {
         });
     },
 
-    getAllMenuCategories_GET: function (req, res) {
+    getListMenuCategories_GET: function (req, res) {
         console.log("Get All Menu Categories");
         let message = '';
         let filter = {};

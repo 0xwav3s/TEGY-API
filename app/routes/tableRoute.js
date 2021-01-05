@@ -25,7 +25,7 @@ module.exports = function (app) {
      * CRUD Bàn ăn
      */
     var routerTable = express.Router();
-    routerTable.get('/list', table_controller.getAllTable_GET)
+    routerTable.get('/list', table_controller.getListTable_GET)
     routerTable.get('/:id', table_controller.getTableById_GET)
     routerTable.patch('/:id', table_controller.updateTableById_PATCH)
     routerTable.delete('/:id', table_controller.deleteTable_DELETE)
@@ -37,7 +37,7 @@ module.exports = function (app) {
     let zoneSubEndponint = '/zone';
     var routerZone = express.Router();
 
-    routerZone.get('/list', table_controller.getAllZone_GET);
+    routerZone.get('/list', table_controller.getListZone_GET);
     routerZone.get('/:id', table_controller.getZoneById_GET)
     routerZone.patch('/:id', table_controller.updateZoneById_PATCH)
     routerZone.delete('/:id', table_controller.deleteZoneById_DELETE)
