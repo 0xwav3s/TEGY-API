@@ -71,11 +71,22 @@ module.exports = {
         let queryDbBill;
         try {
             if (!query.mode) {
-                queryDbBill = await db.Bill.findById(id).populate('order');
+                // queryDbBill = await db.Bill.findById(id).populate('order');
+                queryDbBill = await db.Bill.findById(id).populate({
+                    path : 'order',
+                    populate : {
+                      path : 'menu'
+                    }
+                  });
                 if (queryDbBill === null) throw ''
             } else {
                 if (query.mode = 'multiple') {
-                    queryDbBill = await db.Bill.find({ '_id': { $in: id } }).populate('order');
+                    queryDbBill = await db.Bill.find({ '_id': { $in: id } }).populate({
+                        path : 'order',
+                        populate : {
+                          path : 'menu'
+                        }
+                      });
                     if (queryDbBill.length === 0) throw ''
                 }
             }
