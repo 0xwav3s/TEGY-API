@@ -120,7 +120,7 @@ module.exports = {
             // let duration = new Duration(new Date(), user.local.tokenExpires);
             if (duration >= 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
             let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
-            // if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
+            if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
         }
         return res.status(403).send({ success: false, msg: 'Unauthorized.' });
