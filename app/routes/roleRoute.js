@@ -6,18 +6,21 @@ var express = require('express');
 
 module.exports = function (app) {
 
+    let permissionSubEndpoint = '/permission';
+    let routerPermission = express.Router();
+    routerPermission.get('/list', role_controller.getListPermission_GET);
+    routerPermission.get('/:id', role_controller.getPermissionById_GET);
 
-    /**
-     * Router Table
-     */
     let roleSubEndpoint = '/role';
-    /**
-     * CRUD Bàn ăn
-     */
-    var routerRole = express.Router();
+    let routerRole = express.Router();
     routerRole.get('/list', role_controller.getListRole_GET);
+    routerRole.get('/:id', role_controller.getRoleById_GET)
+    routerRole.patch('/:id', role_controller.updateRoleById_PATCH)
+    routerRole.delete('/:id', role_controller.deleteRole_DELETE)
+    routerRole.post('/create', role_controller.createRole_POST)
 
 
     //Add subEndpoint cho routerPost
+    app.use(permissionSubEndpoint, routerPermission);
     app.use(roleSubEndpoint, routerRole);
 }

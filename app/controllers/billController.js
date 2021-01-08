@@ -22,10 +22,12 @@ console.log("Start " + name);
 module.exports = {
     getListBill_GET: function (req, res) {
         console.log("Get All Menu");
-        var from = helper.getEndDate(req.query.from);
-        var to = helper.getStartDate(req.query.to);
-        var filter = {};
-        filter.createTime = { "$gte": from, "$lt": to };
+        if(req.query.from || req.query.to){
+            var from = helper.getEndDate(req.query.from);
+            var to = helper.getStartDate(req.query.to);
+            var filter = {};
+            filter.createTime = { "$gte": from, "$lt": to };
+        }
         var statusBill = req.query.statusBill;
         switch (statusBill) {
             case config.model.enum.bill[1]:

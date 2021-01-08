@@ -6,13 +6,10 @@ var roleSchema = mongoose.Schema({
     _id: String,
     roleSeq: Number,
     roleName: { type: String, unique: true, required: true },
-    permissions: [
-        {
-            type: String,
-            unique: true,
-            required: true
-        }
-    ],
+    permissions:{
+        type: String,
+        required: true
+    },
     createTime: { type: Date, default: Date.now() },
     updateTime: { type: Date, default: Date.now() }
 });

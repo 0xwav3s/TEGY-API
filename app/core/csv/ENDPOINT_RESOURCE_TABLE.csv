@@ -41,3 +41,5 @@ GET,/role/:id,ALL,N,roleResource,role_ALL
 POST,/role/create,ALL,N,roleResource,role_ALL
 PATCH,/role/:id,ALL,N,roleResource,role_ALL
 DELETE,/role/:id,ALL,N,roleResource,role_ALL
+GET,/permission/list,ALL,Y,roleResource,role_ALL
+GET,/permission/:id,ALL,N,roleResource,role_ALL
