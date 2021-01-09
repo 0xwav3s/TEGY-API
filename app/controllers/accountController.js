@@ -36,38 +36,18 @@ module.exports = {
             }).catch((err) => {
                 res.json(err);
             });
-        // return res.json({ "message": "Logout success" });
     },
-    // login_GET: function (req, res) {
-    //     let message = (req.flash('loginMessage').length > 0) ? req.flash('loginMessage')[0] : '';
-    //     let items = (req.user) ? [req.user] : [];
-    //     handler.buildResponse(req, items, message)
-    //         .then((rs) => {
-    //             res.json(rs);
-    //         }).catch((err) => {
-    //             res.json(err);
-    //         });
-    // },
-    // login_POST: function (req, res) {
-    //     let message = (req.flash('loginMessage').length > 0) ? req.flash('loginMessage')[0] : '';
-    //     let items = (req.user) ? [req.user] : [];
-    //     handler.buildResponse(req, items, message)
-    //         .then((rs) => {
-    //             res.json(rs);
-    //         }).catch((err) => {
-    //             res.json(err);
-    //         });
-    // },
-    signIn_POST: function (req, res) {
+    signIn_POST: async function (req, res) {
         let username = req.body.username;
         console.log('Start find user: ' + username);
         db.User.findOne({
             'local.username': username
-        }, (err, user) => {
+        }).populate('local.role').exec((err, user) => {
             try {
+                console.log(user.toJSON());
                 let message = '';
                 if (err) throw err;
-                else if (!user) {
+                if (!user) {
                     message = 'User not found.';
                     console.log(message);
                     throw message
@@ -83,7 +63,7 @@ module.exports = {
                             console.log(err);
                             throw err;
                         }
-                        message = 'Authentication succuess !';
+                        message = 'Successful Authentication !';
                         let token = jwt.sign(rsUser.toJSON(), config.secret);
                         console.log('Success authentication and find user: ' + rsUser);
                         return handler.buildResponse(req, res, { token: 'jwt ' + token }, message, true);
@@ -97,11 +77,6 @@ module.exports = {
     signUp_POST: function (req, res) {
 
     },
-    // isLoggedIn: function (req, res, next) {
-    //     if (req.isAuthenticated())
-    //         return next();
-    //     res.redirect(endpoint.login);
-    // },
     isLoggedIn: function (req, res, next) {
         let checkExpire = false;
         let user = req.user;
@@ -113,17 +88,17 @@ module.exports = {
         }
         return res.status(403).send({ success: false, msg: 'Unauthorized.' });
     },
-    authenticate: function (req, res, next) {
+    authentication: function (req, res, next) {
         let user = req.user;
         if (user && user.local.tokenExpires) {
             let duration = new Duration(new Date(user.local.tokenExpires), new Date());
             // let duration = new Duration(new Date(), user.local.tokenExpires);
             if (duration >= 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
             let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
-            if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
+            // if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
         }
-        return res.status(403).send({ success: false, msg: 'Unauthorized.' });
+        return res.status(401).send({ success: false, msg: 'Unauthorized.' });
 
     },
     profile_GET: function (req, res) {
