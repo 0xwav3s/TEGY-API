@@ -13,7 +13,6 @@ const path = require('path');
 var scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
 const log4js = require('../helper/logService');
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 var log = log4js.getLog(name);
 log4js.setConsoleToLogger(log);
 console.log("Start " + name);

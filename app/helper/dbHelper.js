@@ -159,71 +159,97 @@ if (config.dev) {
 }
 
 function autoCreateForTest() {
-    let viet = 'vle34';
-    User.findOne({ 'local.username': viet }, function (err, user) {
+    let roleName = "Admin";
+    Role.findOne({ 'roleName': roleName }, function (err, role) {
         if (err) {
             console.log(err);
             return;
         }
-        if (!user) {
-            var newUser = new User();
-            newUser.local.username = viet;
-            newUser.local.fullname = 'Viet Le';
-            newUser.local.email = 'vietle169@gmail.com';
-            newUser.local.phone = '0383260263';
-            newUser.local.password = newUser.generateHash('123123');
-            newUser.save(function (err) {
+        if (!role) {
+            let newRole = new Role({
+                "roleName": roleName,
+                "permissions": "*"
+            });
+            newRole.save(function (err, rsNewRole) {
                 if (err) {
                     console.log(err)
                     return;
                 }
-                console.log("Create new account " + viet);
-            });
-            var newUser2 = new User();
-            newUser2.local.username = 'hau';
-            newUser2.local.fullname = 'Hậu';
-            newUser2.local.email = 'hau@gmail.com';
-            newUser2.local.phone = '0374785005';
-            newUser2.local.password = newUser.generateHash('123');
-            newUser2.save(function (err) {
-                if (err) {
-                    console.log(err)
-                    return;
-                }
-                console.log("Create new account hau");
-            });
-            var newUser2 = new User();
-            newUser2.local.username = 'quyen';
-            newUser2.local.fullname = 'Quyền';
-            newUser2.local.email = 'quyen@gmail.com';
-            newUser2.local.phone = '0374785005';
-            newUser2.local.password = newUser.generateHash('123');
-            newUser2.save(function (err) {
-                if (err) {
-                    console.log(err)
-                    return;
-                }
-                console.log("Create new account quyen");
-            });
-            for (var u = 1; u <= 10; u++) {
-                var newUser3 = new User();
-                newUser3.local.username = 'nv' + u;
-                newUser3.local.fullname = 'nv' + u;
-                newUser3.local.email = 'nv' + u + '@gmail.com';
-                newUser3.local.phone = '0374785005';
-                newUser3.local.password = newUser.generateHash('123');
-                newUser3.save(function (err) {
+                let viet = 'vle34';
+                User.findOne({ 'local.username': viet }, function (err, user) {
                     if (err) {
-                        console.log(err)
+                        console.log(err);
                         return;
                     }
-                    console.log("Create new account nv" + u);
+                    if (!user) {
+                        var newUser = new User();
+                        newUser.local.username = viet;
+                        newUser.local.fullname = 'Viet Le';
+                        newUser.local.email = 'vietle169@gmail.com';
+                        newUser.local.role = rsNewRole._id;
+                        newUser.local.phone = '0383260263';
+                        newUser.local.password = newUser.generateHash('123123');
+                        newUser.save(function (err) {
+                            if (err) {
+                                console.log(err)
+                                return;
+                            }
+                            console.log("Create new account " + viet);
+                        });
+                        var newUser2 = new User();
+                        newUser2.local.username = 'hau';
+                        newUser2.local.fullname = 'Hậu';
+                        newUser2.local.role = roleName;
+                        newUser2.local.email = 'hau@gmail.com';
+                        newUser2.local.phone = '0374785005';
+                        newUser2.local.password = newUser.generateHash('123');
+                        newUser2.save(function (err) {
+                            if (err) {
+                                console.log(err)
+                                return;
+                            }
+                            console.log("Create new account hau");
+                        });
+                        var newUser2 = new User();
+                        newUser2.local.username = 'quyen';
+                        newUser2.local.fullname = 'Quyền';
+                        newUser2.local.email = 'quyen@gmail.com';
+                        newUser2.local.role = rsNewRole._id;
+                        newUser2.local.phone = '0374785005';
+                        newUser2.local.password = newUser.generateHash('123');
+                        newUser2.save(function (err) {
+                            if (err) {
+                                console.log(err)
+                                return;
+                            }
+                            console.log("Create new account quyen");
+                        });
+                        for (var u = 1; u <= 10; u++) {
+                            var newUser3 = new User();
+                            newUser3.local.username = 'nv' + u;
+                            newUser3.local.fullname = 'nv' + u;
+                            // newUser3.local.role = rsNewRole._id;
+                            newUser3.local.email = 'nv' + u + '@gmail.com';
+                            newUser3.local.phone = '0374785005';
+                            newUser3.local.password = newUser.generateHash('123');
+                            newUser3.save(function (err) {
+                                if (err) {
+                                    console.log(err)
+                                    return;
+                                }
+                                console.log("Create new account nv" + u);
+                            });
+                        }
+                        return;
+                    }
+                    console.log("User exists !")
                 });
-            }
-            return;
+                console.log("Create new role: " + roleName);
+            });
+        } else {
+            console.log("Role " + roleName + " is exists.");
         }
-        console.log("User exists !")
-    });
+    })
 
     ArtCategories.countDocuments({}, function (err, count) {
         if (err) {

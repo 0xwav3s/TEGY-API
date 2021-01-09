@@ -24,6 +24,19 @@ module.exports = {
             res.redirect(endpointAdmin.table.table + '/' + endpointAdmin.action.list);
         }
     },
+    authorization: function (req, res, next) {
+        let user = req.user;
+        if (user.local.role) {
+            let permission = user.local.role.permission;
+            // if(permission === "*"){
+                return next();
+            // }else if(permission.include('_')){
+
+            // }
+        } else {
+            return res.status(403).send({ success: false, msg: 'You do not have permission to access / on this server.' });
+        }
+    },
     getListRole_GET: function (req, res) {
         console.log("Get List Role");
         let message = '';
@@ -101,8 +114,8 @@ module.exports = {
     },
     getPermissionById_GET: function (req, res) {
         let id = req.params.id;
-        let item = links.filter(x => x.id === id);
-        handler.buildResponse(req, res, item, "Success get permission id: " + id, true);
+        let items = links.filter(x => x.id === id);
+        handler.buildResponse(req, res, items, (items.length > 0) ? "Success get permission id: " + id : "", true);
     },
 };
 

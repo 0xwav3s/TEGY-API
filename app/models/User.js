@@ -20,7 +20,7 @@ var userSchema = mongoose.Schema({
         },
         bio: String,
         birthday: { type: Date },
-        role: { type: String, ref: 'roles' },
+        role: { type: String, ref: 'role' },
         avatar: { type: String, ref: 'images' },
         createTime: { type: Date, default: Date.now() },
         updateTime: { type: Date, default: Date.now() },
