@@ -21,29 +21,18 @@ console.log("Start " + name);
 module.exports = {
     getListBill_GET: function (req, res) {
         console.log("Get All Menu");
-        if(req.query.from || req.query.to){
+        let filter = {};
+        if (req.query.from || req.query.to) {
             var from = helper.getEndDate(req.query.from);
             var to = helper.getStartDate(req.query.to);
-            var filter = {};
             filter.createTime = { "$gte": from, "$lt": to };
         }
-        var statusBill = req.query.statusBill;
-        switch (statusBill) {
-            case config.model.enum.bill[1]:
-                filter.status = config.model.enum.bill[1];
-                break;
-            case config.model.enum.bill[2]:
-                filter.status = config.model.enum.bill[2];
-                break;
-            case config.model.enum.bill[0]:
-                filter.status = config.model.enum.bill[0];
-                break;
-            default:
-        }
+        let bodyFilter = req.body;
+        let mergedFilter = { ...bodyFilter, ...filter };
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
         db.Bill
-            .find(filter)
+            .find(mergedFilter)
             .sort({ updateTime: "desc" })
             .populate('table')
             .populate('order')
@@ -52,15 +41,19 @@ module.exports = {
             .skip(limit * page)
             .exec(function (err, items) {
                 if (err) return handler.buildErrorResponse(req, res, err)
-                let data = {
-                    limit: limit,
-                    page: page,
-                    page: page,
-                    from: from,
-                    to: to,
-                    items: items
+                let data = {};
+                let message = '';
+                if (items.length > 0) {
+                    data = {
+                        limit: limit,
+                        page: page,
+                        page: page,
+                        from: from,
+                        to: to,
+                        items: items
+                    }
+                    message = 'Successful get all Menu.';
                 }
-                message = 'Successful get all Menu.';
                 console.log(message)
                 handler.buildResponse(req, res, data, message, true);
             })
@@ -74,20 +67,20 @@ module.exports = {
             if (!query.mode) {
                 // queryDbBill = await db.Bill.findById(id).populate('order');
                 queryDbBill = await db.Bill.findById(id).populate({
-                    path : 'order',
-                    populate : {
-                      path : 'menu'
+                    path: 'order',
+                    populate: {
+                        path: 'menu'
                     }
-                  });
+                });
                 if (queryDbBill === null) throw ''
             } else {
                 if (query.mode = 'multiple') {
                     queryDbBill = await db.Bill.find({ '_id': { $in: id } }).populate({
-                        path : 'order',
-                        populate : {
-                          path : 'menu'
+                        path: 'order',
+                        populate: {
+                            path: 'menu'
                         }
-                      });
+                    });
                     if (queryDbBill.length === 0) throw ''
                 }
             }
