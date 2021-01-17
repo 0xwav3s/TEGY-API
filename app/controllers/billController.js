@@ -173,7 +173,7 @@ module.exports = {
                 // let orders = ordersList.filter((obj) => { return obj }).map((obj) => { return obj._id; });
                 newBill.order = orders;
                 newBill.author = user._id;
-                newBill.type_bill = (body.type_bill)? body.type_bill : "Tại bàn";
+                newBill.type_bill = (body.type_bill) ? body.type_bill : "Tại bàn";
                 newBill.total_price_order = body.total_price_order;
                 newBill.table = tableId;
                 newBill.save((err, rsNewBill) => {
@@ -252,8 +252,10 @@ module.exports = {
                     let table = bill.table;
                     if (lastTable != table._id) {
                         lastTable = table._id;
-                        table.active = "Trống";
-                        table.currentBill = [];
+                        if (table.currentBill.length === 0) table.active = "Trống";
+                        id.map(id_bill => {
+                            table.currentBill = helper.removeElement(table.currentBill, id_bill);
+                        })
                         table.updateTime = Date.now();
                         table.save((err) => {
                             if (err) return handler.buildErrorResponse(req, res, err)
