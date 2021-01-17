@@ -173,6 +173,7 @@ module.exports = {
                 // let orders = ordersList.filter((obj) => { return obj }).map((obj) => { return obj._id; });
                 newBill.order = orders;
                 newBill.author = user._id;
+                newBill.type_bill = (body.type_bill)? body.type_bill : "Tại bàn";
                 newBill.total_price_order = body.total_price_order;
                 newBill.table = tableId;
                 newBill.save((err, rsNewBill) => {
