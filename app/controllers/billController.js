@@ -268,8 +268,8 @@ module.exports = {
                             lastTable = table._id;
                             id.map(id_bill => {
                                 table.currentBill = helper.removeElement(table.currentBill, id_bill);
-                                if (table.currentBill.length === 0) table.active = "Trống";
                             });
+                            if (table.currentBill.length === 0) table.active = "Trống";
                             table.updateTime = Date.now();
                             table.save((err) => {
                                 if (err) return handler.buildErrorResponse(req, res, err)
