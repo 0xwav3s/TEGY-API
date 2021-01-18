@@ -166,7 +166,7 @@ module.exports = {
         let user = req.user;
         db.Table.findById(tableId).exec(async (err, table) => {
             if (err) return handler.buildErrorResponse(req, res, err);
-            if (table.active === "Bảo trì") handler.buildResponse(req, res, {}, "Table " + table._id + " is maintain, you cannot insert for this table", false);
+            if (table && table.active === "Bảo trì") handler.buildResponse(req, res, {}, "Table " + table._id + " is maintain, you cannot insert for this table", false);
             insertOrderForBill(body, user).then((ordersList) => {
                 let newBill = new db.Bill();
                 let orders = ordersList.map((obj) => { return obj._id; }); //Get Id Array from Object Array
@@ -175,20 +175,24 @@ module.exports = {
                 newBill.author = user._id;
                 newBill.type_bill = (body.type_bill) ? body.type_bill : "Tại bàn";
                 newBill.total_price_order = body.total_price_order;
-                newBill.table = tableId;
+                if (table) newBill.table = tableId;
                 newBill.save((err, rsNewBill) => {
                     if (err) return handler.buildErrorResponse(req, res, err);
-                    table.currentBill.push(rsNewBill._id);
-                    table.active = "Có khách";
-                    table.updateTime = Date.now();
-                    table.save((err, rsTable) => {
-                        if (err) return handler.buildErrorResponse(req, res, err);
-                        let result = {
-                            table: rsTable,
-                            newBill: rsNewBill
-                        }
-                        return handler.buildResponse(req, res, result, 'Successful saved Table with Id: ' + table._id + ' and Bill with Id: ' + rsNewBill._id, true);
-                    })
+                    if (table) {
+                        table.currentBill.push(rsNewBill._id);
+                        table.active = "Có khách";
+                        table.updateTime = Date.now();
+                        table.save((err, rsTable) => {
+                            if (err) return handler.buildErrorResponse(req, res, err);
+                            let result = {
+                                table: rsTable,
+                                newBill: rsNewBill
+                            }
+                            return handler.buildResponse(req, res, result, 'Successful saved Table with Id: ' + table._id + ' and Bill with Id: ' + rsNewBill._id, true);
+                        })
+                    }else{
+                        return handler.buildResponse(req, res, rsNewBill, 'Successful saved Bill with Id: ' + rsNewBill._id, true);
+                    }
                 })
 
             }).catch((msg) => {
@@ -204,7 +208,7 @@ module.exports = {
             if (!bill) handler.buildErrorResponse(req, res, "");
             let table = bill.table;
             if (err) return handler.buildErrorResponse(req, res, err);
-            if (table.active === "Bảo trì") handler.buildErrorResponse(req, res, "Table " + table._id + " is maintain, you cannot insert for this table");
+            if (table && table.active === "Bảo trì") handler.buildErrorResponse(req, res, "Table " + table._id + " is maintain, you cannot insert for this table");
             insertOrderForBill(body, user).then((ordersList) => {
                 let totalNewOrder = 0;
                 let orders = ordersList.map((obj) => {
@@ -216,10 +220,12 @@ module.exports = {
                 bill.total_price_order += totalNewOrder;
                 bill.save((err, rsBill) => {
                     if (err) return handler.buildErrorResponse(req, res, err);
-                    table.updateTime = Date.now();
-                    table.save((err) => {
-                        if (err) throw err;
-                    })
+                    if (table) {
+                        table.updateTime = Date.now();
+                        table.save((err) => {
+                            if (err) throw err;
+                        })
+                    }
                     let result = {
                         bill: rsBill,
                         newOrder: ordersList

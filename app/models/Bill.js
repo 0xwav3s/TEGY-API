@@ -37,7 +37,7 @@ var billSchema = mongoose.Schema({
         required: true
     },
     // menu: [{ type: String, ref: 'menu', required: true }],
-    table: { type: String, ref: 'table', required: true },
+    table: { type: String, ref: 'table' },
     order: [{ type: String, ref: 'order', required: true }],
     author: { type: String, ref: 'user', required: true },
     timeIn: { type: Date, default: Date.now(), required: true },
