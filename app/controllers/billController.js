@@ -27,10 +27,11 @@ module.exports = {
             var to = helper.getStartDate(req.query.to);
             filter.createTime = { "$gte": from, "$lt": to };
         }
-        let bodyFilter = req.body;
-        let mergedFilter = { ...bodyFilter, ...filter };
+        let paramFilter = req.query;
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
+        let mergedFilter = { ...paramFilter, ...filter };
+        mergedFilter = helper.removeIsNotFilter(mergedFilter);
         db.Bill
             .find(mergedFilter)
             .sort({ updateTime: "desc" })
@@ -190,7 +191,7 @@ module.exports = {
                             }
                             return handler.buildResponse(req, res, result, 'Successful saved Table with Id: ' + table._id + ' and Bill with Id: ' + rsNewBill._id, true);
                         })
-                    }else{
+                    } else {
                         return handler.buildResponse(req, res, rsNewBill, 'Successful saved Bill with Id: ' + rsNewBill._id, true);
                     }
                 })
@@ -256,7 +257,7 @@ module.exports = {
                         bill.totalBills.money_pay_for_cus = result.money_pay_for_cus;
                     }
                     let table = bill.table;
-                    if(table){
+                    if (table) {
                         if (lastTable != table._id) {
                             lastTable = table._id;
                             if (table.currentBill.length === 0) table.active = "Trống";

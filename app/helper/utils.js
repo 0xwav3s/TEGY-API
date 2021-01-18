@@ -222,3 +222,11 @@ module.exports.removeElement = function (array, elem) {
     var index = array.indexOf(elem);
     return (index > -1) ? array.splice(index, 1) : array;
 }
+
+module.exports.removeIsNotFilter = function (mergedFilter) {
+    delete mergedFilter.from;
+    delete mergedFilter.to;
+    delete mergedFilter.page;
+    delete mergedFilter.limit;
+    return mergedFilter;
+}
