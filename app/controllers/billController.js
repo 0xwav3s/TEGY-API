@@ -256,16 +256,18 @@ module.exports = {
                         bill.totalBills.money_pay_for_cus = result.money_pay_for_cus;
                     }
                     let table = bill.table;
-                    if (lastTable != table._id) {
-                        lastTable = table._id;
-                        if (table.currentBill.length === 0) table.active = "Trống";
-                        id.map(id_bill => {
-                            table.currentBill = helper.removeElement(table.currentBill, id_bill);
-                        })
-                        table.updateTime = Date.now();
-                        table.save((err) => {
-                            if (err) return handler.buildErrorResponse(req, res, err)
-                        })
+                    if(table){
+                        if (lastTable != table._id) {
+                            lastTable = table._id;
+                            if (table.currentBill.length === 0) table.active = "Trống";
+                            id.map(id_bill => {
+                                table.currentBill = helper.removeElement(table.currentBill, id_bill);
+                            })
+                            table.updateTime = Date.now();
+                            table.save((err) => {
+                                if (err) return handler.buildErrorResponse(req, res, err)
+                            })
+                        }
                     }
                     bill.save((err) => {
                         if (err) return handler.buildErrorResponse(req, res, err)
