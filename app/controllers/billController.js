@@ -20,7 +20,7 @@ console.log("Start " + name);
 
 module.exports = {
     getListBill_GET: function (req, res) {
-        console.log("Get All Menu");
+        console.log("Get All Bills");
         let filter = {};
         if (req.query.from || req.query.to) {
             var from = helper.getEndDate(req.query.from);
@@ -37,6 +37,12 @@ module.exports = {
             .sort({ updateTime: "desc" })
             .populate('table')
             .populate('order')
+            .populate({
+                path: 'order',
+                populate: {
+                    path: 'menu'
+                }
+            })
             .populate('user')
             .limit(limit)
             .skip(limit * page)
@@ -53,7 +59,7 @@ module.exports = {
                         to: to,
                         items: items
                     }
-                    message = 'Successful get all Menu.';
+                    message = 'Successful get all Bills.';
                 }
                 console.log(message)
                 handler.buildResponse(req, res, data, message, true);
@@ -260,14 +266,14 @@ module.exports = {
                     if (table) {
                         if (lastTable != table._id) {
                             lastTable = table._id;
-                            if (table.currentBill.length === 0) table.active = "Trống";
                             id.map(id_bill => {
                                 table.currentBill = helper.removeElement(table.currentBill, id_bill);
-                            })
+                                if (table.currentBill.length === 0) table.active = "Trống";
+                            });
                             table.updateTime = Date.now();
                             table.save((err) => {
                                 if (err) return handler.buildErrorResponse(req, res, err)
-                            })
+                            });
                         }
                     }
                     bill.save((err) => {
