@@ -40,7 +40,8 @@ module.exports = {
             .populate({
                 path: 'order',
                 populate: {
-                    path: 'menu'
+                    path: 'menu',
+                    select: 'name'
                 }
             })
             .populate('user')
@@ -76,7 +77,8 @@ module.exports = {
                 queryDbBill = await db.Bill.findById(id).populate({
                     path: 'order',
                     populate: {
-                        path: 'menu'
+                        path: 'menu',
+                        select: 'name'
                     }
                 });
                 if (queryDbBill === null) throw ''
@@ -85,7 +87,8 @@ module.exports = {
                     queryDbBill = await db.Bill.find({ '_id': { $in: id } }).populate({
                         path: 'order',
                         populate: {
-                            path: 'menu'
+                            path: 'menu',
+                            select: 'name'
                         }
                     });
                     if (queryDbBill.length === 0) throw ''
