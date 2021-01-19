@@ -218,14 +218,6 @@ module.exports.removePathUrl = function (path, url) {
     return newPath
 }
 
-module.exports.removeElement = function (array, elem) {
-    var index = array.indexOf(elem);
-    if (index > -1)
-        return (array.length === 1) ? [] : array.splice(index, 1)
-    else
-        return array;
-}
-
 module.exports.removeIsNotFilter = function (mergedFilter) {
     delete mergedFilter.from;
     delete mergedFilter.to;

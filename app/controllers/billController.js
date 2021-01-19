@@ -266,9 +266,7 @@ module.exports = {
                     if (table) {
                         if (lastTable != table._id) {
                             lastTable = table._id;
-                            id.map(id_bill => {
-                                table.currentBill = helper.removeElement(table.currentBill, id_bill);
-                            });
+                            table.currentBill = table.currentBill.filter(x => !id.includes(x));
                             if (table.currentBill.length === 0) table.active = "Trống";
                             table.updateTime = Date.now();
                             table.save((err) => {
