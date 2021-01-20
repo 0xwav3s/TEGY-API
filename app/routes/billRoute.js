@@ -23,6 +23,7 @@ module.exports = function (app) {
     routerBill.post('/:id/cancel', function (req, res) {
         bill_controller.submitBill_POST(req, res, 'cancel')
     });
+    routerBill.post('/:id/switch', bill_controller.switchBillToAnotherTableById_POST);
     routerBill.post('/:id/orders', bill_controller.insertNewOrderForBill_POST);
 
     var routerOrder = express.Router();

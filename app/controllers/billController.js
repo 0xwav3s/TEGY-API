@@ -316,6 +316,54 @@ module.exports = {
         } catch (err) {
             return handler.buildErrorResponse(req, res, err);
         }
+    },
+    switchBillToAnotherTableById_POST: function (req, res) {
+        let body = req.body;
+        let id = req.params.id;
+        id = id.split(',');
+        try {
+            db.Bill.find({ '_id': { $in: id } }).populate('table').exec(async (err, bills) => {
+                if (err) throw err;
+                let table = await db.Table.findById(body.tableId);
+                if (table.active === "Bảo trì") return handler.buildErrorResponse(req, res, "Table " + table.name + " is maintain !");
+                let result = {
+                    tableFrom: [],
+                    tableTo: "",
+                    bills: []
+                };
+                let previousTableId;
+                await Promise.all(bills.map(bill => {
+                    let tableBill = bill.table;
+                    if (tableBill._id !== table._id) {
+                        table.currentBill.push(bill._id);
+                        tableBill.currentBill = tableBill.currentBill.filter(x => !id.includes(bill._id));
+                        table.active = "Có khách";
+                        tableBill.active = (tableBill.currentBill.length === 0) ? "Trống" : tableBill.active;
+                        bill.table = table._id;
+                        result.bills.push(bill);
+                        result.tableTo = table._id;
+                        if (!result.tableFrom.includes(tableBill._id))
+                            result.tableFrom.push(tableBill._id);
+                        bill.save((err) => {
+                            if (err) throw err;
+                            if (tableBill._id !== previousTableId){
+                                tableBill.save((err) => {
+                                    if (err) throw err;
+                                })
+                                previousTableId = tableBill._id;
+                            }
+                        })
+                    }
+                }));
+                table.save((err) => {
+                    if (err) throw err;
+                })
+                if (result.tableTo === "" && result.tableFrom.length === 0) return handler.buildErrorResponse(req, res, 'Bill with Id: ' + id + ' already in table');;
+                return handler.buildResponse(req, res, result, 'Successful Switch Bill with Id: ' + id + ' table ' + result.tableFrom + ' to table ' + result.tableTo, true);
+            })
+        } catch (err) {
+            return handler.buildErrorResponse(req, res, err);
+        }
     }
 }
 

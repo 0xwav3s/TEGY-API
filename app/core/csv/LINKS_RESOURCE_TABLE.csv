@@ -29,7 +29,8 @@ bill_insertNewBill,billResource,ALL,bill:insert_bill,/bill,POST,Insert new bill 
 bill_info,billResource,ALL,bill:id,/bill/:id,GET,Get detail bill with order by billId
 bill_update,billResource,ALL,bill:id,/bill/:id,PATCH,Update bill by Id
 bill_pay,billResource,ALL,bill:pay,/bill/:id/pay,POST,Submit bill for payment with multi ID
-bill_cancel,billResource,ALL,bill:id,/bill/:id/cancel,POST,Cancel bill for payment with multi ID
+bill_cancel,billResource,ALL,bill:id,/bill/:id/cancel,POST,Cancel bill with multi ID
+bill_switch,billResource,ALL,bill:id,/bill/:id/switch,POST,Switch bill to another table
 bill_delete,billResource,ALL,bill:id,/bill/:id,DELETE,Remove bill by Id
 bill_insertOrders,billResource,ALL,bill:insert_orders,/bill/:id/orders,POST,Insert new orders for Bill
 order_info,billResource,ALL,order:id,/order/:id,GET,Get order by Id
