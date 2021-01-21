@@ -3,6 +3,7 @@
 const config = require('config');
 const db = require('../helper/dbHelper');
 const helper = require('../helper/utils');
+const filter = require('../helper/filter');
 // const print = require('../helper/printServices/printServices');
 // const notify = require('../helper/notifyFunction');
 const mailService = require('../helper/mailService');
@@ -21,17 +22,19 @@ console.log("Start " + name);
 module.exports = {
     getListBill_GET: function (req, res) {
         console.log("Get All Bills");
-        let filter = {};
-        if (req.query.from || req.query.to) {
-            var from = helper.getEndDate(req.query.from);
-            var to = helper.getStartDate(req.query.to);
-            filter.createTime = { "$gte": from, "$lt": to };
-        }
-        let paramFilter = req.query;
+        // let filter = {};
+        // if (req.query.from || req.query.to) {
+        //     var from = helper.getEndDate(req.query.from);
+        //     var to = helper.getStartDate(req.query.to);
+        //     filter.createTime = { "$gte": from, "$lt": to };
+        // }
+        // let paramFilter = req.query;
+        let mergedFilter = filter.getFilter(req);
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
-        let mergedFilter = { ...paramFilter, ...filter };
-        mergedFilter = helper.removeIsNotFilter(mergedFilter);
+        let from = mergedFilter.from;
+        let to = mergedFilter.to;
+        mergedFilter = filter.removeIsNotFilter(mergedFilter);
         db.Bill
             .find(mergedFilter)
             .sort({ updateTime: "desc" })

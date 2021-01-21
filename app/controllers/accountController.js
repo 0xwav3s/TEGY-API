@@ -37,6 +37,71 @@ module.exports = {
                 res.json(err);
             });
     },
+    getListUser_GET: function (req, res) {
+        console.log("Get All Users");
+        let filter = {};
+        if (req.query.from || req.query.to) {
+            var from = helper.getEndDate(req.query.from);
+            var to = helper.getStartDate(req.query.to);
+            filter.createTime = { "$gte": from, "$lt": to };
+        }
+        let paramFilter = req.query;
+        let page = (req.query.page) ? parseInt(req.query.page) : 0;
+        let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
+        let mergedFilter = { ...paramFilter, ...filter };
+        mergedFilter = helper.removeIsNotFilter(mergedFilter);
+        db.User
+            .find(mergedFilter)
+            .sort({ createTime: "desc" })
+            .populate('role')
+            .limit(limit)
+            .skip(limit * page)
+            .exec(function (err, items) {
+                if (err) return handler.buildErrorResponse(req, res, err)
+                let data = {};
+                let message = '';
+                if (items.length > 0) {
+                    data = {
+                        limit: limit,
+                        page: page,
+                        page: page,
+                        from: from,
+                        to: to,
+                        items: items
+                    }
+                    message = 'Successful get all Users.';
+                }
+                console.log(message)
+                handler.buildResponse(req, res, data, message, true);
+            })
+    },
+    getUserById_GET: function (req, res) {
+        let message = '';
+        let id = req.params.id;
+        db.User
+            .findOne({ _id: id })
+            .exec(function (err, item) {
+                if (err) {
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
+                    console.log(err)
+                    message = err.message;
+                    return handler.buildErrorResponse(req, res, message)
+                }
+                message = 'Success find User by id: ' + id;
+                console.log(message)
+                return handler.buildResponse(req, res, item, message, true);
+            })
+    },
+    updateUserById_PATCH: function (req, res) {
+        let body = req.body;
+        let id = req.params.id;
+        let modelName = 'User';
+        db.updateItemById(modelName, id, body).then((result) => {
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
+        }).catch((err) => {
+            handler.buildResponse(req, res, {}, err, false);
+        });
+    },
     signIn_POST: async function (req, res) {
         let username = req.body.username;
         console.log('Start find user: ' + username);
