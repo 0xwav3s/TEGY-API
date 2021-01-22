@@ -22,13 +22,6 @@ console.log("Start " + name);
 module.exports = {
     getListBill_GET: function (req, res) {
         console.log("Get All Bills");
-        // let filter = {};
-        // if (req.query.from || req.query.to) {
-        //     var from = helper.getEndDate(req.query.from);
-        //     var to = helper.getStartDate(req.query.to);
-        //     filter.createTime = { "$gte": from, "$lt": to };
-        // }
-        // let paramFilter = req.query;
         let mergedFilter = filter.getFilter(req);
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;

@@ -44,3 +44,4 @@ PATCH,/role/:id,ALL,N,roleResource,role_ALL
 DELETE,/role/:id,ALL,N,roleResource,role_ALL
 GET,/permission/list,ALL,Y,roleResource,role_ALL
 GET,/permission/:id,ALL,N,roleResource,role_ALL
+GET,/report/over,ALL,N,reportResource,report_ALL

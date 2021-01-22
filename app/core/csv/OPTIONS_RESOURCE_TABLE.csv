@@ -44,3 +44,4 @@ role_ALL,ALL,/role/:id,PATCH,application/vnd.hal+json,roleSchema
 role_ALL,ALL,/role/:id,DELETE,application/vnd.hal+json,roleSchema
 role_ALL,ALL,/permission/list,GET,application/vnd.hal+json,roleSchema
 role_ALL,ALL,/permission/:id,GET,application/vnd.hal+json,roleSchema
+report_ALL,ALL,/report/over,GET,application/vnd.hal+json,reportSchema

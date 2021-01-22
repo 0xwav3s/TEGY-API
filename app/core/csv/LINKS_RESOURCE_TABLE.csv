@@ -44,3 +44,4 @@ role_update,roleResource,ALL,role:id,/role/:id,PATCH,Update role by ID
 role_delete,roleResource,ALL,role:id,/role/:id,DELETE,Remove role by ID
 permission_list,roleResource,ALL,permission:list,/permission/list,GET,Get list permission
 permission_info,roleResource,ALL,permission:id,/permission/:id,GET,Get permission by ID
+report_over,reportResource,ALL,report:over,/report/over,GET,Get permission by ID
