@@ -1,3 +1,4 @@
+const helper = require('./utils');
 module.exports.getFilter = function (req) {
     let filter = {};
     if (req.query.from || req.query.to) {
@@ -5,9 +6,9 @@ module.exports.getFilter = function (req) {
         var to = helper.getStartDate(req.query.to);
         filter.createTime = { "$gte": from, "$lt": to };
     }
-    let merge = { ...req.query, ...filter };;
+    let merge = { ...req.query, ...filter };
     for(let i in merge){
-        if(merge[i].includes(",")){
+        if(merge[i].length > 2 && merge[i].includes(",")){
             merge[i] = {$in: merge[i].split(",")};
         }
     }
