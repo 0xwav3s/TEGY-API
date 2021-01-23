@@ -22,12 +22,13 @@ console.log("Start " + name);
 module.exports = {
     getListBill_GET: function (req, res) {
         console.log("Get All Bills");
-        let mergedFilter = filter.getFilter(req);
+        let mergedFilter = filter.getFilter(req,'timeIn');
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
         let from = mergedFilter.from;
         let to = mergedFilter.to;
         mergedFilter = filter.removeIsNotFilter(mergedFilter);
+        console.log(mergedFilter)
         db.Bill
             .find(mergedFilter)
             .sort({ updateTime: "desc" })
@@ -256,6 +257,8 @@ module.exports = {
                 let bills = result.bills;
                 let i = 0;
                 bills.map((bill) => {
+                    bill.timeOut = new Date();
+                    bill.updateTime = new Date();
                     bill.totalBills.total_price_bills = result.total_price_bills;
                     if ((result.money_give_by_cus || result.money_pay_for_cus) && mode === 'pay') {
                         bill.totalBills.money_give_by_cus = result.money_give_by_cus;

@@ -39,7 +39,7 @@ module.exports.isEmptyObject = function (obj) {
 module.exports.getStartDate = function (date) {
     if (date) {
         date = new Date(date);
-        date.setSeconds(00, 00);
+        // date.setSeconds(00, 00);
         return date;
     } else {
         date = new Date();
@@ -52,7 +52,7 @@ module.exports.getStartDate = function (date) {
 module.exports.getEndDate = function (date) {
     if (date) {
         date = new Date(date);
-        date.setSeconds(00, 00);
+        // date.setSeconds(00, 00);
         return date;
     } else {
         date = new Date();
