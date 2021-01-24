@@ -26,14 +26,15 @@ module.exports = {
     },
     authorization: function (req, res, next) {
         let user = req.user;
-        return next();
+        // console.log(user.local.role)
+        // return next();
         if (user.local.role) {
-            let permission = user.local.role.permission;
-            // if(permission === "*"){
+            let permission = user.local.role.permissions;
+            if(permission === "*"){
                 return next();
-            // }else if(permission.include('_')){
+            }else if(permission.includes('_')){
 
-            // }
+            }
         } else {
             return res.status(403).send({ success: false, msg: 'You do not have permission to access / on this server.' });
         }
@@ -42,13 +43,8 @@ module.exports = {
         console.log("Get List Role");
         let message = '';
         let filter = {};
-        // let page = (req.query.page) ? parseInt(req.query.page) : 0;
-        // let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
         db.Role
             .find(filter)
-            // .sort({ updateTime: "desc" })
-            // .limit(limit)
-            // .skip(limit * page)
             .exec(function (err, items) {
                 if (err) {
                     mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')

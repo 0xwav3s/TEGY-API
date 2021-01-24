@@ -33,7 +33,7 @@ module.exports = function (passport) {
             if (err) {
                 done(err, false);
             } else {
-                done(null, UserValidate);
+                done(null, jwt_payload);
             }
         })
     }));

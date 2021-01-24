@@ -1,5 +1,5 @@
 const helper = require('./utils');
-module.exports.getFilter = function (req, fieldFromTo) {
+module.exports.getFilterHasFromTo = function (req, fieldFromTo) {
     let filter = {};
     if (req.query.from || req.query.to) {
         var from = helper.getEndDate(req.query.from);

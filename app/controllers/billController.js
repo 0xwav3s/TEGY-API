@@ -22,7 +22,7 @@ console.log("Start " + name);
 module.exports = {
     getListBill_GET: function (req, res) {
         console.log("Get All Bills");
-        let mergedFilter = filter.getFilter(req,'timeIn');
+        let mergedFilter = filter.getFilterHasFromTo(req,'timeIn');
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
         let from = mergedFilter.from;
