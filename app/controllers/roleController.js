@@ -27,7 +27,7 @@ module.exports = {
     authorization: function (req, res, next) {
         let user = req.user;
         // console.log(user.local.role)
-        // return next();
+        return next();
         if (user.local.role) {
             let permission = user.local.role.permissions;
             if(permission === "*"){
