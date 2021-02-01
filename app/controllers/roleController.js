@@ -3,7 +3,7 @@ var config = require('config');
 const handler = require('../core/handler/tegyHandler');
 const mailService = require('../helper/mailService');
 const db = require('../helper/dbHelper');
-
+const helper = require('../helper/utils');
 
 const path = require('path');
 var scriptName = path.basename(__filename).split(".");
@@ -27,13 +27,25 @@ module.exports = {
     authorization: function (req, res, next) {
         let user = req.user;
         // console.log(user.local.role)
-        return next();
+        // return next();
         if (user.local.role) {
             let permission = user.local.role.permissions;
-            if(permission === "*"){
-                return next();
-            }else if(permission.includes('_')){
-
+            if (permission === "*") return next();
+            let detachPermission = permission.split('/');
+            let filterLink = handler.csv.links.filter(e => (e.href === req.baseUrl + req.route.path) && e.method === req.method);
+            if (filterLink.length > 0) {
+                let charSpecial = '_'
+                let resource = filterLink[0];
+                let splitId = resource.id.split(charSpecial);
+                let id = splitId[0].concat(charSpecial);
+                let isAuthorize = false;
+                detachPermission.map(pms => {
+                    if (pms === id.concat('*') || pms === resource.id) {
+                        isAuthorize = true;
+                        return;
+                    }
+                })
+                return (isAuthorize) ? next() : res.status(403).send({ success: false, msg: 'You do not have permission to access / on this server.' });
             }
         } else {
             return res.status(403).send({ success: false, msg: 'You do not have permission to access / on this server.' });

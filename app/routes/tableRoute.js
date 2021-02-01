@@ -1,17 +1,8 @@
 let config = require('config');
 var upload = require('../helper/cloudinaryService');
 const passport = require('passport');
-
-var user_controller = require('../controllers/accountController');
-var post_controller = require('../controllers/postController');
-var table_controller = require('../controllers/tableController');
-var menu_controller = require('../controllers/menuController');
-var bill_controller = require('../controllers/billController');
-// let dirPageAccount = 'admin/pages/account/';
-let endpointAccount = config.get('endpoint').account;
-
-let dirPage = 'admin/pages/dashboard/';
-let endpoint = config.get('endpoint').dashboard;
+const table_controller = require('../controllers/tableController');
+const role_controller = require('../controllers/roleController');
 var express = require('express');
 
 module.exports = function (app) {
@@ -25,11 +16,11 @@ module.exports = function (app) {
      * CRUD Bàn ăn
      */
     var routerTable = express.Router();
-    routerTable.get('/list', table_controller.getListTable_GET)
-    routerTable.get('/:id', table_controller.getTableById_GET)
-    routerTable.patch('/:id', table_controller.updateTableById_PATCH)
-    routerTable.delete('/:id', table_controller.deleteTable_DELETE)
-    routerTable.post('/create', table_controller.createTable_POST)
+    routerTable.get('/list', role_controller.authorization, table_controller.getListTable_GET)
+    routerTable.get('/:id', role_controller.authorization, table_controller.getTableById_GET)
+    routerTable.patch('/:id', role_controller.authorization, table_controller.updateTableById_PATCH)
+    routerTable.delete('/:id', role_controller.authorization, table_controller.deleteTable_DELETE)
+    routerTable.post('/create', role_controller.authorization, table_controller.createTable_POST)
 
     /**
     * CRUD Khu vực
@@ -37,11 +28,11 @@ module.exports = function (app) {
     let zoneSubEndpoint = '/zone';
     var routerZone = express.Router();
 
-    routerZone.get('/list', table_controller.getListZone_GET);
-    routerZone.get('/:id', table_controller.getZoneById_GET)
-    routerZone.patch('/:id', table_controller.updateZoneById_PATCH)
-    routerZone.delete('/:id', table_controller.deleteZoneById_DELETE)
-    routerZone.post('/create', table_controller.createZone_POST)
+    routerZone.get('/list', role_controller.authorization, table_controller.getListZone_GET);
+    routerZone.get('/:id', role_controller.authorization, table_controller.getZoneById_GET)
+    routerZone.patch('/:id', role_controller.authorization, table_controller.updateZoneById_PATCH)
+    routerZone.delete('/:id', role_controller.authorization, table_controller.deleteZoneById_DELETE)
+    routerZone.post('/create', role_controller.authorization, table_controller.createZone_POST)
 
     //Add subEndpoint cho routerPost
     app.use(tabSubEndpoint, routerTable);

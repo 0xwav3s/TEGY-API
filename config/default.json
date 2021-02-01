@@ -4,11 +4,11 @@
     },
     "dev": true,
     "secret": "nodeauthsecret",
-    "timeExpiredToken": 12,
+    "timeExpiredToken": 36,
     "copyright": {
         "name": "TEGY SERVICES"
     },
-    "port": "3000",
+    "port": "3002",
     "role": {
         "admin": [
             "vle34",
