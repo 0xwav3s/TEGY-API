@@ -173,7 +173,14 @@ module.exports = {
         })
     },
     signUp_POST: function (req, res) {
-
+        var body = req.body;
+        let modelName = 'User';
+        db.createNewItem(modelName, body).then((result) => {
+            return handler.buildResponse(req, res, result, 'Successful create new ' + modelName + ' ID: ' + result._id, true);
+        }).catch((err) => {
+            console.log(err);
+            return handler.buildErrorResponse(req, res, {}, err);
+        });
     },
     isLoggedIn: function (req, res, next) {
         let checkExpire = false;
