@@ -24,6 +24,7 @@ var userSchema = mongoose.Schema({
         avatar: { type: String, ref: 'images' },
         createTime: { type: Date, default: Date.now() },
         updateTime: { type: Date, default: Date.now() },
+        available: { type: Boolean, default: true },
         tokenExpires: Date,
         resetPasswordToken: String,
         resetPasswordExpires: Date,

@@ -4,6 +4,11 @@ POST,/account/logout,ALL,N,accountResource,account_POST
 POST,/account/register,ALL,N,accountResource,account_POST
 GET,/account/profile,ALL,N,accountResource,account_GET_PATCH
 PATCH,/account/profile,ALL,N,accountResource,account_GET_PATCH
+GET,/account/list,ALL,N,accountResource,account_ALL
+GET,/account/:id,ALL,N,accountResource,account_ALL
+PATCH,/account/:id,ALL,N,accountResource,account_ALL
+POST,/account/change_password,ALL,N,accountResource,account_ALL
+DELETE,/account/:id,ALL,N,accountResource,account_ALL
 GET,/table/list,ALL,Y,tableResource,table_ALL
 GET,/table/:id,ALL,N,tableResource,table_ALL
 POST,/table/create,ALL,N,tableResource,table_ALL

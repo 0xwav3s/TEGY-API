@@ -3,6 +3,7 @@ const config = require('config');
 const crypto = require('crypto');
 const db = require('../helper/dbHelper');
 const helper = require('../helper/utils');
+const filter = require('../helper/filter');
 const handler = require('../core/handler/tegyHandler');
 const async = require('async');
 const Duration = require("duration");
@@ -22,7 +23,7 @@ const path = require('path');
 var scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
 const log4js = require('../helper/logService');
-const { resolve } = require('path');
+const { throws } = require('assert');
 var log = log4js.getLog(name);
 log4js.setConsoleToLogger(log);
 console.log("Start " + name);
@@ -39,17 +40,13 @@ module.exports = {
     },
     getListUser_GET: function (req, res) {
         console.log("Get All Users");
-        let filter = {};
-        if (req.query.from || req.query.to) {
-            var from = helper.getEndDate(req.query.from);
-            var to = helper.getStartDate(req.query.to);
-            filter.createTime = { "$gte": from, "$lt": to };
-        }
-        let paramFilter = req.query;
+        let mergedFilter = filter.getFilterHasFromTo(req, convertVariableToLocalModel('createTime'));
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
-        let mergedFilter = { ...paramFilter, ...filter };
-        mergedFilter = helper.removeIsNotFilter(mergedFilter);
+        let from = mergedFilter.from;
+        let to = mergedFilter.to;
+        mergedFilter = filter.removeIsNotFilter(mergedFilter);
+        console.log(mergedFilter)
         db.User
             .find(mergedFilter)
             .sort({ createTime: "desc" })
@@ -102,6 +99,16 @@ module.exports = {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
+    deleteUserById_DELETE: function (req, res) {
+        let id = req.params.id;
+        let modelName = 'User';
+        db.removeItemById(modelName, id).then((message) => {
+            return handler.buildResponse(req, res, {}, message, true);
+        }).catch((err) => {
+            console.log(err);
+            return handler.buildErrorResponse(req, res, err);
+        });
+    },
     signIn_POST: async function (req, res) {
         let username = req.body.username;
         console.log('Start find user: ' + username);
@@ -139,6 +146,32 @@ module.exports = {
             }
         })
     },
+    changePasswordByProfile_POST: function (req, res) {
+        // let id = req.params.id;
+        let id = req.user._id;
+        let body = req.body;
+        let password = body.password;
+        let newPassword = body.newPassword;
+        let reNewPassword = body.reNewPassword;
+        db.User.findOne({ '_id': id }, function (err, user) {
+            try {
+                if (newPassword !== reNewPassword) throw new Error("Nhập lại mật khẩu mới không đúng !");
+                else if (err) throw err;
+                else if (!user) throw new Error("Tài khoản này không tồn tại");
+                else if (!user.validPassword(password)) throw new Error("Mật khẩu hiện tại không đúng !");
+                else {
+                    user.local.password = user.generateHash(newPassword);
+                    user.local.updateTime = Date.now();
+                    user.save((err) => {
+                        if (err) throw err;
+                        return handler.buildResponse(req, res, {}, "Đổi mật khẩu mới thành công !", true);
+                    })
+                }
+            } catch (err) {
+                return handler.buildErrorResponse(req, res, err);
+            }
+        })
+    },
     signUp_POST: function (req, res) {
 
     },
@@ -159,7 +192,7 @@ module.exports = {
         if (user && user.local.tokenExpires) {
             let duration = new Duration(new Date(user.local.tokenExpires), new Date());
             // let duration = new Duration(new Date(), user.local.tokenExpires);
-            if (duration.hours >= config.timeExpiredToken-8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
+            if (duration.hours >= config.timeExpiredToken - 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
             let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
             if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
@@ -326,3 +359,7 @@ module.exports = {
         });
     }
 };
+
+function convertVariableToLocalModel(str) {
+    return 'local.' + str;
+}

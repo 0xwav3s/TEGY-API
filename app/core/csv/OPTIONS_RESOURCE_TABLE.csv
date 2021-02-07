@@ -4,6 +4,12 @@ account_POST,ALL,/account/logout,POST,application/vnd.hal+json,
 account_POST,ALL,/account/register,POST,application/vnd.hal+json,userSchema
 account_GET_PATCH,ALL,/account/profile,GET,application/vnd.hal+json,userSchema
 account_GET_PATCH,ALL,/account/profile,PATCH,application/vnd.hal+json,userSchema
+account_ALL,ALL,/account/list,GET,application/vnd.hal+json,userSchema
+account_ALL,ALL,/account/:id,GET,application/vnd.hal+json,userSchema
+account_ALL,ALL,/account/create,POST,application/vnd.hal+json,userSchema
+account_ALL,ALL,/account/:id,PATCH,application/vnd.hal+json,userSchema
+account_ALL,ALL,/account/:id,DELETE,application/vnd.hal+json,userSchema
+account_ALL,ALL,/account/change_password,POST,application/vnd.hal+json,changeSchema
 table_ALL,ALL,/table/list,GET,application/vnd.hal+json,tableSchema
 table_ALL,ALL,/table/:id,GET,application/vnd.hal+json,tableSchema
 table_ALL,ALL,/table/create,POST,application/vnd.hal+json,tableSchema

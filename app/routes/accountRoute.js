@@ -16,6 +16,7 @@ var express = require('express');
 module.exports = function (app) {
 
     let routerAccount = express.Router();
+    var accountSubEndpoint = '/account';
 
     // Đăng nhập
     app.post('/account/login', user_controller.signIn_POST);
@@ -27,11 +28,17 @@ module.exports = function (app) {
     routerAccount.get('/profile', user_controller.profile_GET);
     routerAccount.patch('/profile', user_controller.profile_PATCH);
 
+    //Quản lý
+    routerAccount.get('/list', role_controller.authorization, user_controller.getListUser_GET);
+    routerAccount.get('/:id', role_controller.authorization, user_controller.getUserById_GET);
+    routerAccount.patch('/:id', role_controller.authorization, user_controller.updateUserById_PATCH);
+    routerAccount.delete('/:id', role_controller.authorization, user_controller.deleteUserById_DELETE);
+    routerAccount.post('/change_password', role_controller.authorization, user_controller.changePasswordByProfile_POST);
 
-    // Đăng xuất 
+    // Đăng xuất
     routerAccount.post('/logout', user_controller.logOut);
 
-    app.use('/account', routerAccount);
+    app.use(accountSubEndpoint, routerAccount);
 
     app.get(endpoint.change, user_controller.isLoggedIn, function (req, res) {
         res.render(dirPageDashboard + 'changePassword.ejs', {

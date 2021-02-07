@@ -2,8 +2,14 @@ id,resourceREF,products,linkName,href,method,title
 account_login,accountResource,ALL,account:login,/account/login,POST,Sign In Account
 account_logout,accountResource,ALL,account:logout,/account/logout,POST,Logout Account
 account_signup,accountResource,ALL,account:register,/account/register,POST,Sign Up Account
-account_info,accountResource,ALL,account:profile,/account/profile,GET,Get information account from jwt
-account_update,accountResource,ALL,account:profile,/account/profile,PATCH,Update information account
+account_profile,accountResource,ALL,account:profile,/account/profile,GET,Get information account from jwt
+account_updateProfile,accountResource,ALL,account:profile,/account/profile,PATCH,Update information account
+account_changePassword,accountResource,ALL,account:change_password,/account/change_password,POST,Change password account by ID
+account_list,accountResource,ALL,account:list,/account/list,GET,Get list account
+account_info,accountResource,ALL,account:id,/account/:id,GET,Get account by ID
+account_create,accountResource,ALL,account:create,/account/register,GET,Create new account
+account_update,accountResource,ALL,account:id,/account/:id,PATCH,Update account by ID
+account_delete,accountResource,ALL,account:id,/account/:id,DELETE,Remove account by ID
 table_list,tableResource,ALL,table:list,/table/list,GET,Get list table
 table_info,tableResource,ALL,table:id,/table/:id,GET,Get table by ID
 table_create,tableResource,ALL,table:create,/table/create,POST,Create new table

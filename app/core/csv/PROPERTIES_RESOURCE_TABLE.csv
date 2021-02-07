@@ -1,6 +1,9 @@
 resourceREF,type,enumValue,properties,paths,require,unique,schemaREF
 accountResource,String,,username,local.username,y,y,loginSchema
 accountResource,String,,password,local.password,y,,loginSchema
+accountResource,String,,password,local.password,y,,changeSchema
+accountResource,String,,new_password,local.password,y,,changeSchema
+accountResource,String,,re_new_password,,y,,changeSchema
 accountResource,model,,User,,,,userSchema
 tableResource,model,,Table,,,,tableSchema
 tableResource,model,,Zone,,,,zoneSchema
