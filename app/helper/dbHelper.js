@@ -42,7 +42,12 @@ module.exports = {
 function setPropertyForModel(item, body) {
     for (let i in body) {
         if (hasPropertyFromModel(item, i)) {
-            item[i] = body[i]
+            if (item.local && i.includes('local')) {
+                let spliti = i.split('local.');
+                let value = spliti[1];
+                item.local[value] = (value === 'password') ? new User().generateHash(body[i]) : body[i]
+            } else
+                item[i] = body[i];
         } else {
             return 'Property "' + i + '" is missing.';
         }
@@ -113,21 +118,7 @@ function removeItemById(modelName, id, refList = []) {
             if (err) rejects(err);
             if (!rs) rejects(modelName + ' by ID: ' + id + ' not exists.')
             message += 'Succsessful remove ' + modelName + ' by ID: ' + id;
-            console.log(message)
-            // if (refList.length > 0) {
-            //     await Promise.all(refList.map((ref) => {
-            //         let ob1 = { "zone": id}
-            //         let refModel = Table;
-            //         refModel.updateMany(
-            //             ob1,
-            //             { $unset: { zone: 1 } },
-            //             function (err, res){
-            //                 if (err) throw err;
-            //                 resolve(res);
-            //             }
-            //         );
-            //     }))
-            // }
+            console.log(message);
             resolve(message);
         });
     })
