@@ -19,3 +19,5 @@ billResource,Number,,money_pay_for_cus,money_pay_for_cus,,,paySchema
 roleResource,model,,Role,,,,roleSchema
 reportResource,String,,from,from,,,reportSchema
 reportResource,String,,to,to,,,reportSchema
+itemResource,model,,Item,,,,itemSchema
+itemResource,model,,ItemCategories,,,,itemCatSchema

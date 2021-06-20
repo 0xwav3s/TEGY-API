@@ -20,9 +20,13 @@
         "id": {
             "artcategories": "AC0",
             "articles": "NE0",
+            "itemcategories":"IC0",
+            "item":"IT0",
+            "exportImport":"IE0",
             "menu": "ME0",
             "menucategories": "MC0",
             "order": "OR0",
+            "supplier": "SU0",
             "bill": "BI0",
             "zone": "ZO0",
             "table": "TA0",

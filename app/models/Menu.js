@@ -14,6 +14,7 @@ var menuSchema = mongoose.Schema({
     author: { type: String, ref: 'user', required: true },
     image: { type: String, ref: 'images' },
     available: { type: Boolean, default: true, required: true },
+    resourceItem: [{ type: String, ref: 'item' }],
     createTime: { type: Date, default: Date.now(), required: true },
     updateTime: { type: Date, default: Date.now(), required: true },
     menuSeq: Number,

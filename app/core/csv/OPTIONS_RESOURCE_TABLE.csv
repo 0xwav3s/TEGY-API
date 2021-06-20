@@ -51,3 +51,13 @@ role_ALL,ALL,/role/:id,DELETE,application/vnd.hal+json,roleSchema
 role_ALL,ALL,/permission/list,GET,application/vnd.hal+json,roleSchema
 role_ALL,ALL,/permission/:id,GET,application/vnd.hal+json,roleSchema
 report_ALL,ALL,/report/over,GET,application/vnd.hal+json,reportSchema
+item_ALL,ALL,/item/list,GET,application/vnd.hal+json,itemSchema
+item_ALL,ALL,/item/:id,GET,application/vnd.hal+json,itemSchema
+item_ALL,ALL,/item/create,POST,application/vnd.hal+json,itemSchema
+item_ALL,ALL,/item/:id,PATCH,application/vnd.hal+json,itemSchema
+item_ALL,ALL,/item/:id,DELETE,application/vnd.hal+json,itemSchema
+item_ALL,ALL,/item/categories/list,GET,application/vnd.hal+json,itemCatSchema
+item_ALL,ALL,/item/categories/:id,GET,application/vnd.hal+json,itemCatSchema
+item_ALL,ALL,/item/categories/create,POST,application/vnd.hal+json,itemCatSchema
+item_ALL,ALL,/item/categories/:id,PATCH,application/vnd.hal+json,itemCatSchema
+item_ALL,ALL,/item/categories/:id,DELETE,application/vnd.hal+json,itemCatSchema

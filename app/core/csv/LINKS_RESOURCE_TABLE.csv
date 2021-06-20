@@ -51,3 +51,13 @@ role_delete,roleResource,ALL,role:id,/role/:id,DELETE,Remove role by ID
 permission_list,roleResource,ALL,permission:list,/permission/list,GET,Get list permission
 permission_info,roleResource,ALL,permission:id,/permission/:id,GET,Get permission by ID
 report_over,reportResource,ALL,report:over,/report/over,GET,Get permission by ID
+item_list,itemResource,ALL,item:list,/item/list,GET,Get list item
+item_info,itemResource,ALL,item:id,/item/:id,GET,Get item by ID
+item_create,itemResource,ALL,item:create,/item/create,POST,Create new item
+item_update,itemResource,ALL,item:id,/item/:id,PATCH,Update item by ID
+item_delete,itemResource,ALL,item:id,/item/:id,DELETE,Get item by ID
+item_category_list,itemResource,ALL,categories:list,/item/categories/list,GET,Get list categories
+item_category_info,itemResource,ALL,categories:id,/item/categories/:id,GET,Get categories by ID
+item_category_create,itemResource,ALL,categories:create,/item/categories/create,POST,Create new categories
+item_category_update,itemResource,ALL,categories:id,/item/categories/:id,PATCH,Update categories by ID
+item_category_delete,itemResource,ALL,categories:id,/item/categories/:id,DELETE,Remove categories by ID

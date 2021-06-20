@@ -50,3 +50,13 @@ DELETE,/role/:id,ALL,N,roleResource,role_ALL
 GET,/permission/list,ALL,Y,roleResource,role_ALL
 GET,/permission/:id,ALL,N,roleResource,role_ALL
 GET,/report/over,ALL,N,reportResource,report_ALL
+GET,/item/list,ALL,Y,itemResource,item_ALL
+GET,/item/:id,ALL,N,itemResource,item_ALL
+POST,/item/create,ALL,N,itemResource,item_ALL
+PATCH,/item/:id,ALL,N,itemResource,item_ALL
+DELETE,/item/:id,ALL,N,itemResource,item_ALL
+GET,/item/categories/list,ALL,Y,itemResource,item_ALL
+GET,/item/categories/:id,ALL,N,itemResource,item_ALL
+POST,/item/categories/create,ALL,N,itemResource,item_ALL
+PATCH,/item/categories/:id,ALL,N,itemResource,item_ALL
+DELETE,/item/categories/:id,ALL,N,itemResource,item_ALL

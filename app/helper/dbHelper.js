@@ -5,6 +5,10 @@ const Article = require('../models/Article');
 const Menu = require('../models/Menu');
 const MenuCategories = require('../models/MenuCategories');
 const Images = require('../models/Images');
+const Item = require('../models/Item');
+const ItemCategories = require('../models/ItemCategories');
+const Export_Import = require('../models/Export_Import');
+const Supplier = require('../models/Supplier');
 const Bill = require('../models/Bill');
 const Order = require('../models/Order');
 const Table = require('../models/Table');
@@ -25,6 +29,10 @@ module.exports = {
     Menu,
     MenuCategories,
     Images,
+    Item,
+    ItemCategories,
+    Export_Import,
+    Supplier,
     Bill,
     Order,
     Table,
