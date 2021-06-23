@@ -11,13 +11,13 @@ log4js.setConsoleToLogger(log);
 console.log("Start " + name);
 
 module.exports = {
-    getListMenu_GET: async function (req, res) {
-        console.log("Get All Menu");
+    getListExportImport_GET: async function (req, res) {
+        console.log("Get All Export Import");
         let message = '';
         let filter = {};
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
-        db.Menu
+        db.Export_Import
             .find(filter)
             // .sort({ menuSeq: "asc" })
             // .populate('category')
@@ -35,15 +35,15 @@ module.exports = {
                     page: page,
                     items: items
                 }
-                message = 'Successful get all Menu.';
+                message = 'Successful get all Export Import.';
                 console.log(message)
                 handler.buildResponse(req, res, data, message, true);
             })
     },
-    getMenuById_GET: function (req, res) {
+    getExportImportById_GET: function (req, res) {
         let message = '';
         let id = req.params.id;
-        db.Menu
+        db.Export_Import
             .findOne({ _id: id })
             .exec(function (err, item) {
                 if (err) {
@@ -52,41 +52,35 @@ module.exports = {
                     message = err.message;
                     handler.buildResponse(req, res, {}, message, false);
                 }
-                message = 'Success find Menu by id: ' + id;
+                message = 'Success find Export_Import by id: ' + id;
                 console.log(message)
                 handler.buildResponse(req, res, item, message, true);
             })
     },
-    updateMenuById_PATCH: function (req, res) {
+    updateExportImportById_PATCH: function (req, res) {
         let body = req.body;
         let id = req.params.id;
-        let modelName = 'Menu';
+        let modelName = 'Export_Import';
         db.updateItemById(modelName, id, body).then((result) => {
             handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
         }).catch((err) => {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    createMenu_POST: function (req, res) {
+    createExportImport_POST: function (req, res) {
         var body = req.body;
-        let modelName = 'Menu';
+        let modelName = 'Export_Import';
         db.createNewItem(modelName, body).then((result) => {
-            db.MenuCategories.findById(result.category).exec((err, rs) => {
-                rs.menu.push(result._id);
-                rs.save((err) => {
-                    if (err) throw err;
-                    let message = 'Successful saved ' + modelName + ' ID: ' + result._id;
-                    handler.buildResponse(req, res, result, message, true);
-                })
-            })
+            console.log("Successful create new item: " + result);
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' ID: ' + result._id, true);
         }).catch((err) => {
             console.log(err);
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    deleteMenu_DELETE: function (req, res) {
+    deleteExportImport_DELETE: function (req, res) {
         let id = req.params.id;
-        let modelName = 'Menu';
+        let modelName = 'Export_Import';
         db.removeItemById(modelName, id).then((message) => {
             console.log(message);
             handler.buildResponse(req, res, {}, message, true);
@@ -96,13 +90,13 @@ module.exports = {
         });
     },
 
-    getListMenuCategories_GET: function (req, res) {
-        console.log("Get All Menu Categories");
+    getListSupplier_GET: function (req, res) {
+        console.log("Get All Supplier");
         let message = '';
         let filter = {};
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
-        db.MenuCategories
+        db.Supplier
             .find(filter)
             .sort({ updateTime: "desc" })
             .limit(limit)
@@ -119,15 +113,15 @@ module.exports = {
                     page: page,
                     items: items
                 }
-                message = 'Successful get all Menu Categories.';
+                message = 'Successful get all Supplier.';
                 console.log(message)
                 handler.buildResponse(req, res, data, message, true);
             })
     },
-    getMenuCategoriesById_GET: function (req, res) {
+    getSupplierById_GET: function (req, res) {
         let message = '';
         let id = req.params.id;
-        db.MenuCategories
+        db.Supplier
             .findOne({ _id: id })
             .exec(function (err, item) {
                 if (err) {
@@ -136,24 +130,24 @@ module.exports = {
                     message = err.message;
                     handler.buildResponse(req, res, {}, message, false);
                 }
-                message = 'Success find Menu Categories by id: ' + id;
+                message = 'Success find Supplier by id: ' + id;
                 console.log(message)
                 handler.buildResponse(req, res, item, message, true);
             })
     },
-    updateMenuCategoriesById_PATCH: function (req, res) {
+    updateSupplierById_PATCH: function (req, res) {
         let body = req.body;
         let id = req.params.id;
-        let modelName = 'MenuCategories';
+        let modelName = 'Supplier';
         db.updateItemById(modelName, id, body).then((result) => {
             handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
         }).catch((err) => {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    createMenuCategories_POST: function (req, res) {
+    createSupplier_POST: function (req, res) {
         var body = req.body;
-        let modelName = 'MenuCategories';
+        let modelName = 'Supplier';
         db.createNewItem(modelName, body).then((result) => {
             console.log("Successful create new item: " + result);
             handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' ID: ' + result._id, true);
@@ -161,15 +155,15 @@ module.exports = {
             handler.buildResponse(req, res, {}, err, false);
         });
     },
-    deleteMenuCategories_DELETE: function (req, res) {
+    deleteSupplier_DELETE: function (req, res) {
         let id = req.params.id;
-        let modelName = 'MenuCategories';
+        let modelName = 'Supplier';
         db.removeItemById(modelName, id).then((message) => {
             let object = {}
             object['category'] = id;
-            db.Menu.deleteMany(object).exec((err) => {
+            db.Export_Import.deleteMany(object).exec((err) => {
                 if (err) handler.buildResponse(req, res, {}, err, false);
-                message += '. And delete many Menu from ' + modelName + ' by Id: ' + id;
+                message += '. And delete many Export_Import from ' + modelName + ' by Id: ' + id;
                 console.log(message)
                 handler.buildResponse(req, res, {}, message, true);
             })

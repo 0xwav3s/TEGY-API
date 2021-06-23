@@ -77,6 +77,7 @@ db.init().then(() => {
             'tableRoute',
             'menuRoute',
             'itemRoute',
+            'exportImportRoute',
             'roleRoute',
             'reportRoute',
             'imagesRoute',

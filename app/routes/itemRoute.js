@@ -14,7 +14,7 @@ module.exports = function (app) {
     /**
      * Router Table
      */
-    let menuSubEndpoint = '/item';
+    let itemSubEndpoint = '/item';
     /**
      * CRUD Item
      */
@@ -36,5 +36,5 @@ module.exports = function (app) {
     routerItem.delete(catSubEndpoint + '/:id', role_controller.authorization, item_controller.deleteItemCategories_DELETE)
     routerItem.post(catSubEndpoint + '/create', role_controller.authorization, item_controller.createItemCategories_POST)
 
-    app.use(menuSubEndpoint, routerItem);
+    app.use(itemSubEndpoint, routerItem);
 }

@@ -61,3 +61,13 @@ item_category_info,itemResource,ALL,categories:id,/item/categories/:id,GET,Get c
 item_category_create,itemResource,ALL,categories:create,/item/categories/create,POST,Create new categories
 item_category_update,itemResource,ALL,categories:id,/item/categories/:id,PATCH,Update categories by ID
 item_category_delete,itemResource,ALL,categories:id,/item/categories/:id,DELETE,Remove categories by ID
+supplier_list,supplierResource,ALL,supplier:list,/supplier/list,GET,Get list supplier
+supplier_info,supplierResource,ALL,supplier:id,/supplier/:id,GET,Get supplier by ID
+supplier_create,supplierResource,ALL,supplier:create,/supplier/create,POST,Create new supplier
+supplier_update,supplierResource,ALL,supplier:id,/supplier/:id,PATCH,Update supplier by ID
+supplier_delete,supplierResource,ALL,supplier:id,/supplier/:id,DELETE,Get supplier by ID
+export_import_list,export_importResource,ALL,export_import:list,/export_import/list,GET,Get list export_import
+export_import_info,export_importResource,ALL,export_import:id,/export_import/:id,GET,Get export_import by ID
+export_import_create,export_importResource,ALL,export_import:create,/export_import/create,POST,Create new export_import
+export_import_update,export_importResource,ALL,export_import:id,/export_import/:id,PATCH,Update export_import by ID
+export_import_delete,export_importResource,ALL,export_import:id,/export_import/:id,DELETE,Get export_import by ID

@@ -61,3 +61,13 @@ item_ALL,ALL,/item/categories/:id,GET,application/vnd.hal+json,itemCatSchema
 item_ALL,ALL,/item/categories/create,POST,application/vnd.hal+json,itemCatSchema
 item_ALL,ALL,/item/categories/:id,PATCH,application/vnd.hal+json,itemCatSchema
 item_ALL,ALL,/item/categories/:id,DELETE,application/vnd.hal+json,itemCatSchema
+supplier_ALL,ALL,/supplier/list,GET,application/vnd.hal+json,supplierSchema
+supplier_ALL,ALL,/supplier/:id,GET,application/vnd.hal+json,supplierSchema
+supplier_ALL,ALL,/supplier/create,POST,application/vnd.hal+json,supplierSchema
+supplier_ALL,ALL,/supplier/:id,PATCH,application/vnd.hal+json,supplierSchema
+supplier_ALL,ALL,/supplier/:id,DELETE,application/vnd.hal+json,supplierSchema
+export_import_ALL,ALL,/export_import/list,GET,application/vnd.hal+json,export_importSchema
+export_import_ALL,ALL,/export_import/:id,GET,application/vnd.hal+json,export_importSchema
+export_import_ALL,ALL,/export_import/create,POST,application/vnd.hal+json,export_importSchema
+export_import_ALL,ALL,/export_import/:id,PATCH,application/vnd.hal+json,export_importSchema
+export_import_ALL,ALL,/export_import/:id,DELETE,application/vnd.hal+json,export_importSchema

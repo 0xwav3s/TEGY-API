@@ -71,14 +71,8 @@ module.exports = {
         var body = req.body;
         let modelName = 'Item';
         db.createNewItem(modelName, body).then((result) => {
-            db.Item.findById(result.category).exec((err, rs) => {
-                rs.menu.push(result._id);
-                rs.save((err) => {
-                    if (err) throw err;
-                    let message = 'Successful saved ' + modelName + ' ID: ' + result._id;
-                    handler.buildResponse(req, res, result, message, true);
-                })
-            })
+            console.log("Successful create new item: " + result);
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' ID: ' + result._id, true);
         }).catch((err) => {
             console.log(err);
             handler.buildResponse(req, res, {}, err, false);

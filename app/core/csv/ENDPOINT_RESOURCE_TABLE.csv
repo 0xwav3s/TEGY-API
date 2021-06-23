@@ -60,3 +60,13 @@ GET,/item/categories/:id,ALL,N,itemResource,item_ALL
 POST,/item/categories/create,ALL,N,itemResource,item_ALL
 PATCH,/item/categories/:id,ALL,N,itemResource,item_ALL
 DELETE,/item/categories/:id,ALL,N,itemResource,item_ALL
+GET,/supplier/list,ALL,Y,supplierResource,supplier_ALL
+GET,/supplier/:id,ALL,N,supplierResource,supplier_ALL
+POST,/supplier/create,ALL,N,supplierResource,supplier_ALL
+PATCH,/supplier/:id,ALL,N,supplierResource,supplier_ALL
+DELETE,/supplier/:id,ALL,N,supplierResource,supplier_ALL
+GET,/export_import/list,ALL,Y,export_importResource,export_import_ALL
+GET,/export_import/:id,ALL,N,export_importResource,export_import_ALL
+POST,/export_import/create,ALL,N,export_importResource,export_import_ALL
+PATCH,/export_import/:id,ALL,N,export_importResource,export_import_ALL
+DELETE,/export_import/:id,ALL,N,export_importResource,export_import_ALL
