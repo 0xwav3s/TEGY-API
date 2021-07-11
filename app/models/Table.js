@@ -15,11 +15,8 @@ var tableSchema = mongoose.Schema({
     description: String,
     available: { type: Boolean, default: true, required: true },
     active: {
-        type: String, enum: [
-            "Có khách",
-            "Trống",
-            "Bảo trì"
-        ],
+        type: String,
+        enum: config.model.enum.active,
         required: true
     },
     zone: { type: String, ref: 'zone', required: true },

@@ -29,6 +29,7 @@
             "supplier": "SU0",
             "bill": "BI0",
             "zone": "ZO0",
+            "role": "RO0",
             "table": "TA0",
             "tax_promotions": "TP0",
             "user": "US0"
@@ -69,6 +70,14 @@
             "types_bill": [
                 "Tại bàn",
                 "Mang về"
+            ],
+            "unit_item_resource": [
+                "g",
+                "ml"
+            ],
+            "import_export": [
+                "IMPORT",
+                "EXPORT"
             ],
             "active": [
                 "Có khách",

@@ -457,5 +457,142 @@ function autoCreateForTest() {
         })
     });
 
+    ItemCategories.countDocuments({}, function (err, count) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        if (count > 0)
+            console.log("Item Categories exists");
+        else {
+            for (var i = 1; i <= 4; i++) {
+                var cat = new ItemCategories({
+                    author: 'US01',
+                    name: "Loại nguyên liệu thứ " + i,
+                    description: "Description " + i,
+                });
+                cat.save(function (err, rs) {
+                    if (err) {
+                        console.log(err)
+                        return;
+                    }
+                })
+                console.log("Complete create => MenuCategories " + i);
+            }
+        }
+    }).then(() => {
+        Item.countDocuments({}, function (err, count) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            if (count > 0)
+                console.log("Item exists");
+            else {
+                for (var i = 1; i <= 20; i++) {
+                    var art = new Item({
+                        author: 'US01',
+                        category: 'IC0' + helper.getRandomInt(1, 5),
+                        name: "Nguyên liệu " + i,
+                        amount: i * 10000,
+                        unit: "g",
+                    });
+                    art.save(function (err, rs) {
+                        if (err) {
+                            console.log(err)
+                            return;
+                        }
+                    })
+                    console.log("Complete create => Item " + i);
+                }
+            }
+        }).then(() => {
+            Supplier.countDocuments({}, function (err, count) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                if (count > 0)
+                    console.log("Supplier exists");
+                else {
+                    for (var i = 1; i <= 4; i++) {
+                        var cat = new Supplier({
+                            author: 'US01',
+                            name: "Supplier " + i,
+                            personName: "Contacter Supplier " + i,
+                            phoneNumber: "123123" + i,
+                            address: "Address " + i,
+                        });
+                        cat.save(function (err, rs) {
+                            if (err) {
+                                console.log(err)
+                                return;
+                            }
+                        })
+                        console.log("Complete create => Supplier " + i);
+                    }
+                }
+            }).then(() => {
+                Supplier.countDocuments({}, function (err, count) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    if (count > 0)
+                        console.log("Supplier exists");
+                    else {
+                        for (var i = 1; i <= 4; i++) {
+                            var cat = new Supplier({
+                                author: 'US01',
+                                name: "Supplier " + i,
+                                personName: "Contacter Supplier " + i,
+                                phoneNumber: "123123" + i,
+                                address: "Address " + i,
+                            });
+                            cat.save(function (err, rs) {
+                                if (err) {
+                                    console.log(err)
+                                    return;
+                                }
+                            })
+                            console.log("Complete create => Supplier " + i);
+                        }
+                    }
+                }).then(() => {
+                    Export_Import.countDocuments({}, function (err, count) {
+                        if (err) {
+                            console.log(err);
+                            return;
+                        }
+                        if (count > 0)
+                            console.log("Export_Import exists");
+                        else {
+                            for (var i = 1; i <= 20; i++) {
+                                var art = new Export_Import({
+                                    author: 'US01',
+                                    supplier: 'SU0' + helper.getRandomInt(1, 4),
+                                    name: "Nhập Nguyên liệu " + i,
+                                    item: 'IT0' + helper.getRandomInt(1, 20),
+                                    export_import: config.model.enum.import_export[helper.getRandomInt(0, 2)],
+                                    unit: "g",
+                                    amount: 10000,
+                                    price: 10000,
+                                    expiry_date: "2023-02-29",
+                                    dateTime: "2021-02-29"
+                                });
+                                art.save(function (err, rs) {
+                                    if (err) {
+                                        console.log(err)
+                                        return;
+                                    }
+                                })
+                                console.log("Complete create => Export_Import " + i);
+                            }
+                        }
+                    })
+                })
+            })
+        })
+    });
 
 }

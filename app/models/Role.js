@@ -1,3 +1,4 @@
+var config = require('config');
 var dbHelper = require('../helper/database');
 var mongoose = dbHelper.mongoose;
 var autoIncrement = dbHelper.autoIncrement;
@@ -22,7 +23,7 @@ roleSchema.plugin(autoIncrement.plugin, {
 });
 
 roleSchema.pre('save', function (next) {
-    this._id = "RO0" + this.roleSeq;
+    this._id = config.model.id.role + this.roleSeq;
     this.updateTime = Date.now();
     next();
 });
