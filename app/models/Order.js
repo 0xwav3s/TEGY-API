@@ -13,12 +13,7 @@ var orderSchema = mongoose.Schema({
     amount: { type: Number, required: true },
     status: {
         type: String,
-        enum: [
-            "Đã chọn",
-            "Đang xử lý",
-            "Hoàn tất",
-            "Hủy"
-        ],
+        enum: config.model.enum.order,
         default: "Đã chọn",
         required: true
     },

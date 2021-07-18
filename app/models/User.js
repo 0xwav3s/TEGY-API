@@ -1,3 +1,4 @@
+var config = require('config');
 var dbHelper = require('../helper/database');
 var mongoose = dbHelper.mongoose;
 var autoIncrement = dbHelper.autoIncrement;
@@ -13,13 +14,13 @@ var userSchema = mongoose.Schema({
         fullname: { type: String, required: true },
         phone: { type: String, required: true },
         gender: {
-            type: String, enum: [
-                "Nam",
-                "Nữ"
-            ]
+            type: String, 
+            enum: config.model.enum.gender
         },
         bio: String,
         birthday: { type: Date },
+        point: { type: Number, default: 0 },
+        money: { type: Number, default: 0 },
         role: { type: String, ref: 'role' },
         avatar: { type: String, ref: 'images' },
         createTime: { type: Date, default: Date.now() },
