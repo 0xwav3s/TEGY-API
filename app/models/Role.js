@@ -10,6 +10,7 @@ var roleSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    available: { type: Boolean, default: true, required: true },
     createTime: { type: Date, default: Date.now() },
     updateTime: { type: Date, default: Date.now() }
 });
