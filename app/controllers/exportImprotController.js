@@ -1,6 +1,7 @@
 const config = require('config');
 const db = require('../helper/dbHelper');
 const handler = require('../core/handler/tegyHandler');
+const filter = require('../helper/filter');
 
 const path = require('path');
 var scriptName = path.basename(__filename).split(".");
@@ -13,14 +14,16 @@ console.log("Start " + name);
 module.exports = {
     getListExportImport_GET: async function (req, res) {
         console.log("Get All Export Import");
-        let message = '';
-        let filter = {};
+        let mergedFilter = filter.getFilterHasFromTo(req, 'timeIn');
         let page = (req.query.page) ? parseInt(req.query.page) : 0;
         let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
+        let from = mergedFilter.from;
+        let to = mergedFilter.to;
+        mergedFilter = filter.removeIsNotFilter(mergedFilter);
+        console.log(mergedFilter)
         db.Export_Import
-            .find(filter)
-            // .sort({ menuSeq: "asc" })
-            // .populate('category')
+            .find(mergedFilter)
+            .sort({ updateTime: "desc" })
             .limit(limit)
             .skip(limit * page)
             .exec(function (err, items) {
