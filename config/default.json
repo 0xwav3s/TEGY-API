@@ -27,6 +27,9 @@
             "menucategories": "MC0",
             "order": "OR0",
             "supplier": "SU0",
+            "rev_exp_item_categories":"RC0",
+            "rev_exp_item":"RI0",
+            "revExp":"RE0",
             "bill": "BI0",
             "zone": "ZO0",
             "role": "RO0",
@@ -75,9 +78,20 @@
                 "g",
                 "ml"
             ],
+            "payment_method": [
+                "Tiền mặt",
+                "Chuyển khoản",
+                "Thẻ tín dụng",
+                "Séc",
+                "Khác"
+            ],
             "import_export": [
                 "IMPORT",
                 "EXPORT"
+            ],
+            "rev_exp": [
+                "THU",
+                "CHI"
             ],
             "active": [
                 "Có khách",
