@@ -594,5 +594,36 @@ function autoCreateForTest() {
             })
         })
     });
+    
+    // create bills if need
+    Bill
+    .countDocuments({})
+    .then(count => {
+        if (count > 70) {
+            console.log('Bills existed');
+        } else {
+            for (let i = 1; i <= 70; i++) {
+                let bill = new Bill({
+                    status: 'Đã thanh toán',
+                    type_bill: i % 3 === 0 ? 'Tại bàn' : 'Mang về',
+                    order: ['OR01'],
+                    timeIn: Date.now(),
+                    available: true,
+                    createTime: Date.now(),
+                    updateTime: Date.now(),
+                    author: 'US01',
+                    total_price_order: 100000 * i,
+                    table: 'TA01',
+                    timeOut: Date.now(),
+                });
+                
+                bill
+                .save()
+                .then(() => console.log("Created bill ", i))
+                .catch(e => console.log(`Create bill ${i} failed`))
+            }
+        }
+    })
+    .catch(e => console.log('Bill counting was failed: ', error))
 
 }
