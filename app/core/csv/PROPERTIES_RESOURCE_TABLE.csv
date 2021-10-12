@@ -23,3 +23,4 @@ itemResource,model,,Item,,,,itemSchema
 itemResource,model,,ItemCategories,,,,itemCatSchema
 supplierResource,model,,Supplier,,,,supplierSchema
 export_importResource,model,,Export_Import,,,,export_importSchema
+expensesResource,model,,Expenses,,,,expensesSchema

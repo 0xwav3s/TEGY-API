@@ -37,6 +37,20 @@ module.exports = function (app) {
     routerSupplier.delete('/:id', role_controller.authorization, export_import_controller.deleteSupplier_DELETE)
     routerSupplier.post('/create', role_controller.authorization, export_import_controller.createSupplier_POST)
 
+    /**
+    * CRUD Expenses
+    */
+     let expensesSubEndpoint = '/expenses';
+     var routerExpenses = express.Router();
+ 
+     routerExpenses.get('/list', role_controller.authorization, export_import_controller.getListExpenses_GET);
+     routerExpenses.get('/:id', role_controller.authorization, export_import_controller.getExpensesById_GET)
+     routerExpenses.patch('/:id', role_controller.authorization, export_import_controller.updateExpensesById_PATCH)
+     routerExpenses.delete('/:id', role_controller.authorization, export_import_controller.deleteExpenses_DELETE)
+     routerExpenses.post('/create', role_controller.authorization, export_import_controller.createExpenses_POST)
+
     app.use(exportImportSubEndpoint, routerExportImport);
     app.use(supSubEndpoint, routerSupplier);
+    app.use(expensesSubEndpoint, routerExpenses);
+
 }

@@ -193,6 +193,7 @@ function filterEndpointToProperties(req) {
             &&
             (req.method === item.method)
         );
+        console.log('endpoints ', endpoints);
         let resourceREF = endpoints[0].resourceREF;
         let methodREF = endpoints[0].methodREF;
         let links = await csv.links.filter((item) => (

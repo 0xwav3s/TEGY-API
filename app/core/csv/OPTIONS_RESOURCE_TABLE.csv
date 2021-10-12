@@ -66,6 +66,11 @@ supplier_ALL,ALL,/supplier/:id,GET,application/vnd.hal+json,supplierSchema
 supplier_ALL,ALL,/supplier/create,POST,application/vnd.hal+json,supplierSchema
 supplier_ALL,ALL,/supplier/:id,PATCH,application/vnd.hal+json,supplierSchema
 supplier_ALL,ALL,/supplier/:id,DELETE,application/vnd.hal+json,supplierSchema
+expenses_ALL,ALL,/expenses/list,GET,application/vnd.hal+json,expensesSchema
+expenses_ALL,ALL,/expenses/:id,GET,application/vnd.hal+json,expensesSchema
+expenses_ALL,ALL,/expenses/create,POST,application/vnd.hal+json,expensesSchema
+expenses_ALL,ALL,/expenses/:id,PATCH,application/vnd.hal+json,expensesSchema
+expenses_ALL,ALL,/expenses/:id,DELETE,application/vnd.hal+json,expensesSchema
 export_import_ALL,ALL,/export_import/list,GET,application/vnd.hal+json,export_importSchema
 export_import_ALL,ALL,/export_import/:id,GET,application/vnd.hal+json,export_importSchema
 export_import_ALL,ALL,/export_import/create,POST,application/vnd.hal+json,export_importSchema

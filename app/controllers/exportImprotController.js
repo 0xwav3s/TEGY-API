@@ -222,6 +222,88 @@ module.exports = {
             console.log(err);
             handler.buildResponse(req, res, {}, err, false);
         });
+    },
+    getListExpenses_GET: function (req, res) {
+        console.log("Get All Expenses");
+        let message = '';
+        let filter = {};
+        let page = (req.query.page) ? parseInt(req.query.page) : 0;
+        let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
+        db.Expenses
+            .find(filter)
+            .sort({ updateTime: "desc" })
+            .limit(limit)
+            .skip(limit * page)
+            .exec(function (err, items) {
+                if (err) {
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
+                    console.log(err)
+                    message = err.message
+                    handler.buildResponse(req, res, {}, message, false);
+                }
+                let data = {
+                    limit: limit,
+                    page: page,
+                    items: items
+                }
+                message = 'Successful get all Expenses.';
+                console.log(message)
+                handler.buildResponse(req, res, data, message, true);
+            })
+    },
+    getExpensesById_GET: function (req, res) {
+        let message = '';
+        let id = req.params.id;
+        db.Expenses
+            .findOne({ _id: id })
+            .exec(function (err, item) {
+                if (err) {
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
+                    console.log(err)
+                    message = err.message;
+                    handler.buildResponse(req, res, {}, message, false);
+                }
+                message = 'Success find Expenses by id: ' + id;
+                console.log(message)
+                handler.buildResponse(req, res, item, message, true);
+            })
+    },
+    updateExpensesById_PATCH: function (req, res) {
+        let body = req.body;
+        let id = req.params.id;
+        let modelName = 'Expenses';
+        db.updateItemById(modelName, id, body).then((result) => {
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
+        }).catch((err) => {
+            handler.buildResponse(req, res, {}, err, false);
+        });
+    },
+    createExpenses_POST: function (req, res) {
+        var body = req.body;
+        let modelName = 'Expenses';
+        db.createNewItem(modelName, body).then((result) => {
+            console.log("Successful create new item: " + result);
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' ID: ' + result._id, true);
+        }).catch((err) => {
+            handler.buildResponse(req, res, {}, err, false);
+        });
+    },
+    deleteExpenses_DELETE: function (req, res) {
+        let id = req.params.id;
+        let modelName = 'Expenses';
+        db.removeItemById(modelName, id).then((message) => {
+            let object = {}
+            object['category'] = id;
+            db.Export_Import.deleteMany(object).exec((err) => {
+                if (err) handler.buildResponse(req, res, {}, err, false);
+                message += '. And delete many Export_Import from ' + modelName + ' by Id: ' + id;
+                console.log(message)
+                handler.buildResponse(req, res, {}, message, true);
+            })
+        }).catch((err) => {
+            console.log(err);
+            handler.buildResponse(req, res, {}, err, false);
+        });
     }
 };;
 

@@ -9,6 +9,7 @@ const Item = require('../models/Item');
 const ItemCategories = require('../models/ItemCategories');
 const Export_Import = require('../models/Export_Import');
 const Supplier = require('../models/Supplier');
+const Expenses = require('../models/Expenses');
 const RevExp = require('../models/RevExp');
 const RevExpItem = require('../models/RevExpItem');
 const RevExpItemCategories = require('../models/RevExpItemCategories');
@@ -36,6 +37,7 @@ module.exports = {
     ItemCategories,
     Export_Import,
     Supplier,
+    Expenses,
     RevExp,
     RevExpItemCategories,
     RevExpItem,

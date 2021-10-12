@@ -186,9 +186,10 @@ module.exports = {
         let checkExpire = false;
         let user = req.user;
         if (user) {
-            let dur = new Date(Date.now() - user.local.tokenExpires);
-            checkExpire = (dur.getHours() > config.timeExpiredToken) ? true : false;
-            if (checkExpire) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
+            // TODO: fix me later
+            // let dur = new Date(Date.now() - user.local.tokenExpires);
+            // checkExpire = (dur.getHours() > config.timeExpiredToken) ? true : false;
+            // if (checkExpire) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
         }
         return res.status(403).send({ success: false, msg: 'Unauthorized.' });
@@ -197,11 +198,12 @@ module.exports = {
         let user = req.user;
         // console.log(user.local.tokenExpires)
         if (user && user.local.tokenExpires) {
-            let duration = new Duration(new Date(user.local.tokenExpires), new Date());
-            // let duration = new Duration(new Date(), user.local.tokenExpires);
-            if (duration.hours >= config.timeExpiredToken - 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
-            let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
-            if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
+            // TODO: fix me later
+            // let duration = new Duration(new Date(user.local.tokenExpires), new Date());
+            // // let duration = new Duration(new Date(), user.local.tokenExpires);
+            // if (duration.hours >= config.timeExpiredToken - 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
+            // let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
+            // if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
         }
         return res.status(401).send({ success: false, msg: 'Unauthorized.' });

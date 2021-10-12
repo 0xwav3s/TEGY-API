@@ -64,7 +64,12 @@ GET,/supplier/list,ALL,Y,supplierResource,supplier_ALL
 GET,/supplier/:id,ALL,N,supplierResource,supplier_ALL
 POST,/supplier/create,ALL,N,supplierResource,supplier_ALL
 PATCH,/supplier/:id,ALL,N,supplierResource,supplier_ALL
-DELETE,/supplier/:id,ALL,N,supplierResource,supplier_ALL
+DELETE,/expenses/:id,ALL,N,expensesResource,expenses_ALL
+GET,/expenses/list,ALL,Y,expensesResource,expenses_ALL
+GET,/expenses/:id,ALL,N,expensesResource,expenses_ALL
+POST,/expenses/create,ALL,N,expensesResource,expenses_ALL
+PATCH,/expenses/:id,ALL,N,expensesResource,expenses_ALL
+DELETE,/expenses/:id,ALL,N,expensesResource,expenses_ALL
 GET,/export_import/list,ALL,Y,export_importResource,export_import_ALL
 GET,/export_import/:id,ALL,N,export_importResource,export_import_ALL
 POST,/export_import/create,ALL,N,export_importResource,export_import_ALL
