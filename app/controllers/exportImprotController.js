@@ -282,7 +282,7 @@ module.exports = {
         var body = req.body;
         let modelName = 'Expenses';
         db.createNewItem(modelName, body).then((result) => {
-            console.log("Successful create new item: " + result);
+            console.log("Successful create new expense: " + result);
             handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' ID: ' + result._id, true);
         }).catch((err) => {
             handler.buildResponse(req, res, {}, err, false);
@@ -292,14 +292,7 @@ module.exports = {
         let id = req.params.id;
         let modelName = 'Expenses';
         db.removeItemById(modelName, id).then((message) => {
-            let object = {}
-            object['category'] = id;
-            db.Export_Import.deleteMany(object).exec((err) => {
-                if (err) handler.buildResponse(req, res, {}, err, false);
-                message += '. And delete many Export_Import from ' + modelName + ' by Id: ' + id;
-                console.log(message)
-                handler.buildResponse(req, res, {}, message, true);
-            })
+            handler.buildResponse(req, res, {}, message, true);
         }).catch((err) => {
             console.log(err);
             handler.buildResponse(req, res, {}, err, false);

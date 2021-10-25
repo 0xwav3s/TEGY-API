@@ -35,7 +35,8 @@
             "role": "RO0",
             "table": "TA0",
             "tax_promotions": "TP0",
-            "user": "US0"
+            "user": "US0",
+            "expense": "EX0"
         },
         "enum": {
             "gender": [
@@ -86,6 +87,10 @@
                 "Khác"
             ],
             "import_export": [
+                "IMPORT",
+                "EXPORT"
+            ],
+            "expense_type": [
                 "IMPORT",
                 "EXPORT"
             ],

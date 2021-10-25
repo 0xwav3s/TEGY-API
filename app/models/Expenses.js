@@ -8,8 +8,9 @@ const ObjectId = Schema.ObjectId;
 var expensesSchema = mongoose.Schema({
     _id: String,
     name: { type: String, required: true },
-    amount: { type: String, required: true },
-    description: String,
+    amount: { type: Number, required: true },
+    type: { type: String, enum: config.model.enum.expense_type, required: true },
+    note: String,
     available: { type: Boolean, default: true, required: true },
     author: { type: String, ref: 'user', required: true },
     createTime: { type: Date, default: Date.now(), required: true },
@@ -25,7 +26,7 @@ expensesSchema.plugin(autoIncrement.plugin, {
 });
 
 expensesSchema.pre('save', function (next) {
-    this._id = config.model.id.expenses + this.expensesSeq;
+    this._id = config.model.id.expense + this.expensesSeq;
     this.updateTime = Date.now();
     next();
 });

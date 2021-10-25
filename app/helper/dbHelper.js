@@ -634,4 +634,31 @@ function autoCreateForTest() {
     })
     .catch(e => console.log('Bill counting was failed: ', error))
 
+    // create expenses if need
+    Expenses
+    .countDocuments({})
+    .then(count => {
+        if (count > 30) {
+            console.log('Expenses existed');
+        } else  {
+            for (let i = 1; i <= 30; i++) {
+                let expense = new Expenses({
+                    name: `Expense item ${i}`,
+                    type: i % 3 === 0 ? 'IMPORT' : 'EXPORT',
+                    available: true,
+                    createTime: Date.now(),
+                    updateTime: Date.now(),
+                    author: 'US01',
+                    amount: 100 * i,
+                    note: 'Tiền mặt'
+                });
+                
+                expense
+                .save()
+                .then(() => console.log("Created expense item ", i))
+                .catch(e => console.log(`Create expense ${i} failed: `, e))
+            }
+        }
+    })
+
 }
