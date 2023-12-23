@@ -8,12 +8,6 @@ module.exports = function (app) {
     const endpointAccount = config.get('endpoint').account;
 
     app.get(endpoint.home, function (req, res) {
-        // res.render(dirPage + 'home', {
-        //     name: name,
-        //     title: i18n.__('header').home + " - " + name,
-        //     endpoint: config.get('endpoint'),
-        //     user : req.user
-        // });
         res.redirect(endpointAccount.login);
     })
 

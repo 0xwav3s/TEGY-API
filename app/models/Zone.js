@@ -7,9 +7,14 @@ const ObjectId = Schema.ObjectId;
 
 var zoneSchema = mongoose.Schema({
     _id: String,
-    name: { type: String, required: true },
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
     description: String,
     available: { type: Boolean, default: true, required: true },
+    table: [{ type: String, ref: 'table'}],
     author: { type: String, ref: 'user', required: true },
     createTime: { type: Date, default: Date.now(), required: true },
     updateTime: { type: Date, default: Date.now(), required: true },
@@ -25,6 +30,17 @@ zoneSchema.plugin(autoIncrement.plugin, {
 
 zoneSchema.pre('save', function (next) {
     this._id = config.model.id.zone + this.zoneSeq;
+    this.updateTime = Date.now();
+    next();
+});
+
+zoneSchema.pre('remove', function (next) {
+    var zone = this;
+    zone.model('Table').update(
+        { table: zone._id }, 
+        { $pull: { table: zone._id } }, 
+        { multi: true }, 
+        next);
     next();
 });
 

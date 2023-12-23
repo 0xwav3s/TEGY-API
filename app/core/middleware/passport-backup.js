@@ -1,14 +1,14 @@
 const LocalStrategy = require('passport-local').Strategy;
-const notify = require('../helper/notifyFunction')
-const db = require('../helper/loadModels');
+const notify = require('../../helper/notifyFunction')
+const db = require('../../helper/dbHelper');
 const config = require('config');
-const mailService = require('../helper/mailService');
+const mailService = require('../../helper/mailService');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const path = require('path');
 var scriptName = path.basename(__filename).split(".");
 var name = scriptName[0];
-const log4js = require('../helper/logService');
+const log4js = require('../../helper/logService');
 var log = log4js.getLog(name);
 log4js.setConsoleToLogger(log);
 
@@ -73,7 +73,7 @@ module.exports = function (passport) {
             db.User.findOne({ 'local.username': username }, function (err, user) {
                 // if there are any errors, return the error before anything else
                 if (err) {
-                    console.error(err)
+                    console.log(err)
                     return done(err);
                 }
 

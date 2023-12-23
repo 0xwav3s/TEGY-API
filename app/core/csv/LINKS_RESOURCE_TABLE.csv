@@ -1,6 +1,78 @@
-resourceREF,products,linkName,href,method,title
-accountResource,ALL,account:login,/account/login,POST,Sign In Account
-accountResource,ALL,account:logout,/account/logout,POST,Logout Account
-accountResource,ALL,account:register,/account/register,POST,Sign Up Account
-accountResource,ALL,account:profile,/account/profile,GET,Get information account from jwt
-accountResource,ALL,account:profile,/account/profile,PATCH,Update information account
+id,resourceREF,products,linkName,href,method,title
+account_login,accountResource,ALL,account:login,/account/login,POST,Sign In Account
+account_logout,accountResource,ALL,account:logout,/account/logout,POST,Logout Account
+account_signup,accountResource,ALL,account:register,/account/register,POST,Sign Up Account
+account_profile,accountResource,ALL,account:profile,/account/profile,GET,Get information account from jwt
+account_updateProfile,accountResource,ALL,account:profile,/account/profile,PATCH,Update information account
+account_changePassword,accountResource,ALL,account:change_password,/account/change_password,POST,Change password account by ID
+account_list,accountResource,ALL,account:list,/account/list,GET,Get list account
+account_info,accountResource,ALL,account:id,/account/:id,GET,Get account by ID
+account_create,accountResource,ALL,account:create,/account/register,GET,Create new account
+account_update,accountResource,ALL,account:id,/account/:id,PATCH,Update account by ID
+account_delete,accountResource,ALL,account:id,/account/:id,DELETE,Remove account by ID
+table_list,tableResource,ALL,table:list,/table/list,GET,Get list table
+table_info,tableResource,ALL,table:id,/table/:id,GET,Get table by ID
+table_create,tableResource,ALL,table:create,/table/create,POST,Create new table
+table_update,tableResource,ALL,table:id,/table/:id,PATCH,Update table by ID
+table_delete,tableResource,ALL,table:id,/table/:id,DELETE,Remove table by ID
+zone_list,tableResource,ALL,zone:list,/zone/list,GET,Get list zone
+zone_info,tableResource,ALL,zone:id,/zone/:id,GET,Get zone by ID
+zone_create,tableResource,ALL,zone:create,/zone/create,POST,Create new zone
+zone_update,tableResource,ALL,zone:id,/zone/:id,PATCH,Update zone by ID
+zone_delete,tableResource,ALL,zone:id,/zone/:id,DELETE,Remove zone by ID
+menu_list,menuResource,ALL,menu:list,/menu/list,GET,Get list menu
+menu_info,menuResource,ALL,menu:id,/menu/:id,GET,Get menu by ID
+menu_create,menuResource,ALL,menu:create,/menu/create,POST,Create new menu
+menu_update,menuResource,ALL,menu:id,/menu/:id,PATCH,Update menu by ID
+menu_delete,menuResource,ALL,menu:id,/menu/:id,DELETE,Get menu by ID
+category_list,menuResource,ALL,categories:list,/menu/categories/list,GET,Get list categories
+category_info,menuResource,ALL,categories:id,/menu/categories/:id,GET,Get categories by ID
+category_create,menuResource,ALL,categories:create,/menu/categories/create,POST,Create new categories
+category_update,menuResource,ALL,categories:id,/menu/categories/:id,PATCH,Update categories by ID
+category_delete,menuResource,ALL,categories:id,/menu/categories/:id,DELETE,Remove categories by ID
+bill_list,billResource,ALL,bill:list,/bill/list,GET,Get list bill
+bill_insertNewBill,billResource,ALL,bill:insert_bill,/bill,POST,Insert new bill with orders for table
+bill_info,billResource,ALL,bill:id,/bill/:id,GET,Get detail bill with order by billId
+bill_update,billResource,ALL,bill:id,/bill/:id,PATCH,Update bill by Id
+bill_pay,billResource,ALL,bill:pay,/bill/:id/pay,POST,Submit bill for payment with multi ID
+bill_cancel,billResource,ALL,bill:id,/bill/:id/cancel,POST,Cancel bill with multi ID
+bill_switch,billResource,ALL,bill:id,/bill/:id/switch,POST,Switch bill to another table
+bill_delete,billResource,ALL,bill:id,/bill/:id,DELETE,Remove bill by Id
+bill_insertOrders,billResource,ALL,bill:insert_orders,/bill/:id/orders,POST,Insert new orders for Bill
+order_info,billResource,ALL,order:id,/order/:id,GET,Get order by Id
+order_update,billResource,ALL,order:id,/order/:id,PATCH,Update order by Id
+order_cancel,billResource,ALL,order:cancel,/order/:id/cancel,POST,Cancel order by Id
+order_delete,billResource,ALL,order:id,/order/:id,DELETE,Remove order by Id
+role_list,roleResource,ALL,role:list,/role/list,GET,Get list role
+role_info,roleResource,ALL,role:id,/role/:id,GET,Get role by ID
+role_create,roleResource,ALL,role:create,/role/create,POST,Create new role
+role_update,roleResource,ALL,role:id,/role/:id,PATCH,Update role by ID
+role_delete,roleResource,ALL,role:id,/role/:id,DELETE,Remove role by ID
+permission_list,roleResource,ALL,permission:list,/permission/list,GET,Get list permission
+permission_info,roleResource,ALL,permission:id,/permission/:id,GET,Get permission by ID
+report_over,reportResource,ALL,report:over,/report/over,GET,Get permission by ID
+item_list,itemResource,ALL,item:list,/item/list,GET,Get list item
+item_info,itemResource,ALL,item:id,/item/:id,GET,Get item by ID
+item_create,itemResource,ALL,item:create,/item/create,POST,Create new item
+item_update,itemResource,ALL,item:id,/item/:id,PATCH,Update item by ID
+item_delete,itemResource,ALL,item:id,/item/:id,DELETE,Get item by ID
+item_category_list,itemResource,ALL,categories:list,/item/categories/list,GET,Get list categories
+item_category_info,itemResource,ALL,categories:id,/item/categories/:id,GET,Get categories by ID
+item_category_create,itemResource,ALL,categories:create,/item/categories/create,POST,Create new categories
+item_category_update,itemResource,ALL,categories:id,/item/categories/:id,PATCH,Update categories by ID
+item_category_delete,itemResource,ALL,categories:id,/item/categories/:id,DELETE,Remove categories by ID
+supplier_list,supplierResource,ALL,supplier:list,/supplier/list,GET,Get list supplier
+supplier_info,supplierResource,ALL,supplier:id,/supplier/:id,GET,Get supplier by ID
+supplier_create,supplierResource,ALL,supplier:create,/supplier/create,POST,Create new supplier
+supplier_update,supplierResource,ALL,supplier:id,/supplier/:id,PATCH,Update supplier by ID
+supplier_delete,supplierResource,ALL,supplier:id,/supplier/:id,DELETE,Get supplier by ID
+expenses_list,expensesResource,ALL,expenses:list,/expenses/list,GET,Get list expenses
+expenses_info,expensesResource,ALL,expenses:id,/expenses/:id,GET,Get expenses by ID
+expenses_create,expensesResource,ALL,expenses:create,/expenses/create,POST,Create new expenses
+expenses_update,expensesResource,ALL,expenses:id,/expenses/:id,PATCH,Update expenses by ID
+expenses_delete,expensesResource,ALL,expenses:id,/expenses/:id,DELETE,Get expenses by ID
+export_import_list,export_importResource,ALL,export_import:list,/export_import/list,GET,Get list export_import
+export_import_info,export_importResource,ALL,export_import:id,/export_import/:id,GET,Get export_import by ID
+export_import_create,export_importResource,ALL,export_import:create,/export_import/create,POST,Create new export_import
+export_import_update,export_importResource,ALL,export_import:id,/export_import/:id,PATCH,Update export_import by ID
+export_import_delete,export_importResource,ALL,export_import:id,/export_import/:id,DELETE,Get export_import by ID

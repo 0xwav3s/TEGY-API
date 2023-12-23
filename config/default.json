@@ -2,13 +2,13 @@
     "product": {
         "name": "NGỌC HẢI"
     },
-    "dev": false,
+    "dev": true,
     "secret": "nodeauthsecret",
-    "timeExpiredToken": 12,
+    "timeExpiredToken": 36,
     "copyright": {
         "name": "TEGY SERVICES"
     },
-    "port": "3000",
+    "port": "3002",
     "role": {
         "admin": [
             "vle34",
@@ -20,14 +20,23 @@
         "id": {
             "artcategories": "AC0",
             "articles": "NE0",
+            "itemcategories":"IC0",
+            "item":"IT0",
+            "exportImport":"IE0",
             "menu": "ME0",
             "menucategories": "MC0",
             "order": "OR0",
+            "supplier": "SU0",
+            "rev_exp_item_categories":"RC0",
+            "rev_exp_item":"RI0",
+            "revExp":"RE0",
             "bill": "BI0",
             "zone": "ZO0",
+            "role": "RO0",
             "table": "TA0",
             "tax_promotions": "TP0",
-            "user": "US0"
+            "user": "US0",
+            "expense": "EX0"
         },
         "enum": {
             "gender": [
@@ -65,6 +74,29 @@
             "types_bill": [
                 "Tại bàn",
                 "Mang về"
+            ],
+            "unit_item_resource": [
+                "g",
+                "ml"
+            ],
+            "payment_method": [
+                "Tiền mặt",
+                "Chuyển khoản",
+                "Thẻ tín dụng",
+                "Séc",
+                "Khác"
+            ],
+            "import_export": [
+                "IMPORT",
+                "EXPORT"
+            ],
+            "expense_type": [
+                "IMPORT",
+                "EXPORT"
+            ],
+            "rev_exp": [
+                "THU",
+                "CHI"
             ],
             "active": [
                 "Có khách",

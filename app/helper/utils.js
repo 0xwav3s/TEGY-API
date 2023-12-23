@@ -26,10 +26,20 @@ module.exports.getFullUrl = function (req, endpoint) {
     return req.protocol + '://' + req.get('host') + endpoint;
 }
 
+// This should work both there and elsewhere.
+module.exports.isEmptyObject = function (obj) {
+    for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 module.exports.getStartDate = function (date) {
     if (date) {
         date = new Date(date);
-        date.setSeconds(00, 00);
+        // date.setSeconds(00, 00);
         return date;
     } else {
         date = new Date();
@@ -42,7 +52,7 @@ module.exports.getStartDate = function (date) {
 module.exports.getEndDate = function (date) {
     if (date) {
         date = new Date(date);
-        date.setSeconds(00, 00);
+        // date.setSeconds(00, 00);
         return date;
     } else {
         date = new Date();
@@ -206,4 +216,12 @@ module.exports.removePathUrl = function (path, url) {
         }
     }
     return newPath
+}
+
+module.exports.removeIsNotFilter = function (mergedFilter) {
+    delete mergedFilter.from;
+    delete mergedFilter.to;
+    delete mergedFilter.page;
+    delete mergedFilter.limit;
+    return mergedFilter;
 }

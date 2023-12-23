@@ -26,6 +26,7 @@ articleSchema.plugin(autoIncrement.plugin, {
 
 articleSchema.pre('save', function (next) {
     this._id = config.model.id.articles + this.articleSeq;
+    this.updateTime = Date.now();
     next();
 });
 

@@ -21,6 +21,7 @@ reportSchema.plugin(autoIncrement.plugin, {
 
 reportSchema.pre('save', function (next) {
     this._id = config.model.id.report + this.reportSeq;
+    this.updateTime = Date.now();
     next();
 });
 

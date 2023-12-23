@@ -1,6 +1,7 @@
 console.log('Startup TEGY API Services');
 var startTime = new Date();
 const express = require("express");
+var cors = require('cors')
 const config = require('config');
 const app = express();
 var i18n = require("i18n");
@@ -25,7 +26,7 @@ log4jsCustom.setConsoleToLogger(log);
 // config express, ejs
 app.set("view engine", "ejs");
 app.set("views", "./views");
-
+app.use(cors())
 app.use(cookieParser());
 i18n.configure({
     locales: ['vi', 'en'],
@@ -66,27 +67,31 @@ app.use(flash());
 //Routes
 
 db.init().then(() => {
-    require('./app/core/passport')(passport);
+    require('./app/core/middleware/passport')(passport);
     var handler = require('./app/core/handler/tegyHandler');
     handler.init().then(async () => {
-
         const routeArr = [
+            'accountRoute',
             'systemRoute',
             'homeRoute',
-            'accountRoute',
-            'billRoute',
+            'tableRoute',
+            'menuRoute',
+            'itemRoute',
+            'exportImportRoute',
+            'roleRoute',
             'reportRoute',
             'imagesRoute',
+            'billRoute',
             'errorRoute'
         ]
-
         await Promise.all(routeArr.map((route) => {
+            // console.log('Load route: ' + route)
             require('./app/routes/' + route)(app)
         })).then(() => {
             fs.readFile('./config/logo.txt', 'utf8', function (err, data) {
                 if (err) throw err;
                 console.log("Complete startup TEGY API Services")
-                console.log(data);
+                console.log('%c '+data, 'background: #222; color: #bada55');
                 let duration = new Duration(startTime, new Date());
                 console.log("Total time: " + duration.milliseconds + " ms");
             });

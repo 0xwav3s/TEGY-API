@@ -1,115 +1,93 @@
 
 
 let config = require('config');
-let db = require('../helper/loadModels');
+let db = require('../helper/dbHelper');
 let caculate = require('../helper/accountant/caculate');
 let helper = require('../helper/utils');
-let print = require('../helper/printServices/printServices');
-let notify = require('../helper/notifyFunction');
-var mailService = require('../helper/mailService');
-const { util } = require('config');
-
-let endpointAccount = config.get('endpoint').account;
-let dirPage = 'admin/pages/dashboard/report/';
-let endpoint = config.get('endpoint').dashboard;
-// let cloud = require('../helper/cloudinaryService');
-
-let limitPage = 20;
-let limitPagination = 5;
-
-
+const handler = require('../core/handler/tegyHandler');
 
 module.exports = {
 
     viewOverReport_GET: async function (req, res) {
-        var startDate = helper.getStartDate(req.query.startDate);
-        var endDate = helper.getEndDate(req.query.endDate);
-        var betWDay = startDate.getDate() - endDate.getDate();
+        var to = helper.getStartDate(req.query.to);
+        var from = helper.getEndDate(req.query.from);
+        var betWDay = to.getDate() - from.getDate();
         betWDay = (betWDay === 0) ? 1 : betWDay;
         var day = req.query.day;
         day = (day) ? day : betWDay;
-        var urlOrg = req.originalUrl;
-        var url = helper.removePathUrl('day', urlOrg);
-        getDataOverView(startDate, endDate, day).then(dataOver => {
+        getDataOverView(to, from, day).then(dataOver => {
             console.log(dataOver)
-            res.render(dirPage + 'home.ejs', {
-                endpoint: endpoint,
-                endpointAccount: endpointAccount,
-                dataOver: dataOver,
-                helper: helper,
-                statusBill: config.model.enum.bill,
-                time: {
-                    "startDate": helper.createDate(startDate),
-                    "endDate": helper.createDate(endDate)
-                },
-                day: day,
-                url: url,
-                user: req.user
-            });
+            return handler.buildResponse(req, res, dataOver, "Success get report over view !", true);
+        }).catch(err => {
+            return handler.buildErrorResponse(req, res, err);
         })
     }
 }
 
-function getDataOverView(startDate, endDate, day) {
+function getDataOverView(to, from, day) {
     var data = {
         'inMonth': {},
         'lastMonth': {},
         'cal': {},
         'pieChart': []
     };
-    return new Promise(async (resolve) => {
-        var lastStartDate = new Date(endDate);
-        var lastEndDate = new Date(endDate);
-        lastEndDate.setDate(lastEndDate.getDate() - day);
-        lastEndDate.setHours(00, 00, 00, 00);
-        console.log("startDate:" + startDate)
-        console.log("endDate:" + endDate)
-        console.log("lastStartDate:" + lastStartDate)
-        console.log("lastEndDate:" + lastEndDate)
-        var billsInMonth = await db.Bill.find({ 'createTime': { "$gte": endDate, "$lt": startDate } }).populate('order');
-        data.inMonth.total = billsInMonth.length;
-        data.inMonth.revenue = 0;
-        for (var i in config.model.enum.bill) {
-            data.inMonth[config.model.enum.bill[i]] = 0;
-            data.lastMonth[config.model.enum.bill[i]] = 0;
+    return new Promise(async (resolve, rejects) => {
+        try {
+            var lastStartDate = new Date(from);
+            var lastEndDate = new Date(from);
+            lastEndDate.setDate(lastEndDate.getDate() - day);
+            lastEndDate.setHours(00, 00, 00, 00);
+            console.log("to:" + to)
+            console.log("from:" + from)
+            console.log("lastStartDate:" + lastStartDate)
+            console.log("lastEndDate:" + lastEndDate)
+            var billsInMonth = await db.Bill.find({ 'timeIn': { "$gte": from, "$lt": to } }).populate('order');
+            data.inMonth.total = billsInMonth.length;
+            data.inMonth.revenue = 0;
+            for (var i in config.model.enum.bill) {
+                data.inMonth[config.model.enum.bill[i]] = 0;
+                data.lastMonth[config.model.enum.bill[i]] = 0;
+            }
+            // var ill = 1;
+            var topProduct = [];
+            await Promise.all(billsInMonth.map(async (elem) => {
+                // console.log(ill+": "+elem._id)
+                // ill++;
+                if (elem.status === config.model.enum.bill[1]) {
+                    data.inMonth.revenue += elem.total_price_order;
+                    topProduct = await getTopProduct(elem.order, topProduct);
+                } else {
+                    // console.log(elem.status)
+                }
+                for (var i in config.model.enum.bill) {
+                    data.inMonth[config.model.enum.bill[i]] += (elem.status === config.model.enum.bill[i]) ? 1 : 0;
+                }
+            }));
+            data.inMonth.topProduct = sortTopProduct(await fitExist(topProduct));
+            var billsLastMonth = await db.Bill.find({ 'timeIn': { "$gte": lastEndDate, "$lt": lastStartDate } });
+            data.lastMonth.total = billsLastMonth.length;
+            data.lastMonth.revenue = 0;
+            await Promise.all(billsLastMonth.map(async (elem) => {
+                data.lastMonth.revenue += (elem.status === config.model.enum.bill[1]) ? elem.total_price_order : 0;
+                for (var i in config.model.enum.bill) {
+                    data.lastMonth[config.model.enum.bill[i]] += (elem.status === config.model.enum.bill[i]) ? 1 : 0;
+                }
+            })).then(() => {
+                var total = 0;
+                for (var i in config.model.enum.bill) {
+                    total += data.inMonth[config.model.enum.bill[i]];
+                }
+                // for (var i in config.model.enum.bill) {
+                //     data.pieChart.push(data.inMonth[config.model.enum.bill[i]]);
+                // }
+                for (var i in data.inMonth) {
+                    data.cal[i] = caculate.percIncrease(data.lastMonth[i], data.inMonth[i])
+                }
+                resolve(data);
+            })
+        } catch (err) {
+            rejects(err);
         }
-        // var ill = 1;
-        var topProduct = [];
-        await Promise.all(billsInMonth.map(async (elem) => {
-            // console.log(ill+": "+elem._id)
-            // ill++;
-            if (elem.status === config.model.enum.bill[1]) {
-                data.inMonth.revenue += elem.total_price_order;
-                topProduct = await getTopProduct( elem.order, topProduct);
-            } else {
-                // console.log(elem.status)
-            }
-            for (var i in config.model.enum.bill) {
-                data.inMonth[config.model.enum.bill[i]] += (elem.status === config.model.enum.bill[i]) ? 1 : 0;
-            }
-        }));
-        data.inMonth.topProduct = sortTopProduct(await fitExist(topProduct));
-        var billsLastMonth = await db.Bill.find({ 'createTime': { "$gte": lastEndDate, "$lt": lastStartDate } });
-        data.lastMonth.total = billsLastMonth.length;
-        data.lastMonth.revenue = 0;
-        await Promise.all(billsLastMonth.map(async (elem) => {
-            data.lastMonth.revenue += (elem.status === config.model.enum.bill[1]) ? elem.total_price_order : 0;
-            for (var i in config.model.enum.bill) {
-                data.lastMonth[config.model.enum.bill[i]] += (elem.status === config.model.enum.bill[i]) ? 1 : 0;
-            }
-        })).then(() => {
-            var total = 0;
-            for (var i in config.model.enum.bill) {
-                total += data.inMonth[config.model.enum.bill[i]];
-            }
-            for (var i in config.model.enum.bill) {
-                data.pieChart.push(data.inMonth[config.model.enum.bill[i]]);
-            }
-            for (var i in data.inMonth) {
-                data.cal[i] = caculate.percIncrease(data.lastMonth[i], data.inMonth[i])
-            }
-            resolve(data);
-        })
     })
 }
 
@@ -136,7 +114,7 @@ async function getTopProduct(orders, topProduct) {
 }
 
 async function fitExist(topProduct) {
-    var menu = await db.Menu.find().select("name");
+    var menu = await db.Menu.find().select("name category");
     var newArr = [];
     await Promise.all(topProduct.map((item) => {
         var exist = false;
@@ -152,6 +130,7 @@ async function fitExist(topProduct) {
             for (let menuItem of menu) {
                 if (menuItem._id === item.id) {
                     item.nameMenu = menuItem.name;
+                    item.category = menuItem.category;
                     break;
                 }
             }

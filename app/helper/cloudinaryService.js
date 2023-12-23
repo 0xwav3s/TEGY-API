@@ -1,7 +1,7 @@
 const cloudinary = require('cloudinary');
 const config = require('config');
 const multer = require('multer');
-var imageModel = require('./loadModels').Images;
+var imageModel = require('./dbHelper').Images;
 let utils = require('./utils');
 var mailService = require('./mailService');
 

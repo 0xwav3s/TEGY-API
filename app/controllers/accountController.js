@@ -1,10 +1,12 @@
 const notify = require('../helper/notifyFunction');
 const config = require('config');
 const crypto = require('crypto');
-const db = require('../helper/loadModels');
+const db = require('../helper/dbHelper');
 const helper = require('../helper/utils');
+const filter = require('../helper/filter');
 const handler = require('../core/handler/tegyHandler');
 const async = require('async');
+const Duration = require("duration");
 
 const jwt = require('jsonwebtoken');
 
@@ -20,7 +22,8 @@ const cloud = require('../helper/cloudinaryService');
 const path = require('path');
 var scriptName = path.basename(__filename).split(".");
 const name = scriptName[0];
-const log4js = require('../helper/logService')
+const log4js = require('../helper/logService');
+const { throws } = require('assert');
 var log = log4js.getLog(name);
 log4js.setConsoleToLogger(log);
 console.log("Start " + name);
@@ -34,94 +37,176 @@ module.exports = {
             }).catch((err) => {
                 res.json(err);
             });
-        // return res.json({ "message": "Logout success" });
     },
-    // login_GET: function (req, res) {
-    //     let message = (req.flash('loginMessage').length > 0) ? req.flash('loginMessage')[0] : '';
-    //     let items = (req.user) ? [req.user] : [];
-    //     handler.buildResponse(req, items, message)
-    //         .then((rs) => {
-    //             res.json(rs);
-    //         }).catch((err) => {
-    //             res.json(err);
-    //         });
-    // },
-    // login_POST: function (req, res) {
-    //     let message = (req.flash('loginMessage').length > 0) ? req.flash('loginMessage')[0] : '';
-    //     let items = (req.user) ? [req.user] : [];
-    //     handler.buildResponse(req, items, message)
-    //         .then((rs) => {
-    //             res.json(rs);
-    //         }).catch((err) => {
-    //             res.json(err);
-    //         });
-    // },
-    signIn_POST: function (req, res) {
+    getListUser_GET: function (req, res) {
+        console.log("Get All Users");
+        let mergedFilter = filter.getFilterHasFromTo(req, convertVariableToLocalModel('createTime'));
+        let page = (req.query.page) ? parseInt(req.query.page) : 0;
+        let limit = (req.query.limit) ? parseInt(req.query.limit) : 20;
+        let from = mergedFilter.from;
+        let to = mergedFilter.to;
+        mergedFilter = filter.removeIsNotFilter(mergedFilter);
+        console.log(mergedFilter)
+        db.User
+            .find(mergedFilter)
+            .sort({ createTime: "desc" })
+            .populate('role')
+            .limit(limit)
+            .skip(limit * page)
+            .exec(function (err, items) {
+                if (err) return handler.buildErrorResponse(req, res, err)
+                let data = {};
+                let message = '';
+                if (items.length > 0) {
+                    data = {
+                        limit: limit,
+                        page: page,
+                        page: page,
+                        from: from,
+                        to: to,
+                        items: items
+                    }
+                    message = 'Successful get all Users.';
+                }
+                console.log(message)
+                handler.buildResponse(req, res, data, message, true);
+            })
+    },
+    getUserById_GET: function (req, res) {
+        let message = '';
+        let id = req.params.id;
+        db.User
+            .findOne({ _id: id })
+            .exec(function (err, item) {
+                if (err) {
+                    mailService.sendMail(config.mail.recieverError, 'Error Delivery From Ngoc Hai', 'Error: ' + err.stack + '')
+                    console.log(err)
+                    message = err.message;
+                    return handler.buildErrorResponse(req, res, message)
+                }
+                message = 'Success find User by id: ' + id;
+                console.log(message)
+                return handler.buildResponse(req, res, item, message, true);
+            })
+    },
+    updateUserById_PATCH: function (req, res) {
+        let body = req.body;
+        let id = req.params.id;
+        let modelName = 'User';
+        db.updateItemById(modelName, id, body).then((result) => {
+            handler.buildResponse(req, res, result, 'Successful saved ' + modelName + ' by ID: ' + result._id, true);
+        }).catch((err) => {
+            handler.buildResponse(req, res, {}, err, false);
+        });
+    },
+    deleteUserById_DELETE: function (req, res) {
+        let id = req.params.id;
+        let modelName = 'User';
+        db.removeItemById(modelName, id).then((message) => {
+            return handler.buildResponse(req, res, {}, message, true);
+        }).catch((err) => {
+            console.log(err);
+            return handler.buildErrorResponse(req, res, err);
+        });
+    },
+    signIn_POST: async function (req, res) {
         let username = req.body.username;
         console.log('Start find user: ' + username);
         db.User.findOne({
             'local.username': username
-        }, async (err, user) => {
-            try{
-                let items = [];
+        }).populate('local.role').exec((err, user) => {
+            try {
+                console.log(user.toJSON());
                 let message = '';
-                let stt = false;
                 if (err) throw err;
-                else if (!user) {
-                    message = 'Authentication failed. User not found.';
+                if (!user) {
+                    message = 'User not found.';
                     console.log(message);
-                    // res.status(401).send({ success: false, msg: message });
+                    throw message
                 }
                 else if (!user.validPassword(req.body.password)) {
-                    message = 'Authentication failed. Wrong password.';
+                    message = 'Wrong password.';
                     console.log(message);
-                    // res.status(401).send({ success: false, msg: message });
+                    throw message
                 } else {
-                    message = 'Authentication succuess !';
-                    let token = jwt.sign(user.toJSON(), config.secret);
-                    items = { token: 'jwt ' + token };
-                    stt = true;
                     user.local.tokenExpires = new Date();
-                    await user.save((err) => {
-                        if (err) console.err(err)
-                        console.log('Success authentication and find user: ' + user);
+                    user.save((err, rsUser) => {
+                        if (err) {
+                            console.log(err);
+                            throw err;
+                        }
+                        message = 'Successful Authentication !';
+                        let token = jwt.sign(rsUser.toJSON(), config.secret);
+                        console.log('Success authentication and find user: ' + rsUser);
+                        return handler.buildResponse(req, res, { token: 'jwt ' + token }, message, true);
                     })
                 }
-                handler.buildResponse(req, res, items, message, stt);
-            }catch(err){
-                handler.buildResponse(req, res, {}, err, false);
+            } catch (err) {
+                return handler.buildErrorResponse(req, res, err);
+            }
+        })
+    },
+    changePasswordByProfile_POST: function (req, res) {
+        // let id = req.params.id;
+        let id = req.user._id;
+        let body = req.body;
+        let password = body.password;
+        let newPassword = body.newPassword;
+        let reNewPassword = body.reNewPassword;
+        db.User.findOne({ '_id': id }, function (err, user) {
+            try {
+                if (newPassword !== reNewPassword) throw new Error("Nhập lại mật khẩu mới không đúng !");
+                else if (err) throw err;
+                else if (!user) throw new Error("Tài khoản này không tồn tại");
+                else if (!user.validPassword(password)) throw new Error("Mật khẩu hiện tại không đúng !");
+                else {
+                    user.local.password = user.generateHash(newPassword);
+                    user.local.updateTime = Date.now();
+                    user.save((err) => {
+                        if (err) throw err;
+                        return handler.buildResponse(req, res, {}, "Đổi mật khẩu mới thành công !", true);
+                    })
+                }
+            } catch (err) {
+                return handler.buildErrorResponse(req, res, err);
             }
         })
     },
     signUp_POST: function (req, res) {
-
+        var body = req.body;
+        let modelName = 'User';
+        db.createNewItem(modelName, body).then((result) => {
+            return handler.buildResponse(req, res, result, 'Successful create new ' + modelName + ' ID: ' + result._id, true);
+        }).catch((err) => {
+            console.log(err);
+            return handler.buildErrorResponse(req, res, {}, err);
+        });
     },
-    // isLoggedIn: function (req, res, next) {
-    //     if (req.isAuthenticated())
-    //         return next();
-    //     res.redirect(endpoint.login);
-    // },
     isLoggedIn: function (req, res, next) {
         let checkExpire = false;
         let user = req.user;
         if (user) {
-            let dur = new Date(Date.now() - user.local.tokenExpires);
-            checkExpire = (dur.getHours() > config.timeExpiredToken) ? true : false;
-            if (checkExpire) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
+            // TODO: fix me later
+            // let dur = new Date(Date.now() - user.local.tokenExpires);
+            // checkExpire = (dur.getHours() > config.timeExpiredToken) ? true : false;
+            // if (checkExpire) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
         }
         return res.status(403).send({ success: false, msg: 'Unauthorized.' });
     },
-    authorized: function (req, res, next) {
-        let checkExpire = false;
+    authentication: function (req, res, next) {
         let user = req.user;
-        if (user) {
-            let dur = new Date(Date.now() - user.local.tokenExpires);
-            checkExpire = (dur.getHours() > config.timeExpiredToken) ? true : false;
-            if (checkExpire) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
+        // console.log(user.local.tokenExpires)
+        if (user && user.local.tokenExpires) {
+            // TODO: fix me later
+            // let duration = new Duration(new Date(user.local.tokenExpires), new Date());
+            // // let duration = new Duration(new Date(), user.local.tokenExpires);
+            // if (duration.hours >= config.timeExpiredToken - 8) console.log("Warning: Your expired token: " + duration.hours + "/" + config.timeExpiredToken);
+            // let isExpired = (duration.hours > config.timeExpiredToken) ? true : false;
+            // if (isExpired) return res.status(410).send({ success: false, msg: 'The requested resource is no longer available at the server and no forwarding address is known.' });
             if (handler.getToken(req.headers)) return next();
         }
-        return res.status(403).send({ success: false, msg: 'Unauthorized.' });
+        return res.status(401).send({ success: false, msg: 'Unauthorized.' });
 
     },
     profile_GET: function (req, res) {
@@ -156,7 +241,10 @@ module.exports = {
                                 if (element === 'local') {
                                     let local = body[element];
                                     for (let varible in local) {
-                                        user.local[varible] = local[varible];
+                                        if (varible === 'birthday')
+                                            user.local[varible] = Date(local[varible]);
+                                        else
+                                            user.local[varible] = local[varible];
                                     }
                                 } else {
                                     user[element] = body[element];
@@ -280,3 +368,7 @@ module.exports = {
         });
     }
 };
+
+function convertVariableToLocalModel(str) {
+    return 'local.' + str;
+}

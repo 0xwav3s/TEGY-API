@@ -2,6 +2,7 @@ var config = require('config');
 
 //controllers
 var user_controller = require('../controllers/accountController');
+var role_controller = require('../controllers/roleController');
 var passport = require('passport');
 // require('../core/passport-backup')(passport);
 
@@ -15,61 +16,30 @@ var express = require('express');
 module.exports = function (app) {
 
     let routerAccount = express.Router();
+    var accountSubEndpoint = '/account';
 
     // Đăng nhập
-    // routerAccount.get(endpoint.login, user_controller.login_GET);
-    // routerAccount.post('/login', passport.authenticate('local-login'), user_controller.login_POST);
-    routerAccount.post(
-        '/login',
-        user_controller.signIn_POST
-    );
+    app.post('/account/login', user_controller.signIn_POST);
+    app.post('/account/register', user_controller.signUp_POST);
+
+    //Set authen and author after get route account
+    app.use(passport.authenticate('jwt', { session: false }), user_controller.authentication);
 
     // Profile
-    routerAccount.get('/profile', passport.authenticate('jwt', { session: false }), user_controller.authorized, user_controller.profile_GET
-    );
-    routerAccount.patch('/profile', passport.authenticate('jwt', { session: false }), user_controller.authorized, user_controller.profile_PATCH);
+    routerAccount.get('/profile', user_controller.profile_GET);
+    routerAccount.patch('/profile', user_controller.profile_PATCH);
 
+    //Quản lý
+    routerAccount.get('/list', role_controller.authorization, user_controller.getListUser_GET);
+    routerAccount.get('/:id', role_controller.authorization, user_controller.getUserById_GET);
+    routerAccount.patch('/:id', role_controller.authorization, user_controller.updateUserById_PATCH);
+    routerAccount.delete('/:id', role_controller.authorization, user_controller.deleteUserById_DELETE);
+    routerAccount.post('/change_password', role_controller.authorization, user_controller.changePasswordByProfile_POST);
 
-    // Đăng xuất 
+    // Đăng xuất
     routerAccount.post('/logout', user_controller.logOut);
 
-    app.use('/account', routerAccount);
-
-    app.get(endpoint.change, user_controller.isLoggedIn, function (req, res) {
-        res.render(dirPageDashboard + 'changePassword.ejs', {
-            endpoint: endpointAdmin,
-            endpointAccount: endpoint,
-            user: req.user,
-            message: req.flash('changeMessage'),
-        });
-    });
-
-    app.post(endpoint.change, user_controller.isLoggedIn, passport.authenticate('local-change', {
-        successRedirect: endpoint.change,
-        failureRedirect: endpoint.change,
-        failureFlash: true
-    }));
-
-    // hiển thị form đăng ký
-    app.get(endpoint.signup, function (req, res) {
-        var body = req.flash('bodyInput')[0];
-        res.render(dirPage + 'signup.ejs', {
-            message: req.flash('signupMessage'),
-            endpoint: endpoint,
-            data: body
-        });
-    });
-
-    // Xử lý form đăng ký ở đây
-    app.post(endpoint.signup, passport.authenticate('local-signup', {
-        successRedirect: endpoint.profile, // Điều hướng tới trang hiển thị profile
-        failureRedirect: endpoint.signup, // Trở lại trang đăng ký nếu lỗi
-        failureFlash: true
-    }));
-
-    //Profile
-    // app.get(endpoint.profile, user_controller.isLoggedIn, user_controller.profile_GET);
-    // app.post(endpoint.profile, user_controller.isLoggedIn, upload.multer.any(), user_controller.profile_POST);
+    app.use(accountSubEndpoint, routerAccount);
 
     //Quên mật khẩu
     app.get(endpoint.forget, user_controller.forget_GET);

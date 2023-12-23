@@ -30,6 +30,7 @@ tax_promotionsSchema.plugin(autoIncrement.plugin, {
 
 tax_promotionsSchema.pre('save', function (next) {
     this._id = config.model.id.tax_promotions + this.tax_promotionsSeq;
+    this.updateTime = Date.now();
     next();
 });
 
